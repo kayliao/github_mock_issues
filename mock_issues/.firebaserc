@@ -1,0 +1,18 @@
+{
+  "projects": {
+    "default": "kay-github-mock-issues"
+  },
+  "targets": {
+    "kay-github-mock-issues": {
+      "hosting": {
+        "mockissues": [
+          "kay-github-mock-issues"
+        ],
+        "storybook": [
+          "githubissuesstorybook"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
