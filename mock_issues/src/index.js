@@ -1,23 +1,34 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
 import "./index.css";
 import App from "./App";
 import Repo from "./Repo";
 
-import Oauth from "./Oauth.js";
-
-import GetCode from "./GetCode";
-
 import reportWebVitals from "./reportWebVitals";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import store from "./store/store";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
 	<BrowserRouter>
 		<Routes>
-			<Route path="/" element={<App />}>
-				<Route path="/" element={<Repo />} />
-				{/* <Route path="/login/oauth2/code/github" element={<GetCode />}></Route> */}
+			<Route
+				path="/"
+				element={
+					<Provider store={store}>
+						<App />
+					</Provider>
+				}
+			>
+				<Route
+					path="/"
+					element={
+						<Provider store={store}>
+							<Repo />
+						</Provider>
+					}
+				/>
 			</Route>
 		</Routes>
 	</BrowserRouter>

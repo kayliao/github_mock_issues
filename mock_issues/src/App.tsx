@@ -1,16 +1,8 @@
-import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { createGlobalStyle } from "styled-components";
 import { Reset } from "styled-reset";
-import { supabase } from "./Client";
 
-// import store from "./store/store";
-import { useSelector } from "react-redux";
-// import { StateType } from "./reducer/actionList";
-
-// import Footer from "./components/Footer/Footer";
 import Header from "./components/Header/Header";
-// import { Provider } from "react-redux";
 
 const GlobalStyle = createGlobalStyle`
   * {

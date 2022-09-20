@@ -1,22 +1,15 @@
 import { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
-import { createGlobalStyle } from "styled-components";
-import { Reset } from "styled-reset";
-import { supabase } from "./Client";
+
 import styled from "styled-components";
-
-// import store from "./store/store";
 import { useSelector } from "react-redux";
-// import { StateType } from "./reducer/actionList";
-
-// import Footer from "./components/Footer/Footer";
-import Header from "./components/Header/Header";
-// import { Provider } from "react-redux";
 
 function Repo() {
-	const token = JSON.parse(window.localStorage.getItem("supabase.auth.token"));
+	const token = useSelector(
+		(state) => state.sessionStore.session?.provider_token
+	);
+	console.log(token);
+
 	const [repolist, setrepolist] = useState([]);
-	// const username = ${token.currentSession.user.user_metadata.user_name}
 
 	useEffect(() => {
 		async function getRepos() {
@@ -25,7 +18,7 @@ function Repo() {
 				{
 					method: `GET`,
 					headers: new Headers({
-						Authorization: "Bearer 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",
+						Authorization: `Bearer ${token}`,
 					}),
 				}
 			);
@@ -33,24 +26,37 @@ function Repo() {
 			console.log(resjson);
 			setrepolist(resjson);
 		}
-		getRepos();
-	}, []);
+		if (token) getRepos();
+	}, [token]);
+
+	function getTime(time) {
+		const formattedDate = new Date(time);
+
+		formattedDate.toLocaleString("default", { month: "short" });
+
+		return formattedDate.toLocaleString("en-GB", {
+			day: "numeric",
+			month: "long",
+			year: "numeric",
+		});
+	}
 
 	return (
 		<>
 			{token ? (
 				<>
-					{/* <h1>{token.currentSession.user.user_metadata.user_name}</h1> */}
 					<RepoListBox>
 						{repolist.map((element) => (
 							<RepoBox>
 								<RepoA>{element.name}</RepoA>
 								<VisibilityTag>{element.visibility}</VisibilityTag>
+								<UpdateTime>
+									{`Updated on `}
+									{getTime(element.updated_at)}
+								</UpdateTime>
 							</RepoBox>
 						))}
 					</RepoListBox>
-
-					{/* <button onClick={async () => getRepos()}>list all repos</button> */}
 				</>
 			) : (
 				<></>
@@ -62,9 +68,10 @@ function Repo() {
 export default Repo;
 
 const RepoBox = styled.div`
-	height: 60px;
+	height: 100px;
 	border-top: 1px solid #000;
-	padding-top: 5px;
+	padding-top: 24px;
+	position: relative;
 
 	&:last-child {
 		border-bottom: 1px solid #000;
@@ -96,5 +103,13 @@ const RepoListBox = styled.div`
 	margin-left: auto;
 	margin-right: auto;
 	width: 80%;
-	margin-top: 50px;
+	margin-top: 100px;
+	margin-bottom: 50px;
+`;
+
+const UpdateTime = styled.div`
+	font-size: 12px;
+	color: #57606a;
+	position: absolute;
+	bottom: 24px;
 `;
