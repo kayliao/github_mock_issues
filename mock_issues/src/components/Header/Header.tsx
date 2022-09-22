@@ -1,15 +1,21 @@
 import styled from "styled-components";
 import { useEffect } from "react";
+import { RootState } from "../../store/store";
+
 import github from "../../utils/github";
 import { useDispatch, useSelector } from "react-redux";
-import { userActionTypes } from "../../reducer/userReducer";
+import {
+	userActionTypes,
+	userStateType,
+	userType,
+} from "../../reducer/userReducer";
 import { sessionActionTypes } from "../../reducer/sessionReducer";
 
 import { MarkGithubIcon } from "@primer/octicons-react";
 
 function Header() {
 	const dispatch = useDispatch();
-	const user = useSelector((state) => state.userStore.user);
+	const user = useSelector<RootState>((state) => state.userStore["user"]);
 
 	useEffect(() => {
 		async function checkUser() {
@@ -61,7 +67,7 @@ function Header() {
 				<>
 					<AvartarImg
 						alt="profile_picture"
-						src={user.identities[0].identity_data.avatar_url}
+						src={(user as userType).identities[0].identity_data.avatar_url}
 					/>
 					<SignOut onClick={handleSignOutClick}>Sign Out</SignOut>
 				</>

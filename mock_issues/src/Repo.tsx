@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
+import { RootState } from "./store/store";
 
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 
 function Repo() {
-	const token = useSelector(
-		(state) => state.sessionStore.session?.provider_token
+	const token = useSelector<RootState>(
+		(state) => state.sessionStore["session"]?.provider_token
 	);
 	console.log(token);
 
