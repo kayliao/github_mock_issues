@@ -9,4 +9,7 @@ const infoReducerCombine = combineReducers({
 
 const store = createStore(infoReducerCombine);
 
+type RootState = ReturnType<typeof store.getState>;
+
 export default store;
+export { RootState };

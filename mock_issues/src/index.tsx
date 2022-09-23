@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import "./index.css";
 import App from "./App";
 import Repo from "./Repo";
+import LabelManagement from "./pages/Label/LabelManagement";
 
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -21,13 +22,10 @@ root.render(
 					</Provider>
 				}
 			>
+				<Route path="/" element={<Repo />} />
 				<Route
-					path="/"
-					element={
-						<Provider store={store}>
-							<Repo />
-						</Provider>
-					}
+					path="/:username/:reponame/labels"
+					element={<LabelManagement />}
 				/>
 			</Route>
 		</Routes>
