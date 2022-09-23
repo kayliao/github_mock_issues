@@ -4,12 +4,36 @@ import Button from "../../stories/Iconsstories/Button";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
+const ButtonColor = {
+	darkColors: [
+		"#B60205",
+		"#D93F0B",
+		"#FBCA04",
+		"#0E8A16",
+		"#006B75",
+		"#1D76DB",
+		"#0052CC",
+		"#5319E7",
+	],
+	lightColors: [
+		"#E99695",
+		"#F9D0C4",
+		"#FEF2C0",
+		"#C2E0C6",
+		"#BFDADC",
+		"#C5DEF5",
+		"#BFD4F2",
+		"#D4C5F9",
+	],
+};
+
 export default function LabelActionBox({ show, cancelAction, typeName }) {
 	const [isSubmitOk, setIsSubmitOk] = useState(false);
 	const [name, setName] = useState("bug");
 	const [description, setDescription] = useState("");
 	const [color, setColor] = useState("#000000");
 	const [buttonColorShow, setButtonColorShow] = useState("#000");
+	const [colorInputOnFocus, setColorInputOnFocus] = useState(false);
 
 	// const onFormSumbit = (formObj, e) => {
 	// 	e.preventDefault();
@@ -66,7 +90,8 @@ export default function LabelActionBox({ show, cancelAction, typeName }) {
 	}
 
 	function GetRandomColor() {
-		const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+		let randomColor = Math.floor(Math.random() * 16777215).toString(16);
+		while (randomColor.length < 6) randomColor = GetRandomColor();
 		return randomColor;
 	}
 
@@ -96,7 +121,7 @@ export default function LabelActionBox({ show, cancelAction, typeName }) {
 							if (checkNameValid) {
 								if (e.target.value.length >= e.target.maxLength) {
 									e.target.value = e.target.value.slice(0, e.target.maxLength);
-									e.preventDefault();
+									// e.preventDefault();
 									setName(e.target.value);
 									return;
 								}
@@ -127,7 +152,8 @@ export default function LabelActionBox({ show, cancelAction, typeName }) {
 						<NewColorButton
 							buttonColor={buttonColorShow}
 							onClick={(e) => {
-								e.preventDefault();
+								// e.preventDefault();
+								// e.stopPropagation();
 								const randomColor = GetRandomColor();
 								setButtonColorShow(`#${randomColor}`);
 								setColor(`#${randomColor}`);
@@ -135,6 +161,7 @@ export default function LabelActionBox({ show, cancelAction, typeName }) {
 						>
 							<SyncIcon fill={lightOrDark(buttonColorShow)} />
 						</NewColorButton>
+
 						<InputInput
 							required
 							type="text"
@@ -144,10 +171,16 @@ export default function LabelActionBox({ show, cancelAction, typeName }) {
 							id="label-color"
 							placeholder="#fff"
 							value={color}
+							onFocus={() => {
+								setColorInputOnFocus(true);
+							}}
+							onBlur={() => {
+								setColorInputOnFocus(false);
+							}}
 							onChange={(e) => {
 								if (e.target.value.length >= e.target.maxLength) {
 									e.target.value = e.target.value.slice(0, e.target.maxLength);
-									e.preventDefault();
+									// e.preventDefault();
 
 									const isColor = checkIsColor(e.target.value);
 									if (isColor) setButtonColorShow(e.target.value);
@@ -156,7 +189,7 @@ export default function LabelActionBox({ show, cancelAction, typeName }) {
 								}
 								if (e.target.value.length === 0) {
 									e.target.value = "#";
-									e.preventDefault();
+									// e.preventDefault();
 									setColor(e.target.value);
 									return;
 								}
@@ -165,6 +198,39 @@ export default function LabelActionBox({ show, cancelAction, typeName }) {
 								setColor(e.target.value);
 							}}
 						/>
+						<ColorMenu display={colorInputOnFocus ? "block" : "none"}>
+							<p style={{ color: "#57606a", fontSize: "12px" }}>
+								Choose from default colors:
+							</p>
+							<ColorMenuContainer>
+								{ButtonColor.darkColors.map((item) => (
+									<ColorMenuBtn
+										onMouseDown={(e) => {
+											// e.preventDefault();
+											// e.stopPropagation();
+
+											setButtonColorShow(item);
+											setColor(item);
+										}}
+										backgroundColor={item}
+									></ColorMenuBtn>
+								))}
+							</ColorMenuContainer>
+							<ColorMenuContainer>
+								{ButtonColor.lightColors.map((item) => (
+									<ColorMenuBtn
+										onMouseDown={(e) => {
+											// e.preventDefault();
+											// e.stopPropagation();
+
+											setButtonColorShow(item);
+											setColor(item);
+										}}
+										backgroundColor={item}
+									></ColorMenuBtn>
+								))}
+							</ColorMenuContainer>
+						</ColorMenu>
 					</ColorBox>
 				</InputWrapperBox>
 				<InputActionBox>
@@ -219,7 +285,7 @@ const LabelABox = styled.div`
 	height: 48px;
 `;
 
-const LabelFormBox = styled.form`
+const LabelFormBox = styled.div`
 	display: flex;
 	margin-bottom: -8px;
 	align-items: flex-start;
@@ -272,6 +338,7 @@ const InputInput = styled.input`
 const ColorBox = styled.div`
 	display: flex;
 	margin-left: 0;
+	position: relative;
 `;
 
 const NewColorButton = styled.button<PropsType>`
@@ -329,4 +396,73 @@ type PropsType = {
 	labelcolor?: string;
 	wordcolor?: string;
 	buttonColor?: string;
+};
+
+//.............................
+
+const ColorMenu = styled.div<DisplayProps>`
+	display: ${(props) => props.display};
+	z-index: 100;
+	position: absolute;
+	background-color: #fff;
+	box-shadow: 0 8px 24px rgba(140, 149, 159, 20%);
+	top: 100%;
+	width: 16em;
+	border-radius: 6px;
+	padding: 8px;
+	margin-right: auto;
+	left: 8%;
+	border: 1px solid #d0d7de;
+	margin-top: 3px;
+
+	&::after {
+		content: none;
+	}
+
+	@media screen and (min-width: 768px) {
+		left: 18%;
+
+		&::after {
+			top: -12px;
+			left: 10px;
+			right: auto;
+			border: 7px solid transparent;
+			position: absolute;
+			display: inline-block;
+			border-bottom-color: #fff;
+			content: "";
+		}
+
+		&::before {
+			top: -14px;
+			left: 10px;
+			right: auto;
+			border: 7px solid transparent;
+			position: absolute;
+			display: inline-block;
+			border-bottom-color: #d0d7de;
+			content: "";
+		}
+	}
+`;
+const ColorMenuContainer = styled.div`
+	width: 100%;
+	display: flex;
+	justify-content: space-between;
+	margin-top: 8px;
+`;
+const ColorMenuBtn = styled.button<backgroundColorProps>`
+	width: 24px;
+	height: 24px;
+	border-color: transparent;
+	border-radius: 6px;
+	background-color: ${(props) => props.backgroundColor};
+	cursor: pointer;
+`;
+type DisplayProps = {
+	display: string;
+};
+
+type backgroundColorProps = {
+	backgroundColor: string;
 };
