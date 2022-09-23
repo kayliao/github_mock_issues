@@ -32,6 +32,7 @@ export default function LabelActionBox({ show, cancelAction, typeName }) {
 	const [name, setName] = useState("bug");
 	const [description, setDescription] = useState("");
 	const [color, setColor] = useState("#000000");
+	const [colorInvalid, setColorInvalid] = useState(false);
 	const [buttonColorShow, setButtonColorShow] = useState("#000");
 	const [colorInputOnFocus, setColorInputOnFocus] = useState(false);
 
@@ -49,6 +50,8 @@ export default function LabelActionBox({ show, cancelAction, typeName }) {
 		const checkNameValid = checkName(name);
 		if (checkColorValid && checkNameValid) setIsSubmitOk(true);
 		else setIsSubmitOk(false);
+		if (!checkColorValid) setColorInvalid(true);
+		else setColorInvalid(false);
 	}, [name, color]);
 
 	function checkIsColor(value: string) {
@@ -163,6 +166,7 @@ export default function LabelActionBox({ show, cancelAction, typeName }) {
 						</NewColorButton>
 
 						<InputInput
+							style={{ color: colorInvalid ? "#cf222e" : "#24292f" }}
 							required
 							type="text"
 							maxLength={7}
