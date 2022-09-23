@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import MidHead from "../../components/MidHead/MidHead";
 import NewLabel from "./NewLabel";
+import SearchBox from "../../stories/Iconsstories/SearchBox";
 import LabelActionBox from "./LabelActionBox";
 import LabelItem from "./LabelItem";
 import Button from "../../stories/Iconsstories/Button";
@@ -35,10 +36,11 @@ export default function LabelManagement() {
 						</ButtonIconLink>
 					</LabelMileStoneBox>
 					<SearchLabelWrapper>
-						<SearchLabelBox>
+						<SearchBox />
+						{/* <SearchLabelBox>
 							<SearchIcon />
 							<SearchLabelInput placeholder="Search all labels" />
-						</SearchLabelBox>
+						</SearchLabelBox> */}
 					</SearchLabelWrapper>
 					<ButtonCompoStyle>
 						<Button
@@ -173,8 +175,13 @@ type isSelectedProps = {
 
 const SearchLabelWrapper = styled.div`
 	flex-basis: 100%;
+	margin-left: 0px;
+	margin-right: 24px;
+	margin-top: 16px;
 	@media screen and (min-width: 768px) {
 		flex-basis: 0%;
+		margin-left: 8px;
+		margin-top: 0px;
 	}
 `;
 
@@ -199,6 +206,7 @@ const SearchLabelInput = styled.input`
 	border: none;
 	color: #57606a;
 	width: 280px;
+	outline: none;
 `;
 
 const NewLabelButton = styled.button`
