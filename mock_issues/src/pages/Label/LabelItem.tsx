@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { KebabHorizontalIcon } from "@primer/octicons-react";
+import Button from "../../stories/Iconsstories/Button";
 import LabelActionBox from "./LabelActionBox";
 import { useState } from "react";
 
@@ -17,6 +18,19 @@ export default function LabelItem() {
 				>
 					<NewKebabHorizontalIcon />
 				</ActionSummaryButton>
+				{/* <ActionSortButtonBox>
+					<Button
+						textColor={sortClick ? "#24292f" : "ffffff"}
+						backgroundColor={sortClick ? "#0969da" : "#f6f8fa"}
+						textSize="14px"
+						displayText="..."
+						borderColor="rgba(27, 36, 31, 0.15)"
+						hoverColor="#ffffff"
+						hoverBorderColor="#0969da"
+						isAble={true}
+						onClickFunc={() => setSortClick((prev) => !prev)}
+					/>
+				</ActionSortButtonBox> */}
 				<ReviseMenuDelete display={sortClick ? "block" : "none"}>
 					<ReviseMenuContainer>
 						<ReviseMenuBtn>Delete</ReviseMenuBtn>
@@ -113,6 +127,16 @@ const ActionSummaryButton = styled.button<PropsTypes>`
 	}
 	&:hover {
 		background-color: #0969da;
+	}
+`;
+
+const ActionSortButtonBox = styled.div`
+	position: absolute;
+	right: 0;
+	vertical-align: text-top;
+
+	@media screen and (min-width: 1012px) {
+		display: none;
 	}
 `;
 

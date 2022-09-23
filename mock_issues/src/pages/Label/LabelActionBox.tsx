@@ -6,13 +6,10 @@ import { useForm } from "react-hook-form";
 
 export default function LabelActionBox({ show, cancelAction, typeName }) {
 	const [isSubmitOk, setIsSubmitOk] = useState(false);
-	const [name, setName] = useState("");
+	const [name, setName] = useState("bug");
 	const [description, setDescription] = useState("");
-	const [color, setColor] = useState("");
+	const [color, setColor] = useState("#000000");
 	const [buttonColorShow, setButtonColorShow] = useState("#000");
-	// const { register, handleSubmit } = useForm({
-	// 	mode: "onChange", // "onBlur"
-	// });
 
 	// const onFormSumbit = (formObj, e) => {
 	// 	e.preventDefault();
@@ -23,12 +20,58 @@ export default function LabelActionBox({ show, cancelAction, typeName }) {
 	// 	}
 	// };
 
-	useEffect(() => {}, [name, color]);
+	useEffect(() => {
+		const checkColorValid = checkIsColor(color);
+		const checkNameValid = checkName(name);
+		if (checkColorValid && checkNameValid) setIsSubmitOk(true);
+		else setIsSubmitOk(false);
+	}, [name, color]);
+
+	function checkIsColor(value: string) {
+		const s = new Option().style;
+		s.color = value;
+		return s.color !== "";
+	}
+
+	function checkName(input) {
+		const namePattern = new RegExp(/^(?!(\.|\.\.)$).*$/);
+		if (namePattern.test(input) && input.length != 0) {
+			return true;
+		} else return false;
+	}
+
+	function lightOrDark(bgcolor) {
+		if (bgcolor.length === 7) {
+			const r = parseInt(bgcolor.slice(1, 3), 16);
+			const g = parseInt(bgcolor.slice(3, 5), 16);
+			const b = parseInt(bgcolor.slice(5, 7), 16);
+			const hsp = r * 0.3 + g * 0.6 + b * 0.1;
+			if (hsp > 127.5) {
+				return "#000000";
+			} else {
+				return "#ffffff";
+			}
+		} else if (bgcolor.length === 4) {
+			const r = parseInt(bgcolor.slice(1, 2) + bgcolor.slice(1, 2), 16);
+			const g = parseInt(bgcolor.slice(2, 3) + bgcolor.slice(2, 3), 16);
+			const b = parseInt(bgcolor.slice(3, 4) + bgcolor.slice(3, 4), 16);
+			const hsp = r * 0.3 + g * 0.6 + b * 0.1;
+			if (hsp > 127.5) {
+				return "#000000";
+			} else {
+				return "#ffffff";
+			}
+		}
+		if (bgcolor === "#ffff" || "#0000") return "#000000";
+	}
 
 	return show ? (
 		<>
-			<LabelA labelcolor="#d73a4a" wordcolor="#fff">
-				bug
+			<LabelA
+				labelcolor={buttonColorShow}
+				wordcolor={lightOrDark(buttonColorShow)}
+			>
+				{name.length != 0 ? name : "label preview"}
 			</LabelA>
 
 			<LabelFormBox>
@@ -44,20 +87,23 @@ export default function LabelActionBox({ show, cancelAction, typeName }) {
 						placeholder="Label name"
 						value={name}
 						onChange={(e) => {
-							if (e.target.value.length >= e.target.maxLength) {
-								e.target.value = e.target.value.slice(0, e.target.maxLength);
-								e.preventDefault();
+							const checkNameValid = checkName(e.target.value);
+							if (checkNameValid) {
+								if (e.target.value.length >= e.target.maxLength) {
+									e.target.value = e.target.value.slice(0, e.target.maxLength);
+									e.preventDefault();
+									setName(e.target.value);
+									return;
+								}
 								setName(e.target.value);
 								return;
+							} else {
+								if (e.target.value.length === 0) {
+									setName(e.target.value);
+								}
 							}
-							setName(e.target.value);
 						}}
 						name="label-name"
-						// {...register("label-name", {
-						// 	required: true,
-						// 	maxLength: 50,
-						// 	pattern: /^(?!(\.|\.\.)$).*$/,
-						// })}
 					/>
 				</InputWrapperBox>
 				<InputWrapperBox>
@@ -66,14 +112,15 @@ export default function LabelActionBox({ show, cancelAction, typeName }) {
 						id="label-description"
 						placeholder="Description (optional)"
 						value={description}
+						autoComplete="off"
 						onChange={(e) => setDescription(e.target.value)}
 					/>
 				</InputWrapperBox>
 				<InputWrapperBox>
 					<InputTitle htmlFor="label-color">Color</InputTitle>
 					<ColorBox>
-						<NewColorButton buttonColor={buttonColorShow}>
-							<SyncIcon />
+						<NewColorButton buttonColor={buttonColorShow} onClick={() => {}}>
+							<SyncIcon fill={lightOrDark(buttonColorShow)} />
 						</NewColorButton>
 						<InputInput
 							required
@@ -85,12 +132,6 @@ export default function LabelActionBox({ show, cancelAction, typeName }) {
 							placeholder="#fff"
 							value={color}
 							onChange={(e) => {
-								function checkIsColor(value) {
-									const s = new Option().style;
-									s.color = value;
-									return s.color !== "";
-								}
-
 								if (e.target.value.length >= e.target.maxLength) {
 									e.target.value = e.target.value.slice(0, e.target.maxLength);
 									e.preventDefault();
@@ -209,6 +250,10 @@ const InputInput = styled.input`
 	@media screen and (min-width: 768px) {
 		width: 100%;
 	}
+	&:focus {
+		outline-color: #0969da;
+		background-color: #fff;
+	}
 `;
 
 const ColorBox = styled.div`
@@ -219,7 +264,6 @@ const ColorBox = styled.div`
 const NewColorButton = styled.button<PropsType>`
 	color: #fff;
 	background-color: ${(props) => props.buttonColor};
-	border-color: rgba(240, 246, 252, 0.1);
 	border: 1px solid;
 	border-radius: 6px;
 	padding: 0px 7px;
@@ -230,6 +274,13 @@ const NewColorButton = styled.button<PropsType>`
 	vertical-align: middle;
 	cursor: pointer;
 	margin-right: 8px;
+	border-color: ${(props) =>
+		props.buttonColor === "#ffffff" ||
+		props.buttonColor === "#fff" ||
+		props.buttonColor === "#ffff" ||
+		props.buttonColor === "#0000"
+			? "#d0d7de"
+			: props.buttonColor};
 `;
 
 const InputActionBox = styled.div`
