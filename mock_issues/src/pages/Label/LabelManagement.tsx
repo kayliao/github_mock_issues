@@ -415,7 +415,7 @@ const LabelsList = styled.div<DisplayProps>`
 	background-color: #fff;
 	font-size: 12px;
 	color: #24292f;
-	border-color: #d0d7de;
+	border: 1px solid #d0d7de;
 	margin-top: 4px;
 	margin-bottom: 20px;
 	background-clip: padding-box;

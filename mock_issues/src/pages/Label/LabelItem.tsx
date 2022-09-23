@@ -9,6 +9,8 @@ export default function LabelItem() {
 	const [sortClick, setSortClick] = useState(false);
 	const [summaryClick, setSummaryClick] = useState(false);
 
+	console.log("editClick", editClick);
+
 	return editClick ? (
 		<WrapperBox>
 			<WrapperItemBox>
@@ -16,7 +18,7 @@ export default function LabelItem() {
 					isClicked={sortClick}
 					onClick={() => setSortClick((prev) => !prev)}
 				>
-					<NewKebabHorizontalIcon />
+					<NewKebabHorizontalIcon fill={sortClick ? "#fff" : "#57606a"} />
 				</ActionSummaryButton>
 				{/* <ActionSortButtonBox>
 					<Button
@@ -61,11 +63,13 @@ export default function LabelItem() {
 						isClicked={sortClick}
 						onClick={() => setSortClick((prev) => !prev)}
 					>
-						<NewKebabHorizontalIcon />
+						<NewKebabHorizontalIcon fill={sortClick ? "#fff" : "#57606a"} />
 					</SummaryButton>
 					<ReviseMenu display={sortClick ? "block" : "none"}>
 						<ReviseMenuContainer>
-							<ReviseMenuBtn>Edit</ReviseMenuBtn>
+							<ReviseMenuBtn onClick={() => setEditClick(true)}>
+								Edit
+							</ReviseMenuBtn>
 							<ReviseMenuBtn>Delete</ReviseMenuBtn>
 						</ReviseMenuContainer>
 					</ReviseMenu>
@@ -97,7 +101,7 @@ const ActionBoxButton = styled.button`
 		text-decoration: none;
 		white-space: nowrap;
 		cursor: pointer;
-		font-size: inherit;
+		font-size: 12px;
 		appearance: none;
 		user-select: none;
 		background-color: transparent;
@@ -193,9 +197,9 @@ const SummaryButton = styled.button`
 		background-color: #0969da;
 	}
 
-	&:focus {
-		background-color: #0969da;
-	}
+	// &:focus {
+	// 	background-color: #0969da;
+	// }
 `;
 
 const LabelDescipition = styled.span`
@@ -244,7 +248,7 @@ const ActionButton = styled.button`
 		text-decoration: none;
 		white-space: nowrap;
 		cursor: pointer;
-		font-size: inherit;
+		font-size: 12px;
 		appearance: none;
 		user-select: none;
 		background-color: transparent;
@@ -290,20 +294,21 @@ const ReviseMenuDelete = styled.div<DisplayProps>`
 `;
 
 const ReviseMenuContainer = styled.div`
-	width: 158px;
+	width: 160px;
 	display: flex;
 	flex-direction: column;
 	background-color: #fff;
 	color: #24292f;
-	border-color: #d0d7de;
+	border: 1px solid #d0d7de;
 	margin-top: 2px;
-	padding: 0 4px;
+	padding-top: 4px;
+	padding-bottom: 4px;
 	line-height: 1.5;
 	box-shadow: 0 8px 24px rgba(140, 149, 159, 20%);
 	border-radius: 6px;
 
 	&::after {
-		top: -12px;
+		top: -10.7px;
 		right: 10px;
 		left: auto;
 		border: 7px solid transparent;
@@ -312,14 +317,27 @@ const ReviseMenuContainer = styled.div`
 		border-bottom-color: #fff;
 		content: "";
 	}
+	&::before {
+		top: -12px;
+		right: 10px;
+		left: auto;
+		border: 7px solid transparent;
+		position: absolute;
+		display: inline-block;
+		border-bottom-color: #d0d7de;
+		content: "";
+	}
 `;
 const ReviseMenuBtn = styled.button`
-	text-align: start;
+	text-align: left;
 	background-color: transparent;
 	border: none;
 	padding: 4px 8px 4px 16px;
 	justify-content: flex-end;
-
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	width: 100%;
+	cursor: pointer;
 	&:hover {
 		background-color: #0969da;
 		color: #fff;

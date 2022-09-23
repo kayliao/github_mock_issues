@@ -65,6 +65,11 @@ export default function LabelActionBox({ show, cancelAction, typeName }) {
 		if (bgcolor === "#ffff" || "#0000") return "#000000";
 	}
 
+	function GetRandomColor() {
+		const randomColor = Math.floor(Math.random() * 16777215).toString(16);
+		return randomColor;
+	}
+
 	return show ? (
 		<>
 			<LabelA
@@ -119,7 +124,15 @@ export default function LabelActionBox({ show, cancelAction, typeName }) {
 				<InputWrapperBox>
 					<InputTitle htmlFor="label-color">Color</InputTitle>
 					<ColorBox>
-						<NewColorButton buttonColor={buttonColorShow} onClick={() => {}}>
+						<NewColorButton
+							buttonColor={buttonColorShow}
+							onClick={(e) => {
+								e.preventDefault();
+								const randomColor = GetRandomColor();
+								setButtonColorShow(`#${randomColor}`);
+								setColor(`#${randomColor}`);
+							}}
+						>
 							<SyncIcon fill={lightOrDark(buttonColorShow)} />
 						</NewColorButton>
 						<InputInput
