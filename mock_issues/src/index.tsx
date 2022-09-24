@@ -9,6 +9,8 @@ import LabelManagement from "./pages/Label/LabelManagement";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import store from "./store/store";
+import { ApiProvider } from "@reduxjs/toolkit/dist/query/react";
+import { githubApiSlice } from "./api/githubApiSlice";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { SyncIcon } from "@primer/octicons-react";
 import Button from "../../stories/Iconsstories/Button";
 import { useState, useEffect } from "react";
+import Label from "../../stories/Iconsstories/Label";
 import { useForm } from "react-hook-form";
 
 const ButtonColor = {
@@ -27,13 +28,22 @@ const ButtonColor = {
 	],
 };
 
-export default function LabelActionBox({ show, cancelAction, typeName }) {
+export default function LabelActionBox({
+	show,
+	cancelAction,
+	typeName,
+	gitInfo,
+	typeAction,
+	labelName,
+	labeldescription,
+	labelcolor,
+}) {
 	const [isSubmitOk, setIsSubmitOk] = useState(false);
-	const [name, setName] = useState("bug");
-	const [description, setDescription] = useState("");
-	const [color, setColor] = useState("#000000");
+	const [name, setName] = useState(labelName);
+	const [description, setDescription] = useState(labeldescription);
+	const [color, setColor] = useState(labelcolor);
 	const [colorInvalid, setColorInvalid] = useState(false);
-	const [buttonColorShow, setButtonColorShow] = useState("#000");
+	const [buttonColorShow, setButtonColorShow] = useState(labelcolor);
 	const [colorInputOnFocus, setColorInputOnFocus] = useState(false);
 
 	// const onFormSumbit = (formObj, e) => {
@@ -100,12 +110,16 @@ export default function LabelActionBox({ show, cancelAction, typeName }) {
 
 	return show ? (
 		<>
-			<LabelA
+			{/* <LabelA
 				labelcolor={buttonColorShow}
 				wordcolor={lightOrDark(buttonColorShow)}
 			>
 				{name.length != 0 ? name : "label preview"}
-			</LabelA>
+			</LabelA> */}
+			<Label
+				backgroundColor={buttonColorShow}
+				labelName={name.length != 0 ? name : "label preview"}
+			/>
 
 			<LabelFormBox>
 				<InputWrapperBox>
@@ -146,7 +160,16 @@ export default function LabelActionBox({ show, cancelAction, typeName }) {
 						placeholder="Description (optional)"
 						value={description}
 						autoComplete="off"
-						onChange={(e) => setDescription(e.target.value)}
+						maxLength={100}
+						onChange={(e) => {
+							if (e.target.value.length >= e.target.maxLength) {
+								e.target.value = e.target.value.slice(0, e.target.maxLength);
+								setDescription(e.target.value);
+								return;
+							}
+							setDescription(e.target.value);
+							return;
+						}}
 					/>
 				</InputWrapperBox>
 				<InputWrapperBox>
@@ -248,7 +271,36 @@ export default function LabelActionBox({ show, cancelAction, typeName }) {
 							hoverColor="#2c974b"
 							hoverBorderColor="rgba(27,31,36,0.15)"
 							isAble={isSubmitOk}
-							onClickFunc={() => {}}
+							onClickFunc={() => {
+								let apiBodyData = {
+									username: gitInfo.username,
+									reponame: gitInfo.reponame,
+								};
+								if (typeName === "Save Changes") {
+									console.log("new name errors:", gitInfo.labelname, name);
+									apiBodyData["labelname"] = gitInfo.labelname;
+									apiBodyData["editData"] = {
+										owner: gitInfo.username,
+										repo: gitInfo.reponame,
+										name: gitInfo.labelname,
+										new_name: name,
+										description: description,
+										color: buttonColorShow.slice(1, 7),
+									};
+									typeAction(apiBodyData);
+								}
+								if (typeName === "Create Label") {
+									apiBodyData["createLabelData"] = {
+										owner: gitInfo.username,
+										repo: gitInfo.reponame,
+										name: name,
+										description: description,
+										color: buttonColorShow.slice(1, 7),
+									};
+									typeAction(apiBodyData);
+								}
+								cancelAction();
+							}}
 						/>
 					</ButtonCompoStyleBox>
 					<ButtonCompoStyleBox2>

@@ -9,27 +9,57 @@ import {
 	userStateType,
 	userType,
 } from "../../reducer/userReducer";
-import { sessionActionTypes } from "../../reducer/sessionReducer";
+// import { sessionActionTypes } from "../../reducer/sessionReducer";
+import store from "../../store/store";
+import { supaBaseInfoActions } from "../../reducer/supaBaseReducer";
 
 import { MarkGithubIcon } from "@primer/octicons-react";
 
 function Header() {
 	const dispatch = useDispatch();
-	const user = useSelector<RootState>((state) => state.userStore["user"]);
+	// const user = useSelector<RootState>((state) => state.userStore["user"]);
+
+	const user = useSelector((state: RootState) => state.supaBaseInfo.user);
+
+	// const supaBaseInfo = store
 
 	useEffect(() => {
 		async function checkUser() {
 			const result = await github.checkUser();
 
 			console.log(result);
-			dispatch({
-				type: userActionTypes.SET_USER_INFO,
-				payload: { userInfo: result.user },
-			});
-			dispatch({
-				type: sessionActionTypes.SET_SESSION_INFO,
-				payload: { sessionInfo: result.session },
-			});
+			// dispatch({
+			// 	type: userActionTypes.SET_USER_INFO,
+			// 	payload: { userInfo: result.user },
+			// });
+			// dispatch({
+			// 	type: sessionActionTypes.SET_SESSION_INFO,
+			// 	payload: { sessionInfo: result.session },
+			// });
+			dispatch(supaBaseInfoActions.setuser({ userInfo: result.user }));
+			dispatch(supaBaseInfoActions.setsession({ sessionInfo: result.session }));
+
+			if ("provider_token" in result.session) {
+				localStorage.setItem("provider_token", result.session.provider_token);
+				// dispatch({
+				// 	type: sessionActionTypes.SET_SESSION_TOKEN,
+				// 	payload: { sessionToken: result.session.provider_token },
+				// });
+				dispatch(
+					supaBaseInfoActions.settoken({
+						sessionToken: result.session.provider_token,
+					})
+				);
+			} else {
+				const token = localStorage.getItem("provider_token") ?? null;
+				// dispatch({
+				// 	type: sessionActionTypes.SET_SESSION_TOKEN,
+				// 	payload: { sessionToken: token },
+				// });
+				dispatch(supaBaseInfoActions.settoken({ sessionToken: token }));
+
+				console.log(token);
+			}
 		}
 
 		checkUser();
@@ -47,14 +77,16 @@ function Header() {
 
 		console.log("signout", result);
 
-		dispatch({
-			type: userActionTypes.SET_USER_INFO,
-			payload: { userInfo: null },
-		});
-		dispatch({
-			type: sessionActionTypes.SET_SESSION_INFO,
-			payload: { sessionInfo: null },
-		});
+		// dispatch({
+		// 	type: userActionTypes.SET_USER_INFO,
+		// 	payload: { userInfo: null },
+		// });
+		dispatch(supaBaseInfoActions.setuser({ userInfo: null }));
+		// dispatch({
+		// 	type: sessionActionTypes.SET_SESSION_INFO,
+		// 	payload: { sessionInfo: null },
+		// });
+		dispatch(supaBaseInfoActions.setsession({ sessionInfo: null }));
 	}
 
 	console.log(user);

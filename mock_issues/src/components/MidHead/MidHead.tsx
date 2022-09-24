@@ -73,7 +73,7 @@ const ActionLists = [
 	},
 ];
 
-export default function MidHead() {
+export default function MidHead({ username, reponame }) {
 	// function renderActionList() {
 	// 	const currentWidth = window.innerWidth;
 	// 	if (currentWidth < 544) {
@@ -114,9 +114,9 @@ export default function MidHead() {
 		<MidHeadBox>
 			<TitleBox>
 				<RepoIcon />
-				<UserNameTitle>kayliao</UserNameTitle>
+				<UserNameTitle>{username}</UserNameTitle>
 				<DivideLine>/</DivideLine>
-				<RepoNameTitle>3rd-ML100Days</RepoNameTitle>
+				<RepoNameTitle>{reponame}</RepoNameTitle>
 				<Visibility>Public</Visibility>
 			</TitleBox>
 			<ActionsListBoxContainer>

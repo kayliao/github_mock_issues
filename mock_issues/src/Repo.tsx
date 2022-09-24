@@ -1,14 +1,20 @@
 import { useEffect, useState } from "react";
 import { RootState } from "./store/store";
+import { Link } from "react-router-dom";
 
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 
 function Repo() {
-	const token = useSelector<RootState>(
-		(state) => state.sessionStore["session"]?.provider_token
-	);
+	// const token = useSelector<RootState>(
+	// 	(state) => state.sessionStore["session"]?.provider_token
+	// );
+	// const token = useSelector<RootState>((state) => state.sessionStore.token);
+	const token = useSelector((state: RootState) => state.supaBaseInfo.token);
+	const user = useSelector((state: RootState) => state.supaBaseInfo.user);
+
 	console.log(token);
+	console.log(user);
 
 	const [repolist, setrepolist] = useState([]);
 
@@ -49,7 +55,9 @@ function Repo() {
 					<RepoListBox>
 						{repolist.map((element) => (
 							<RepoBox>
-								<RepoA>{element.name}</RepoA>
+								<RepoA to={`/${element.full_name}/labels`}>
+									{element.name}
+								</RepoA>
 								<VisibilityTag>{element.visibility}</VisibilityTag>
 								<UpdateTime>
 									{`Updated on `}
@@ -71,7 +79,7 @@ export default Repo;
 const RepoBox = styled.div`
 	height: 100px;
 	border-top: 1px solid #000;
-	padding-top: 24px;
+	padding-top: 15px;
 	position: relative;
 
 	&:last-child {
@@ -79,7 +87,7 @@ const RepoBox = styled.div`
 	}
 `;
 
-const RepoA = styled.a`
+const RepoA = styled(Link)`
 	font-size: 20px;
 	color: #58a6ff;
 	text-decoration: none;
@@ -104,7 +112,7 @@ const RepoListBox = styled.div`
 	margin-left: auto;
 	margin-right: auto;
 	width: 80%;
-	margin-top: 100px;
+	margin-top: 20px;
 	margin-bottom: 50px;
 `;
 
@@ -112,5 +120,5 @@ const UpdateTime = styled.div`
 	font-size: 12px;
 	color: #57606a;
 	position: absolute;
-	bottom: 24px;
+	bottom: 15px;
 `;

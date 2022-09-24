@@ -13,7 +13,6 @@ export default function SearchBox() {
 					setInputIsFocus(false);
 				}}
 				onFocus={() => {
-					console.log("is on focus");
 					setInputIsFocus(true);
 				}}
 				placeholder="Search all labels"
