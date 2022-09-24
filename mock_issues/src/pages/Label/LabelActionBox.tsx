@@ -280,9 +280,9 @@ export default function LabelActionBox({
 									console.log("new name errors:", gitInfo.labelname, name);
 									apiBodyData["labelname"] = gitInfo.labelname;
 									apiBodyData["editData"] = {
-										owner: gitInfo.username,
-										repo: gitInfo.reponame,
-										name: gitInfo.labelname,
+										// owner: gitInfo.username,
+										// repo: gitInfo.reponame,
+										// name: gitInfo.labelname,
 										new_name: name,
 										description: description,
 										color: buttonColorShow.slice(1, 7),
@@ -291,8 +291,8 @@ export default function LabelActionBox({
 								}
 								if (typeName === "Create Label") {
 									apiBodyData["createLabelData"] = {
-										owner: gitInfo.username,
-										repo: gitInfo.reponame,
+										// owner: gitInfo.username,
+										// repo: gitInfo.reponame,
 										name: name,
 										description: description,
 										color: buttonColorShow.slice(1, 7),
