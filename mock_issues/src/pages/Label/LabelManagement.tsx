@@ -4,7 +4,7 @@ import NewLabel from "./NewLabel";
 import SearchBox from "../../stories/Iconsstories/SearchBox";
 import LabelActionBox from "./LabelActionBox";
 import LabelItem from "./LabelItem";
-import Button from "../../stories/Iconsstories/Button";
+import ButtonShare from "../../stories/Iconsstories/ButtonShare";
 import {
 	TagIcon,
 	MilestoneIcon,
@@ -78,7 +78,7 @@ export default function LabelManagement() {
 						</SearchLabelBox> */}
 					</SearchLabelWrapper>
 					<ButtonCompoStyle>
-						<Button
+						<ButtonShare
 							textColor="#fff"
 							backgroundColor="#2da44e"
 							textSize="14px"

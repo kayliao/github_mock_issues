@@ -55,7 +55,17 @@ function Repo() {
 					<RepoListBox>
 						{repolist.map((element) => (
 							<RepoBox>
-								<RepoA to={`/${element.full_name}/labels`}>
+								<RepoA
+									onClick={() => {
+										window.scrollTo({
+											top: 0,
+											behavior: "smooth",
+										});
+
+										// if (navigateCallback) navigateCallback(navigateUrl);
+									}}
+									to={`/${element.full_name}/labels`}
+								>
 									{element.name}
 								</RepoA>
 								<VisibilityTag>{element.visibility}</VisibilityTag>

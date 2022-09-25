@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { SyncIcon } from "@primer/octicons-react";
-import Button from "../../stories/Iconsstories/Button";
+import ButtonShare from "../../stories/Iconsstories/ButtonShare";
 import LabelActionBox from "../Label/LabelActionBox";
 import { useState } from "react";
 
