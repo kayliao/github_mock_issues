@@ -1,4 +1,5 @@
 import React from "react";
+import "../../stories/storybookStyle.css";
 
 import LabelItem from "./LabelItem";
 

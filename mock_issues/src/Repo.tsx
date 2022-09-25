@@ -3,13 +3,16 @@ import { RootState } from "./store/store";
 import { Link } from "react-router-dom";
 
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { currentRepoInfoActions } from "./reducer/currentRepoInfoReducer";
 
 function Repo() {
 	// const token = useSelector<RootState>(
 	// 	(state) => state.sessionStore["session"]?.provider_token
 	// );
 	// const token = useSelector<RootState>((state) => state.sessionStore.token);
+	const dispatch = useDispatch();
+
 	const token = useSelector((state: RootState) => state.supaBaseInfo.token);
 	const user = useSelector((state: RootState) => state.supaBaseInfo.user);
 
@@ -61,6 +64,11 @@ function Repo() {
 											top: 0,
 											behavior: "smooth",
 										});
+										dispatch(
+											currentRepoInfoActions.setCurrentRepoInfo({
+												repoInfo: element,
+											})
+										);
 
 										// if (navigateCallback) navigateCallback(navigateUrl);
 									}}
