@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { SyncIcon } from "@primer/octicons-react";
-import Button from "../../stories/Iconsstories/Button";
+import ButtonShare from "../../stories/Iconsstories/ButtonShare";
 import { useState, useEffect } from "react";
 import Label from "../../stories/Iconsstories/Label";
 import { useForm } from "react-hook-form";
@@ -262,7 +262,7 @@ export default function LabelActionBox({
 				</InputWrapperBox>
 				<InputActionBox>
 					<ButtonCompoStyleBox>
-						<Button
+						<ButtonShare
 							textColor={isSubmitOk ? "#fff" : "rgba(255,255,255,0.8)"}
 							backgroundColor={isSubmitOk ? "#2da44e" : "#94d3a2"}
 							textSize="14px"
@@ -304,7 +304,7 @@ export default function LabelActionBox({
 						/>
 					</ButtonCompoStyleBox>
 					<ButtonCompoStyleBox2>
-						<Button
+						<ButtonShare
 							textColor="#24292f"
 							backgroundColor="#f6f8fa"
 							textSize="14px"

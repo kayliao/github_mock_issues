@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { KebabHorizontalIcon } from "@primer/octicons-react";
-import Button from "../../stories/Iconsstories/Button";
+import ButtonShare from "../../stories/Iconsstories/ButtonShare";
 import LabelActionBox from "./LabelActionBox";
 import { useState } from "react";
 import Label from "../../stories/Iconsstories/Label";
@@ -74,11 +74,31 @@ export default function LabelItem({
 				</ActionSortButtonBox> */}
 				<ReviseMenuDelete display={sortClick ? "block" : "none"}>
 					<ReviseMenuContainer>
-						<ReviseMenuBtn onClick={deleteAction}>Delete</ReviseMenuBtn>
+						<ReviseMenuBtn
+							onClick={() => {
+								setSortClick(false);
+								const result = window.confirm(
+									"Are you sure? Deleting a label will remove it from all issues and pull requests."
+								);
+								if (result) deleteAction();
+							}}
+						>
+							Delete
+						</ReviseMenuBtn>
 					</ReviseMenuContainer>
 				</ReviseMenuDelete>
 			</WrapperItemBox>
-			<ActionBoxButton onClick={deleteAction}>Delete</ActionBoxButton>
+			<ActionBoxButton
+				onClick={() => {
+					setSortClick(false);
+					const result = window.confirm(
+						"Are you sure? Deleting a label will remove it from all issues and pull requests."
+					);
+					if (result) deleteAction();
+				}}
+			>
+				Delete
+			</ActionBoxButton>
 			<LabelActionBox
 				show={editClick}
 				cancelAction={() => setEditClick(false)}
@@ -123,11 +143,31 @@ export default function LabelItem({
 							<ReviseMenuBtn onClick={() => setEditClick(true)}>
 								Edit
 							</ReviseMenuBtn>
-							<ReviseMenuBtn onClick={deleteAction}>Delete</ReviseMenuBtn>
+							<ReviseMenuBtn
+								onClick={() => {
+									setSortClick(false);
+									const result = window.confirm(
+										"Are you sure? Deleting a label will remove it from all issues and pull requests."
+									);
+									if (result) deleteAction();
+								}}
+							>
+								Delete
+							</ReviseMenuBtn>
 						</ReviseMenuContainer>
 					</ReviseMenu>
 					<ActionButton onClick={() => setEditClick(true)}>Edit</ActionButton>
-					<ActionButton onClick={deleteAction}>Delete</ActionButton>
+					<ActionButton
+						onClick={() => {
+							setSortClick(false);
+							const result = window.confirm(
+								"Are you sure? Deleting a label will remove it from all issues and pull requests."
+							);
+							if (result) deleteAction();
+						}}
+					>
+						Delete
+					</ActionButton>
 				</WrapperItemBox>
 			</ListItemInnerBox>
 		</>

@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { useState } from "react";
+import { RootState } from "../../store/store";
+import { useSelector } from "react-redux";
 
 import {
 	RepoIcon,
@@ -73,7 +75,7 @@ const ActionLists = [
 	},
 ];
 
-export default function MidHead({ username, reponame }) {
+export default function MidHead({ username, reponame, visibility }) {
 	// function renderActionList() {
 	// 	const currentWidth = window.innerWidth;
 	// 	if (currentWidth < 544) {
@@ -109,6 +111,9 @@ export default function MidHead({ username, reponame }) {
 	// }
 
 	const [pageId, setPageId] = useState(1);
+	ActionLists[1].number = useSelector(
+		(state: RootState) => state.currentRepoInfo.repoInfo.open_issues_count
+	);
 
 	return (
 		<MidHeadBox>
@@ -117,7 +122,7 @@ export default function MidHead({ username, reponame }) {
 				<UserNameTitle>{username}</UserNameTitle>
 				<DivideLine>/</DivideLine>
 				<RepoNameTitle>{reponame}</RepoNameTitle>
-				<Visibility>Public</Visibility>
+				<Visibility>{visibility}</Visibility>
 			</TitleBox>
 			<ActionsListBoxContainer>
 				<ActionsListBox>

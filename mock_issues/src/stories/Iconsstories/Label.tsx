@@ -37,6 +37,7 @@ export default function Label({ backgroundColor, labelName }) {
 }
 
 const LabelA = styled.button`
+	cursor: pointer;
 	white-space: nowrap;
 	padding: 0 10px;
 	font-size: 12px;

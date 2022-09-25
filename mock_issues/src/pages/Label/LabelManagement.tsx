@@ -4,7 +4,8 @@ import NewLabel from "./NewLabel";
 import SearchBox from "../../stories/Iconsstories/SearchBox";
 import LabelActionBox from "./LabelActionBox";
 import LabelItem from "./LabelItem";
-import Button from "../../stories/Iconsstories/Button";
+import SortDropList from "stories/Iconsstories/SortDropList";
+import ButtonShare from "../../stories/Iconsstories/ButtonShare";
 import {
 	TagIcon,
 	MilestoneIcon,
@@ -15,6 +16,9 @@ import {
 } from "@primer/octicons-react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import { RootState } from "../../store/store";
+import { useSelector } from "react-redux";
+
 import {
 	useGetLabelListsQuery,
 	useDeleteLabelMutation,
@@ -27,6 +31,9 @@ export default function LabelManagement() {
 	const [newLabelClick, setNewLabelClick] = useState(false);
 	const [sortClick, setSortClick] = useState(false);
 	const { username, reponame } = useParams();
+	const visibility = useSelector(
+		(state: RootState) => state.currentRepoInfo.repoInfo.visibility
+	);
 
 	const {
 		data: labelListData,
@@ -38,13 +45,19 @@ export default function LabelManagement() {
 		username: username,
 		reponame: reponame,
 	});
+
+	console.log("username", username, "reponame", reponame);
 	const [deleteLabel] = useDeleteLabelMutation();
 	const [updateLabel] = useUpdateLabelMutation();
 	const [createLabel] = useCreateLabelMutation();
 
 	if (isLoading) {
 		console.log("isloading");
-		return <p>...loading</p>;
+		return (
+			<LoadingWrapper>
+				<p>...loading</p>
+			</LoadingWrapper>
+		);
 	}
 	if (isSuccess) {
 		console.log("issuccess");
@@ -57,7 +70,11 @@ export default function LabelManagement() {
 
 	return (
 		<>
-			<MidHead username={username} reponame={reponame} />
+			<MidHead
+				username={username}
+				reponame={reponame}
+				visibility={visibility}
+			/>
 			<WrapperBox>
 				<OtherNavBox>
 					<LabelMileStoneBox>
@@ -78,7 +95,7 @@ export default function LabelManagement() {
 						</SearchLabelBox> */}
 					</SearchLabelWrapper>
 					<ButtonCompoStyle>
-						<Button
+						<ButtonShare
 							textColor="#fff"
 							backgroundColor="#2da44e"
 							textSize="14px"
@@ -100,33 +117,10 @@ export default function LabelManagement() {
 				<LabelListBox>
 					<LabelListBoxHeader>
 						<LabelListBoxHeaderSpan>{`${labelListData.length} labels`}</LabelListBoxHeaderSpan>
-						<SortBox>
-							<SortButton onClick={() => setSortClick((prev) => !prev)}>
-								<SortButtonA>Sort</SortButtonA>
-								<TriangleDownIcon></TriangleDownIcon>
-							</SortButton>
-							<LabelsList display={sortClick ? "block" : "none"}>
-								<SortTitle>Sort</SortTitle>
-								<SortListMenu>
-									<SortLink href="#/">
-										<CheckIcon size={16} />
-										<SortText>Alphabetically</SortText>
-									</SortLink>
-									<SortLink href="#/">
-										{/* <CheckIcon size={16} /> */}
-										<SortText>Reverse alphabetically</SortText>
-									</SortLink>
-									<SortLink href="#/">
-										{/* <CheckIcon size={16} /> */}
-										<SortText>Most issues</SortText>
-									</SortLink>
-									<SortLink href="#/">
-										{/* <CheckIcon size={16} /> */}
-										<SortText>Fewest issues</SortText>
-									</SortLink>
-								</SortListMenu>
-							</LabelsList>
-						</SortBox>
+						<SortDropList
+							isDrop={sortClick}
+							onClickFunc={() => setSortClick((prev) => !prev)}
+						/>
 					</LabelListBoxHeader>
 
 					{labelListData.map((element) => {
@@ -166,6 +160,14 @@ type GitLabelDataType = {
 	node_id?: string;
 	url?: string;
 };
+
+const LoadingWrapper = styled.div`
+	display: flex;
+	justify-content: center;
+	margin-top: 40px;
+	font-weight: 600;
+	font-size: 14px;
+`;
 
 const WrapperBox = styled.div`
 	margin-top: 24px;

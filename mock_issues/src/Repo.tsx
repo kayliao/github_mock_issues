@@ -3,13 +3,16 @@ import { RootState } from "./store/store";
 import { Link } from "react-router-dom";
 
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { currentRepoInfoActions } from "./reducer/currentRepoInfoReducer";
 
 function Repo() {
 	// const token = useSelector<RootState>(
 	// 	(state) => state.sessionStore["session"]?.provider_token
 	// );
 	// const token = useSelector<RootState>((state) => state.sessionStore.token);
+	const dispatch = useDispatch();
+
 	const token = useSelector((state: RootState) => state.supaBaseInfo.token);
 	const user = useSelector((state: RootState) => state.supaBaseInfo.user);
 
@@ -50,12 +53,27 @@ function Repo() {
 
 	return (
 		<>
-			{token ? (
+			{token && user ? (
 				<>
 					<RepoListBox>
 						{repolist.map((element) => (
 							<RepoBox>
-								<RepoA to={`/${element.full_name}/labels`}>
+								<RepoA
+									onClick={() => {
+										window.scrollTo({
+											top: 0,
+											behavior: "smooth",
+										});
+										dispatch(
+											currentRepoInfoActions.setCurrentRepoInfo({
+												repoInfo: element,
+											})
+										);
+
+										// if (navigateCallback) navigateCallback(navigateUrl);
+									}}
+									to={`/${element.full_name}/labels`}
+								>
 									{element.name}
 								</RepoA>
 								<VisibilityTag>{element.visibility}</VisibilityTag>
@@ -68,13 +86,27 @@ function Repo() {
 					</RepoListBox>
 				</>
 			) : (
-				<></>
+				<WelcomeBox>
+					<h1>
+						Welcome to GitHub Issues
+						<br />
+						Please Sign In
+					</h1>
+				</WelcomeBox>
 			)}
 		</>
 	);
 }
 
 export default Repo;
+
+const WelcomeBox = styled.div`
+	display: flex;
+	justify-content: center;
+	margin-top: 40px;
+	font-weight: 600;
+	text-align: center;
+`;
 
 const RepoBox = styled.div`
 	height: 100px;
