@@ -50,7 +50,7 @@ function Repo() {
 
 	return (
 		<>
-			{token ? (
+			{token && user ? (
 				<>
 					<RepoListBox>
 						{repolist.map((element) => (
@@ -78,13 +78,27 @@ function Repo() {
 					</RepoListBox>
 				</>
 			) : (
-				<></>
+				<WelcomeBox>
+					<h1>
+						Welcome to GitHub Issues
+						<br />
+						Please Sign In
+					</h1>
+				</WelcomeBox>
 			)}
 		</>
 	);
 }
 
 export default Repo;
+
+const WelcomeBox = styled.div`
+	display: flex;
+	justify-content: center;
+	margin-top: 40px;
+	font-weight: 600;
+	text-align: center;
+`;
 
 const RepoBox = styled.div`
 	height: 100px;

@@ -9,7 +9,8 @@ export default {
 		layout: "fullscreen",
 		docs: {
 			description: {
-				component: "Button. User can customize the background color and text.",
+				component:
+					"Label. User can customize the background color and text to display.",
 			},
 		},
 	},

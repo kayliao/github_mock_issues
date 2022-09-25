@@ -77,7 +77,10 @@ export default function LabelItem({
 						<ReviseMenuBtn
 							onClick={() => {
 								setSortClick(false);
-								deleteAction();
+								const result = window.confirm(
+									"Are you sure? Deleting a label will remove it from all issues and pull requests."
+								);
+								if (result) deleteAction();
 							}}
 						>
 							Delete
@@ -88,7 +91,10 @@ export default function LabelItem({
 			<ActionBoxButton
 				onClick={() => {
 					setSortClick(false);
-					deleteAction();
+					const result = window.confirm(
+						"Are you sure? Deleting a label will remove it from all issues and pull requests."
+					);
+					if (result) deleteAction();
 				}}
 			>
 				Delete
@@ -140,7 +146,10 @@ export default function LabelItem({
 							<ReviseMenuBtn
 								onClick={() => {
 									setSortClick(false);
-									deleteAction();
+									const result = window.confirm(
+										"Are you sure? Deleting a label will remove it from all issues and pull requests."
+									);
+									if (result) deleteAction();
 								}}
 							>
 								Delete
@@ -151,7 +160,10 @@ export default function LabelItem({
 					<ActionButton
 						onClick={() => {
 							setSortClick(false);
-							deleteAction();
+							const result = window.confirm(
+								"Are you sure? Deleting a label will remove it from all issues and pull requests."
+							);
+							if (result) deleteAction();
 						}}
 					>
 						Delete
