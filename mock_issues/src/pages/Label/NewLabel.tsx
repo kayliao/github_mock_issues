@@ -4,13 +4,23 @@ import Button from "../../stories/Iconsstories/Button";
 import LabelActionBox from "../Label/LabelActionBox";
 import { useState } from "react";
 
-export default function NewLabel({ show, cancelAction }) {
+export default function NewLabel({
+	show,
+	gitInfo,
+	cancelAction,
+	createAction,
+}) {
 	return show ? (
 		<WrapperBox>
 			<LabelActionBox
 				show={show}
 				cancelAction={cancelAction}
 				typeName={"Create Label"}
+				gitInfo={gitInfo}
+				typeAction={createAction}
+				labelName=""
+				labeldescription=""
+				labelcolor="#ffffff"
 			/>
 		</WrapperBox>
 	) : (

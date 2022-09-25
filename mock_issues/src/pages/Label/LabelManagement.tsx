@@ -14,15 +14,50 @@ import {
 	CheckIcon,
 } from "@primer/octicons-react";
 import { useState } from "react";
+import { useParams } from "react-router-dom";
+import {
+	useGetLabelListsQuery,
+	useDeleteLabelMutation,
+	useUpdateLabelMutation,
+	useCreateLabelMutation,
+} from "../../api/githubApiSlice";
 
 export default function LabelManagement() {
 	const [editClick, setEditClick] = useState(false);
 	const [newLabelClick, setNewLabelClick] = useState(false);
 	const [sortClick, setSortClick] = useState(false);
+	const { username, reponame } = useParams();
+
+	const {
+		data: labelListData,
+		isLoading,
+		isSuccess,
+		isError,
+		error,
+	} = useGetLabelListsQuery({
+		username: username,
+		reponame: reponame,
+	});
+	const [deleteLabel] = useDeleteLabelMutation();
+	const [updateLabel] = useUpdateLabelMutation();
+	const [createLabel] = useCreateLabelMutation();
+
+	if (isLoading) {
+		console.log("isloading");
+		return <p>...loading</p>;
+	}
+	if (isSuccess) {
+		console.log("issuccess");
+	}
+	if (isError) {
+		console.log("iserror", error);
+	}
+
+	console.log(labelListData);
 
 	return (
 		<>
-			<MidHead />
+			<MidHead username={username} reponame={reponame} />
 			<WrapperBox>
 				<OtherNavBox>
 					<LabelMileStoneBox>
@@ -59,10 +94,12 @@ export default function LabelManagement() {
 				<NewLabel
 					show={newLabelClick}
 					cancelAction={() => setNewLabelClick(false)}
+					createAction={createLabel}
+					gitInfo={{ reponame: reponame, username: username }}
 				/>
 				<LabelListBox>
 					<LabelListBoxHeader>
-						<LabelListBoxHeaderSpan>9 labels</LabelListBoxHeaderSpan>
+						<LabelListBoxHeaderSpan>{`${labelListData.length} labels`}</LabelListBoxHeaderSpan>
 						<SortBox>
 							<SortButton onClick={() => setSortClick((prev) => !prev)}>
 								<SortButtonA>Sort</SortButtonA>
@@ -91,17 +128,45 @@ export default function LabelManagement() {
 							</LabelsList>
 						</SortBox>
 					</LabelListBoxHeader>
-					<ListItemBox>
-						<LabelItem />
-					</ListItemBox>
-					<ListItemBox>
-						<LabelItem />
-					</ListItemBox>
+
+					{labelListData.map((element) => {
+						return (
+							<ListItemBox>
+								<LabelItem
+									gitLabelData={element}
+									deleteAction={() =>
+										deleteLabel({
+											username: username,
+											reponame: reponame,
+											labelname: element.name,
+										})
+									}
+									gitInfo={{
+										username: username,
+										reponame: reponame,
+										labelname: element.name,
+									}}
+									updateAction={updateLabel}
+								/>
+							</ListItemBox>
+						);
+					})}
 				</LabelListBox>
 			</WrapperBox>
 		</>
 	);
 }
+
+type GitLabelDataType = {
+	color?: string;
+	default?: boolean;
+	description?: boolean;
+	id?: number;
+	name?: string;
+	node_id?: string;
+	url?: string;
+};
+
 const WrapperBox = styled.div`
 	margin-top: 24px;
 	padding-left: 16px;
