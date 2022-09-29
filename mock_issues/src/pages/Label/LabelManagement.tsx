@@ -24,7 +24,7 @@ import {
 	useDeleteLabelMutation,
 	useUpdateLabelMutation,
 	useCreateLabelMutation,
-} from "../../api/githubApiSlice";
+} from "../../api/labelApiSlice";
 
 export default function LabelManagement() {
 	const [editClick, setEditClick] = useState(false);

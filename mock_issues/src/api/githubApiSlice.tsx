@@ -19,45 +19,56 @@ export const githubApiSlice = createApi({
 	}),
 	tagTypes: ["Labels"],
 	endpoints: (builder) => ({
-		getLabelLists: builder.query({
-			query: (repoInfo) => ({
-				url: `/repos/${repoInfo.username}/${repoInfo.reponame}/labels`,
-				// headers: {
-				// 	Accept: "application/vnd.github+json",
-				// 	Authorization: `Bearer ${token}`,
-				// },
-			}),
-			providesTags: ["Labels"],
-		}),
-		deleteLabel: builder.mutation({
-			query: (deleteInfo) => ({
-				url: `/repos/${deleteInfo.username}/${deleteInfo.reponame}/labels/${deleteInfo.labelname}`,
-				method: "DELETE",
-			}),
-			invalidatesTags: ["Labels"],
-		}),
-		updateLabel: builder.mutation({
-			query: (updateInfo) => ({
-				url: `/repos/${updateInfo.username}/${updateInfo.reponame}/labels/${updateInfo.labelname}`,
-				method: "PATCH",
-				body: updateInfo.editData,
-			}),
-			invalidatesTags: ["Labels"],
-		}),
-		createLabel: builder.mutation({
-			query: (createInfo) => ({
-				url: `/repos/${createInfo.username}/${createInfo.reponame}/labels`,
-				method: "POST",
-				body: createInfo.createLabelData,
-			}),
-			invalidatesTags: ["Labels"],
-		}),
+		// 	getLabelLists: builder.query({
+		// 		query: (repoInfo) => ({
+		// 			url: `/repos/${repoInfo.username}/${repoInfo.reponame}/labels`,
+		// 		}),
+		// 		providesTags: ["Labels"],
+		// 	}),
+		// 	deleteLabel: builder.mutation({
+		// 		query: (deleteInfo) => ({
+		// 			url: `/repos/${deleteInfo.username}/${deleteInfo.reponame}/labels/${deleteInfo.labelname}`,
+		// 			method: "DELETE",
+		// 		}),
+		// 		invalidatesTags: ["Labels"],
+		// 	}),
+		// 	updateLabel: builder.mutation({
+		// 		query: (updateInfo) => ({
+		// 			url: `/repos/${updateInfo.username}/${updateInfo.reponame}/labels/${updateInfo.labelname}`,
+		// 			method: "PATCH",
+		// 			body: updateInfo.editData,
+		// 		}),
+		// 		invalidatesTags: ["Labels"],
+		// 	}),
+		// 	createLabel: builder.mutation({
+		// 		query: (createInfo) => ({
+		// 			url: `/repos/${createInfo.username}/${createInfo.reponame}/labels`,
+		// 			method: "POST",
+		// 			body: createInfo.createLabelData,
+		// 		}),
+		// 		invalidatesTags: ["Labels"],
+		// 	}),
+		// 	getIssueLists: builder.query({
+		// 		query: (repoInfo) => ({
+		// 			url: `/repos/${repoInfo.username}/${
+		// 				repoInfo.reponame
+		// 			}/issues?per_page=25&page=${repoInfo.page}${
+		// 				repoInfo?.milestone ? `&milestone=${repoInfo.milestone}` : ""
+		// 			}${repoInfo?.state ? `&state=${repoInfo.state}` : ""}${
+		// 				repoInfo?.assignee ? `&assignee=${repoInfo.assignee}` : ""
+		// 			}${repoInfo?.creator ? `&creator=${repoInfo.creator}` : ""}${
+		// 				repoInfo?.mentioned ? `&mentioned=${repoInfo.mentioned}` : ""
+		// 			}${repoInfo?.issuelabels ? `&labels=${repoInfo.issuelabels}` : ""}${
+		// 				repoInfo?.issuesortby ? `&sort=${repoInfo.issuesortby}` : ""
+		// 			}${repoInfo?.direction ? `&direction=${repoInfo.direction}` : ""}${
+		// 				repoInfo?.since ? `&since=${repoInfo.since}` : ""
+		// 			}`,
+		// 		}),
+		// 	}),
+		// }),
 	}),
 });
 
-export const {
-	useGetLabelListsQuery,
-	useDeleteLabelMutation,
-	useUpdateLabelMutation,
-	useCreateLabelMutation,
-} = githubApiSlice;
+// export const {
+// 	useGetIssueListsQuery,
+// } = githubApiSlice;

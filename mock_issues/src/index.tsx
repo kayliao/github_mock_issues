@@ -5,6 +5,7 @@ import "./index.css";
 import App from "./App";
 import Repo from "./Repo";
 import LabelManagement from "./pages/Label/LabelManagement";
+import IssuesListManagement from "pages/IssuesList/IssuesListManagement";
 
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -28,6 +29,10 @@ root.render(
 				<Route
 					path="/:username/:reponame/labels"
 					element={<LabelManagement />}
+				/>
+				<Route
+					path="/:username/:reponame/issues"
+					element={<IssuesListManagement />}
 				/>
 			</Route>
 		</Routes>
