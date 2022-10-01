@@ -92,6 +92,15 @@ export default function IssuesListManagement() {
 	const visibility = useSelector(
 		(state: RootState) => state.currentRepoInfo.repoInfo.visibility
 	);
+	const loginAvatar = useSelector(
+		(state: RootState) =>
+			state.supaBaseInfo.user.identities[0].identity_data.avatar_url
+	);
+	const loginName = useSelector(
+		(state: RootState) =>
+			state.supaBaseInfo.user.identities[0].identity_data.user_name
+	);
+
 	const [sortOnClickItem, setSortOnClickItem] = useState(0);
 	const [filterOnClickItem, setFilterOnClickItem] = useState(-1);
 
@@ -101,6 +110,8 @@ export default function IssuesListManagement() {
 		type: string;
 		assignee?: string;
 		label?: string[];
+		noassignee?: string;
+		nolabel?: string;
 	};
 	const token = useSelector((state: RootState) => state.supaBaseInfo.token);
 	const [queryString, setQueryString] = useState<queryType>({
@@ -123,7 +134,9 @@ export default function IssuesListManagement() {
 	function makeQueryString(stringObjects) {
 		let result = "";
 		for (let [key, value] of Object.entries(stringObjects)) {
-			result = result + `+${key}:${value}`;
+			if (key === "noassignee") result = result + `+no:assignee`;
+			else if (key === "nolabel") result = result + `+no:label`;
+			else result = result + `+${key}:${value}`;
 		}
 		result = result.substring(1);
 		console.log("result", result);
@@ -144,6 +157,10 @@ export default function IssuesListManagement() {
 			);
 			const data = await res.json();
 			console.log(data);
+			data?.unshift({
+				login: loginName,
+				avatar_url: loginAvatar,
+			});
 			setAssigneeListData(data);
 		}
 		getAssigneeLists(username, reponame);
@@ -182,6 +199,7 @@ export default function IssuesListManagement() {
 			order: sortItemsQueryTable[0].order,
 		});
 		setSortOnClickItem(0);
+		setFilterOnClickItem(-1);
 	}, [resetQuery]);
 
 	useEffect(() => {
@@ -210,71 +228,62 @@ export default function IssuesListManagement() {
 	}, [sortOnClickItem]);
 
 	useEffect(() => {
-		setQueryString({
-			...filterItemsQueryTable[filterOnClickItem],
-			repo: `${username}/${reponame}`,
-		});
-		setSearchInfoObjectPack({
-			...searchInfoObjectPack,
-			q: makeQueryString({
+		if (filterOnClickItem != -1) {
+			setQueryString({
 				...filterItemsQueryTable[filterOnClickItem],
 				repo: `${username}/${reponame}`,
-			}),
-		});
-		setSortOnClickItem(0);
-		setSelectedAssignee("");
-		setSelectedLabelList([]);
+			});
+			setSearchInfoObjectPack({
+				...searchInfoObjectPack,
+				q: makeQueryString({
+					...filterItemsQueryTable[filterOnClickItem],
+					repo: `${username}/${reponame}`,
+				}),
+			});
+			setSortOnClickItem(0);
+			setSelectedAssignee("");
+			setSelectedLabelList([]);
+		}
 	}, [filterOnClickItem]);
 
 	useEffect(() => {
-		setQueryString({
-			...queryString,
-			assignee: selectedAssignee,
-		});
-		setSearchInfoObjectPack({
-			...searchInfoObjectPack,
-			q: makeQueryString({
+		if (
+			selectedAssignee != "" &&
+			selectedAssignee != null &&
+			selectedAssignee != undefined &&
+			selectedAssignee != "Assigned to nobody"
+		) {
+			const changeQuery = {
 				...queryString,
 				assignee: selectedAssignee,
-			}),
-		});
+			};
+
+			if (changeQuery?.noassignee === "assignee") {
+				delete changeQuery.noassignee;
+			}
+			console.log("change query", changeQuery);
+
+			setQueryString(changeQuery);
+			setSearchInfoObjectPack({
+				...searchInfoObjectPack,
+				q: makeQueryString(changeQuery),
+			});
+		}
+
+		if (selectedAssignee === "Assigned to nobody") {
+			const changeQuery = {
+				...queryString,
+				noassignee: "assignee",
+			};
+			delete changeQuery.assignee;
+			console.log("change query", changeQuery);
+			setQueryString(changeQuery);
+			setSearchInfoObjectPack({
+				...searchInfoObjectPack,
+				q: makeQueryString(changeQuery),
+			});
+		}
 	}, [selectedAssignee]);
-
-	// const {
-	// 	data: LabelListData,
-	// 	isSuccess: labelSuccess,
-	// 	isLoading: labelIsLoading,
-	// 	isError: labelError,
-	// } = useGetLabelListsQuery({
-	// 	username: username,
-	// 	reponame: reponame,
-	// });
-
-	// const { data: AssigneeListData } = useGetAssigneeListsQuery({
-	// 	username: username,
-	// 	reponame: reponame,
-	// });
-
-	// if (IssueIsSuccess) {
-	// 	console.log(IssueListData);
-	// }
-	// if (labelSuccess) {
-	// 	console.log(LabelListData);
-	// }
-	// if (labelError) {
-	// 	console.log(LabelListData);
-	// }
-
-	// if (isLoading) {
-	// 	console.log("why you are loading");
-	// }
-
-	// if (labelIsLoading) {
-	// 	console.log("is loading");
-	// }
-
-	// console.log(AssigneeListData);
-	// console.log(status);
 
 	function countRestTime(timeString) {
 		const time = new Date(timeString);
@@ -316,6 +325,8 @@ export default function IssuesListManagement() {
 			})}`;
 		}
 	}
+
+	console.log("assignee", AssigneeListData);
 
 	return (
 		<>
@@ -424,15 +435,74 @@ export default function IssuesListManagement() {
 					</div>
 					Clear current search query, filters, and sorts
 				</a>
-				<div className="lg:hidden flex items-center">
-					<a href="#/">
-						<IssueOpenedIcon size={16} className="mr-1" />
-						<span className="font-semibold">Open</span>
-					</a>
-					<a href="#/" className="ml-2.5">
-						<CheckIcon size={16} className="fill-[#57606a] mr-1" />
-						<span className="">Closed</span>
-					</a>
+				<div className="lg:hidden flex items-center cursor-pointer">
+					<div
+						onClick={() => {
+							setQueryString({
+								...queryString,
+								state: "open",
+							});
+							setSearchInfoObjectPack({
+								...searchInfoObjectPack,
+								q: makeQueryString({
+									...queryString,
+									state: "open",
+								}),
+							});
+							setFilterOnClickItem(-1);
+						}}
+					>
+						<IssueOpenedIcon
+							size={16}
+							className={`${
+								queryString?.state === "open"
+									? "fill-[#000000]"
+									: "fill-[#57606a]"
+							} mr-1`}
+						/>
+						<span
+							className={
+								queryString?.state === "open" ? "font-semibold" : "font-normal"
+							}
+						>
+							Open
+						</span>
+					</div>
+					<div
+						className="ml-2.5 cursor-pointer"
+						onClick={() => {
+							setQueryString({
+								...queryString,
+								state: "closed",
+							});
+							setSearchInfoObjectPack({
+								...searchInfoObjectPack,
+								q: makeQueryString({
+									...queryString,
+									state: "closed",
+								}),
+							});
+							setFilterOnClickItem(-1);
+						}}
+					>
+						<CheckIcon
+							size={16}
+							className={`${
+								queryString?.state === "closed"
+									? "fill-[#000000]"
+									: "fill-[#57606a]"
+							} mr-1`}
+						/>
+						<span
+							className={
+								queryString?.state === "closed"
+									? "font-semibold"
+									: "font-normal"
+							}
+						>
+							Closed
+						</span>
+					</div>
 				</div>
 			</div>
 
@@ -471,6 +541,7 @@ export default function IssuesListManagement() {
 										isDisplayDropDown={labelButtonClick}
 										setSelectedList={setSelectedLabelList}
 										cancelActions={() => setLabelButtonClick(false)}
+										selectedList={selectedLabelList}
 									/>
 								</div>
 								<div className="px-[16px] hidden md:block cursor-pointer">
@@ -492,6 +563,7 @@ export default function IssuesListManagement() {
 										isDisplayDropDown={assigneeButtonClick}
 										setSelectedList={setSelectedAssignee}
 										cancelActions={() => setAssigneeButtonClick(false)}
+										selectedList={selectedAssignee}
 									/>
 								</div>
 								<div className="px-[16px] cursor-pointer">
