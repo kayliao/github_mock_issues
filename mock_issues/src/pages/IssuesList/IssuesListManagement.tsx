@@ -20,6 +20,7 @@ import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import NormalDropList from "stories/Iconsstories/NormalDropList";
 import MidHead from "components/MidHead/MidHead";
+import { string } from "prop-types";
 
 const sortItemsQueryTable = [
 	{
@@ -87,6 +88,18 @@ export default function IssuesListManagement() {
 	const [selectedLabelList, setSelectedLabelList] = useState([]);
 	const [selectedAssignee, setSelectedAssignee] = useState("");
 	const [resetQuery, setResetQuery] = useState(false);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(1);
+	const [paginationPageSet, setPaginationPageSet] = useState({
+		prePages: [],
+		middle: [],
+		nextPages: [],
+	});
+	const [paginationPageSetLarge, setPaginationPageSetLarge] = useState({
+		prePages: [],
+		middle: [],
+		nextPages: [],
+	});
 
 	const { username, reponame } = useParams();
 	const visibility = useSelector(
@@ -123,12 +136,14 @@ export default function IssuesListManagement() {
 		q?: string;
 		sort?: string;
 		order?: string;
+		page?: number;
 	};
 	const [searchInfoObjectPack, setSearchInfoObjectPack] =
 		useState<searchInfoType>({
 			q: makeQueryString(queryString),
 			sort: "created",
 			order: "desc",
+			page: 1,
 		});
 
 	function makeQueryString(stringObjects) {
@@ -136,6 +151,10 @@ export default function IssuesListManagement() {
 		for (let [key, value] of Object.entries(stringObjects)) {
 			if (key === "noassignee") result = result + `+no:assignee`;
 			else if (key === "nolabel") result = result + `+no:label`;
+			else if (key === "label")
+				(value as []).forEach((element) => {
+					result = result + `+label:${element}`;
+				});
 			else result = result + `+${key}:${value}`;
 		}
 		result = result.substring(1);
@@ -183,12 +202,44 @@ export default function IssuesListManagement() {
 			const data = await res.json();
 			console.log(data);
 			setIssueList(data.items);
+			setTotalPages(Math.ceil(data.total_count / 25));
 		}
 		console.log(searchInfoObjectPack);
 		getIssuesLists(searchInfoObjectPack);
-	}, [searchInfoObjectPack]);
+	}, [searchInfoObjectPack, queryString]);
 
 	useEffect(() => {
+		const middlePage = Math.ceil(totalPages / 2);
+
+		const pagingSet: {
+			prePages: number[];
+			middle: number[];
+			nextPages: number[];
+		} = { prePages: [1], middle: [], nextPages: [totalPages] };
+		if (currentPage < middlePage && currentPage > 1) {
+			pagingSet.prePages.push(currentPage);
+		} else if (
+			totalPages % 2 === 0 &&
+			(currentPage === middlePage || currentPage === middlePage + 1) &&
+			currentPage > 1 &&
+			currentPage < totalPages
+		) {
+			pagingSet.middle.push(currentPage);
+		} else if (totalPages % 2 === 1 && currentPage === middlePage) {
+			pagingSet.middle.push(currentPage);
+		} else if (currentPage > middlePage && currentPage != totalPages) {
+			pagingSet.nextPages.unshift(currentPage);
+		}
+		setPaginationPageSet(pagingSet);
+		setSearchInfoObjectPack({ ...searchInfoObjectPack, page: currentPage });
+	}, [currentPage, totalPages]);
+
+	useEffect(() => {
+		setQueryString({
+			state: "open",
+			repo: `${username}/${reponame}`,
+			type: "issue",
+		});
 		setSearchInfoObjectPack({
 			q: makeQueryString({
 				state: "open",
@@ -197,9 +248,13 @@ export default function IssuesListManagement() {
 			}),
 			sort: sortItemsQueryTable[0].sort,
 			order: sortItemsQueryTable[0].order,
+			page: 1,
 		});
 		setSortOnClickItem(0);
 		setFilterOnClickItem(-1);
+		setSelectedAssignee("");
+		setSelectedLabelList([]);
+		setCurrentPage(1);
 	}, [resetQuery]);
 
 	useEffect(() => {
@@ -224,7 +279,9 @@ export default function IssuesListManagement() {
 			...searchInfoObjectPack,
 			sort: sortItemsQueryTable[sortOnClickItem].sort,
 			order: sortItemsQueryTable[sortOnClickItem].order,
+			page: 1,
 		});
+		setCurrentPage(1);
 	}, [sortOnClickItem]);
 
 	useEffect(() => {
@@ -239,16 +296,17 @@ export default function IssuesListManagement() {
 					...filterItemsQueryTable[filterOnClickItem],
 					repo: `${username}/${reponame}`,
 				}),
+				page: 1,
 			});
 			setSortOnClickItem(0);
 			setSelectedAssignee("");
 			setSelectedLabelList([]);
+			setCurrentPage(1);
 		}
 	}, [filterOnClickItem]);
 
 	useEffect(() => {
 		if (
-			selectedAssignee != "" &&
 			selectedAssignee != null &&
 			selectedAssignee != undefined &&
 			selectedAssignee != "Assigned to nobody"
@@ -267,6 +325,7 @@ export default function IssuesListManagement() {
 			setSearchInfoObjectPack({
 				...searchInfoObjectPack,
 				q: makeQueryString(changeQuery),
+				page: 1,
 			});
 		}
 
@@ -281,9 +340,59 @@ export default function IssuesListManagement() {
 			setSearchInfoObjectPack({
 				...searchInfoObjectPack,
 				q: makeQueryString(changeQuery),
+				page: 1,
 			});
 		}
+
+		setCurrentPage(1);
 	}, [selectedAssignee]);
+
+	console.log(selectedLabelList);
+
+	useEffect(() => {
+		console.log("why you didn't render");
+		const stringSelectedLabel = JSON.stringify(selectedLabelList);
+		console.log(stringSelectedLabel);
+		if (
+			stringSelectedLabel != null &&
+			stringSelectedLabel != undefined &&
+			stringSelectedLabel != JSON.stringify(["Unlabeled"])
+		) {
+			const changeQuery = {
+				...queryString,
+				label: selectedLabelList,
+			};
+
+			if (changeQuery?.nolabel === "label") {
+				delete changeQuery.nolabel;
+			}
+			console.log("change query", changeQuery);
+
+			setQueryString(changeQuery);
+			setSearchInfoObjectPack({
+				...searchInfoObjectPack,
+				q: makeQueryString(changeQuery),
+				page: 1,
+			});
+		}
+
+		if (stringSelectedLabel == JSON.stringify(["Unlabeled"])) {
+			const changeQuery = {
+				...queryString,
+				nolabel: "label",
+			};
+			delete changeQuery.label;
+			console.log("change query", changeQuery);
+			setQueryString(changeQuery);
+			setSearchInfoObjectPack({
+				...searchInfoObjectPack,
+				q: makeQueryString(changeQuery),
+				page: 1,
+			});
+		}
+
+		setCurrentPage(1);
+	}, [selectedLabelList]);
 
 	function countRestTime(timeString) {
 		const time = new Date(timeString);
@@ -413,28 +522,38 @@ export default function IssuesListManagement() {
 								type="text"
 								placeholder="Search all issues"
 								value="is:issue is:open"
-								className="bg-[#f6f8fa] py-[5px] pl-8 pr-3 border border-solid border-[rgba(27,31,36,0.15)] rounded-r-md shadow-[inset 0 1px 0 rgb(208 215 222 / 20%)] w-full text-[#57606a]"
+								className="bg-[#f6f8fa] py-[5px] pl-8 pr-3 outline-none border border-solid border-[rgba(27,31,36,0.15)] rounded-r-md focus:border-[#0969da] focus:shadow-[0_0_0_1px_#0969da] w-full text-[#57606a]"
 							/>
 						</div>
 					</div>
 				</div>
-				<a
-					onMouseEnter={() => setNoQueryHover(true)}
-					onMouseLeave={() => setNoQueryHover(false)}
-					onClick={() => {
-						setResetQuery((prev) => !prev);
-					}}
-					className="flex items-center text-[#57606a] font-semibold mb-[16px] w-full hover:text-[#0969da] w-[780px]"
-				>
+				{makeQueryString({
+					state: "open",
+					repo: `${username}/${reponame}`,
+					type: "issue",
+				}) === makeQueryString(queryString) &&
+				sortOnClickItem === 0 &&
+				filterOnClickItem === -1 ? (
+					<></>
+				) : (
 					<div
-						className={`h-[18px] w-[18px] ${
-							noQueryHover ? "bg-[#0969da]" : "bg-[#617781]"
-						} flex justify-center items-center rounded-md p-px mr-[8px]`}
+						onMouseEnter={() => setNoQueryHover(true)}
+						onMouseLeave={() => setNoQueryHover(false)}
+						onClick={() => {
+							setResetQuery((prev) => !prev);
+						}}
+						className="flex cursor-pointer items-center text-[#57606a] font-semibold mb-[16px] w-full hover:text-[#0969da] w-[780px]"
 					>
-						<XIcon fill={"#ffffff"} />
+						<div
+							className={`h-[18px] w-[18px] ${
+								noQueryHover ? "bg-[#0969da]" : "bg-[#617781]"
+							} flex justify-center items-center rounded-md p-px mr-[8px]`}
+						>
+							<XIcon fill={"#ffffff"} />
+						</div>
+						Clear current search query, filters, and sorts
 					</div>
-					Clear current search query, filters, and sorts
-				</a>
+				)}
 				<div className="lg:hidden flex items-center cursor-pointer">
 					<div
 						onClick={() => {
@@ -448,8 +567,10 @@ export default function IssuesListManagement() {
 									...queryString,
 									state: "open",
 								}),
+								page: 1,
 							});
 							setFilterOnClickItem(-1);
+							setCurrentPage(1);
 						}}
 					>
 						<IssueOpenedIcon
@@ -481,8 +602,10 @@ export default function IssuesListManagement() {
 									...queryString,
 									state: "closed",
 								}),
+								page: 1,
 							});
 							setFilterOnClickItem(-1);
+							setCurrentPage(1);
 						}}
 					>
 						<CheckIcon
@@ -601,7 +724,13 @@ export default function IssuesListManagement() {
 							return (
 								<>
 									<div>
-										<div className=" px-[16px] py-[8px] flex border-b border-solid border-[#d0d7de] hover:bg-[rgba(234,238,242,0.5)]">
+										<div
+											className={` px-[16px] py-[8px] flex border-solid border-[#d0d7de] ${
+												index === IssueListData.length - 1
+													? "border-b-0"
+													: "border-b"
+											} hover:bg-[rgba(234,238,242,0.5)]`}
+										>
 											{element?.pull_request ? (
 												element.state === "open" ? (
 													<GitPullRequestIcon
@@ -722,40 +851,92 @@ export default function IssuesListManagement() {
 						</div>
 					)}
 				</div>
-
-				<div className="flex justify-center items-center text-sm my-4 px-1">
-					<button className="grid place-items-center grid-flow-col	text-[#8c959f] flex items-center py-5px px-2.5 border border-solid border-transparent hover:border-primary-border hover:rounded-md cursor-pointer">
-						<ChevronLeftIcon size={16} className="mr-1" />
-						<span>Previous</span>
-					</button>
-					{/* {pagination.prePages.map((page) => {
-						return (
-							<a className="grid place-items-center text-primary-text py-5px px-2.5 min-w-[32px] border border-solid border-transparent hover:border-primary-border hover:rounded-md cursor-pointer">
-								{page}
-							</a>
-						);
-					})} */}
-					{/* <span className="py-5px px-2.5 min-w-[32px]">...</span>
-					{pagination.middle.map((page) => {
-						return (
-							<a className="grid place-items-center text-primary-text py-5px px-2.5 min-w-[32px] border border-solid border-transparent hover:border-primary-border hover:rounded-md cursor-pointer">
-								{page}
-							</a>
-						);
-					})} */}
-					{/* <span className="py-5px px-2.5 min-w-[32px]">...</span> */}
-					{/* {pagination.nextPages.map((page) => {
-						return (
-							<a className="grid place-items-center text-primary-text py-5px px-2.5 min-w-[32px] border border-solid border-transparent hover:border-primary-border hover:rounded-md cursor-pointer">
-								{page}
-							</a>
-						);
-					})} */}
-					<button className="grid place-items-center grid-flow-col text-[#0969da] flex items-center py-5px px-2.5 border border-solid border-transparent hover:border-primary-border hover:rounded-md cursor-pointer">
-						<span>Next</span>
-						<ChevronRightIcon size={16} className="ml-1" />
-					</button>
-				</div>
+				{totalPages > 1 ? (
+					<div className="flex justify-center items-center text-sm my-4 px-1">
+						<button
+							disabled={currentPage === 1 ? true : false}
+							className={`grid place-items-center grid-flow-col ${
+								currentPage === 1 ? "text-[#8c959f]" : "text-[#0969da]"
+							} flex items-center py-5px px-2.5 border border-solid border-transparent hover:border-primary-border hover:rounded-md ${
+								currentPage === 1 ? "" : "cursor-pointer"
+							}`}
+							onClick={() => setCurrentPage((prev) => prev - 1)}
+						>
+							<ChevronLeftIcon size={16} className="mr-1" />
+							<span>Previous</span>
+						</button>
+						{paginationPageSet.prePages.map((page) => {
+							return (
+								<div
+									className={`grid rounded-md place-items-center text-primary-text h-[32px] py-5px px-2.5 min-w-[32px] border border-solid border-transparent hover:border-[#d0d7de] hover:rounded-md cursor-pointer ${
+										page === currentPage
+											? "text-[#ffffff] border-[#0969da] bg-[#0969da]"
+											: "text-[#000000]"
+									}`}
+									onClick={() => setCurrentPage(page)}
+								>
+									{page}
+								</div>
+							);
+						})}
+						{totalPages > 2 ? (
+							<span className="py-5px px-2.5 min-w-[32px] text-[#8c959f]">
+								...
+							</span>
+						) : (
+							<></>
+						)}
+						{paginationPageSet.middle.map((page) => {
+							return (
+								<div
+									className={`cursor-pointer rounded-md grid place-items-center text-primary-text py-5px px-2.5 min-w-[32px] h-[32px] border border-solid border-transparent hover:border-[#d0d7de] hover:rounded-md cursor-pointer ${
+										page === currentPage
+											? "text-[#ffffff] border-[#0969da] bg-[#0969da]"
+											: "text-[#000000]"
+									}`}
+									onClick={() => setCurrentPage(page)}
+								>
+									{page}
+								</div>
+							);
+						})}
+						{JSON.stringify(paginationPageSet.middle) != JSON.stringify([]) ? (
+							<span className="py-5px px-2.5 min-w-[32px] text-[#8c959f]">
+								...
+							</span>
+						) : (
+							<></>
+						)}
+						{paginationPageSet.nextPages.map((page) => {
+							return (
+								<div
+									className={`grid rounded-md place-items-center text-primary-text h-[32px] py-5px px-2.5 min-w-[32px] border border-solid border-transparent hover:border-[#d0d7de] hover:rounded-md cursor-pointer ${
+										page === currentPage
+											? "text-[#ffffff] border-[#0969da] bg-[#0969da]"
+											: "text-[#000000]"
+									}`}
+									onClick={() => setCurrentPage(page)}
+								>
+									{page}
+								</div>
+							);
+						})}
+						<button
+							disabled={currentPage === totalPages ? true : false}
+							className={`grid place-items-center grid-flow-col ${
+								currentPage === totalPages ? "text-[#8c959f]" : "text-[#0969da]"
+							} flex items-center py-5px px-2.5 border border-solid border-transparent hover:border-primary-border hover:rounded-md ${
+								currentPage === totalPages ? "" : "cursor-pointer"
+							}`}
+							onClick={() => setCurrentPage((prev) => prev + 1)}
+						>
+							<span>Next</span>
+							<ChevronRightIcon size={16} className="ml-1" />
+						</button>
+					</div>
+				) : (
+					<></>
+				)}
 			</div>
 		</>
 	);

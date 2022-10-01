@@ -77,7 +77,7 @@ export default function FilterDropList({
 								className="flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b border-solid border-b-[hsla(210,18%,87%,1)] sm:pt-[7px] sm:pb-[7px] hover:bg-[rgba(234,238,242,0.5)]"
 								onClick={() => {
 									type === "label"
-										? setSelectedList(["no:label"])
+										? setSelectedList(["Unlabeled"])
 										: setSelectedList("Assigned to nobody");
 									cancelActions();
 								}}
@@ -86,7 +86,9 @@ export default function FilterDropList({
 									<CheckIcon
 										className={`${
 											type === "label"
-												? "fill-[#00000]"
+												? selectedList.includes("Unlabeled")
+													? "fill-[#000000]"
+													: "fill-[#ffffff]"
 												: selectedList === "Assigned to nobody"
 												? "fill-[#000000]"
 												: "fill-[#ffffff]"
@@ -108,14 +110,30 @@ export default function FilterDropList({
 											} hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] sm:pt-[7px] sm:pb-[7px]`}
 											onClick={() => {
 												type === "label"
-													? setSelectedList((prev) => [...prev, element.name])
+													? setSelectedList((prev) => {
+															let newArr = [...prev];
+															if (newArr.includes("Unlabeled"))
+																newArr = newArr.filter((e) => e != "Unlabeled");
+															if (newArr.includes(element.name)) {
+																return newArr.filter((e) => e != element.name);
+															} else {
+																newArr.push(element.name);
+																return newArr;
+															}
+													  })
 													: setSelectedList(element.login);
 												cancelActions();
 											}}
 										>
 											{type === "label" ? (
 												<div className="flex items-start mr-2">
-													<CheckIcon fill={"#000000"} />
+													<CheckIcon
+														className={`${
+															selectedList.includes(element.name)
+																? "fill-[#000000]"
+																: "fill-[#ffffff]"
+														}`}
+													/>
 												</div>
 											) : (
 												<div className="flex items-start mr-2">
