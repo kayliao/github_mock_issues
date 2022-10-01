@@ -6,7 +6,11 @@ export default function NormalDropList({
 	lists,
 	position,
 	isCenter,
+	clickItemActions,
+	currentItemIndex,
+	cancelActions,
 }) {
+	console.log(currentItemIndex);
 	return (
 		<div className="sm:relative">
 			<div className="text-[14px] sm:text-[12px]">
@@ -22,20 +26,32 @@ export default function NormalDropList({
 					<div className="h-4/5 mt-0 bg-[#ffffff] border border-solid border-[rgba(0,0,0,0)] rounded-xl sm:border-[hsla(210,18%,87%,1)] sm:h-auto sm:max-h-[480px] sm:mt-2 sm:w-[300px]">
 						<header className="flex p-4 items-center border-b border-solid border-b-[hsla(210,18%,87%,1)] sm:pt-[7px] sm:pr-[7px] sm:pb-[7px]">
 							<span className="font-semibold flex-1">{title}</span>
-							<button className="cursor-pointer p-4 m-[-16px] leading-none rounded-none">
+							<button
+								className="cursor-pointer p-4 m-[-16px] leading-none rounded-none"
+								onClick={cancelActions}
+							>
 								<XIcon fill={"#57606a"} />
 							</button>
 						</header>
 						<div className="overflow-y-auto max-h-[calc(100%-126px)] sm:max-h-[calc(485px-82px)]">
 							{lists.map((element, index) => {
+								console.log("current index", index, currentItemIndex);
 								return (
-									<a
+									<div
 										className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b ${
 											lists.length - 1 != index ? "border-solid" : "border-none"
 										} hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] sm:pt-[7px] sm:pb-[7px]`}
+										onClick={() => {
+											clickItemActions(index);
+											cancelActions();
+										}}
 									>
 										<div className="flex items-start mr-2">
-											<CheckIcon fill={"#000000"} />
+											<CheckIcon
+												fill={
+													currentItemIndex === index ? "#000000" : "#ffffff"
+												}
+											/>
 										</div>
 										<div className="leading-tight min-w-0">
 											<div className="flex items-center">
@@ -44,7 +60,7 @@ export default function NormalDropList({
 												</div>
 											</div>
 										</div>
-									</a>
+									</div>
 								);
 							})}
 						</div>

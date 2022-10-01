@@ -1,5 +1,7 @@
 import FilterDropList from "stories/Iconsstories/FilterDropList";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { RootState } from "../../store/store";
+
 import {
 	CheckIcon,
 	IssueOpenedIcon,
@@ -11,13 +13,67 @@ import {
 	ChevronLeftIcon,
 	ChevronRightIcon,
 	IssueClosedIcon,
-	TriangleDownIcon,
+	GitPullRequestIcon,
+	GitPullRequestClosedIcon,
 } from "@primer/octicons-react";
 import { useGetIssueListsQuery } from "api/issueApiSlice";
 import { useGetLabelListsQuery } from "api/labelApiSlice";
 import { useGetAssigneeListsQuery } from "api/assigneeApiSlice";
 import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import NormalDropList from "stories/Iconsstories/NormalDropList";
+
+const sortItemsQueryTable = [
+	{
+		sort: "created",
+		order: "desc",
+	},
+	{
+		sort: "created",
+		order: "asc",
+	},
+	{
+		sort: "comments",
+		order: "desc",
+	},
+	{
+		sort: "comments",
+		order: "asc",
+	},
+	{
+		sort: "updated",
+		order: "desc",
+	},
+	{
+		sort: "updated",
+		order: "asc",
+	},
+];
+
+const filterItemsQueryTable = [
+	{
+		type: "all",
+		state: "open",
+	},
+	{
+		type: "issue",
+		state: "open",
+	},
+	{
+		type: "pr",
+		state: "open",
+	},
+	{
+		type: "all",
+		assignee: "@me",
+		state: "open",
+	},
+	{
+		type: "all",
+		mentions: "@me",
+		state: "open",
+	},
+];
 
 export default function IssuesListManagement() {
 	const [noQueryHover, setNoQueryHover] = useState(false);
@@ -25,57 +81,185 @@ export default function IssuesListManagement() {
 	const [assigneeButtonClick, setAssigneeButtonClick] = useState(false);
 	const [sortButtonClick, setSortButtonClick] = useState(false);
 	const [filterButtonClick, setFilterButtonClick] = useState(false);
+	const [IssueListData, setIssueList] = useState(null);
+	const [LabelListData, setLabelListData] = useState(null);
+	const [AssigneeListData, setAssigneeListData] = useState(null);
+	const [selectedLabelList, setSelectedLabelList] = useState([]);
+	const [selectedAssignee, setSelectedAssignee] = useState("");
 
 	const { username, reponame } = useParams();
-	const initialSearchInput = ["is:issue", "is:open"];
+	const [sortOnClickItem, setSortOnClickItem] = useState(0);
+	const [filterOnClickItem, setFilterOnClickItem] = useState(-1);
 
-	const {
-		data: IssueListData,
-		isLoading,
-		isSuccess,
-		isError,
-		error,
-	} = useGetIssueListsQuery({
-		username: username,
-		reponame: reponame,
-		state: "all",
-		page: 2,
+	type queryType = {
+		state: string;
+		repo: string;
+		type: string;
+		assignee?: string;
+		label?: string[];
+	};
+	// const token = useSelector((state: RootState) => state.supaBaseInfo.token);
+	const [queryString, setQueryString] = useState<queryType>({
+		state: "open",
+		repo: `${username}/${reponame}`,
+		type: "issue",
+	});
+	const [searchInfoObjectPack, setSearchInfoObjectPack] = useState({
+		q: makeQueryString(queryString),
+		sort: "created",
+		order: "desc",
 	});
 
-	const {
-		data: LabelListData,
-		isSuccess: labelSuccess,
-		isLoading: labelIsLoading,
-		isError: labelError,
-	} = useGetLabelListsQuery({
-		username: username,
-		reponame: reponame,
-	});
-
-	const { data: AssigneeListData } = useGetAssigneeListsQuery({
-		username: username,
-		reponame: reponame,
-	});
-
-	if (isSuccess) {
-		console.log(IssueListData);
-	}
-	if (labelSuccess) {
-		console.log(LabelListData);
-	}
-	if (labelError) {
-		console.log(LabelListData);
+	function makeQueryString(stringObjects) {
+		let result = "";
+		for (let [key, value] of Object.entries(stringObjects)) {
+			result = result + `+${key}:${value}`;
+		}
+		result = result.substring(1);
+		console.log("result", result);
+		return result;
 	}
 
-	if (isLoading) {
-		console.log("why you are loading");
-	}
+	console.log(selectedAssignee);
 
-	if (labelIsLoading) {
-		console.log("is loading");
-	}
+	// const initialSearchInput = ["is:issue", "is:open"];
 
-	console.log(AssigneeListData);
+	// const { data: IssueListData, isSuccess: IssueIsSuccess } =
+	// 	useGetIssueListsQuery({
+	// 		username: username,
+	// 		reponame: reponame,
+	// 		state: "all",
+	// 		page: 2,
+	// 	});
+
+	useEffect(() => {
+		async function getAssigneeLists(username, reponame) {
+			const res = await fetch(
+				`https://api.github.com/repos/${username}/${reponame}/assignees`,
+				{
+					headers: new Headers({
+						Authorization: `Bearer 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`,
+					}),
+				}
+			);
+			const data = await res.json();
+			console.log(data);
+			setAssigneeListData(data);
+		}
+		getAssigneeLists(username, reponame);
+	}, []);
+
+	useEffect(() => {
+		async function getIssuesLists(searchInfo) {
+			const res = await fetch(
+				`https://api.github.com/search/issues?per_page=25${
+					searchInfo?.page ? `&page=${searchInfo.page}` : ""
+				}${searchInfo?.sort ? `&sort=${searchInfo.sort}` : ""}${
+					searchInfo?.order ? `&order=${searchInfo.order}` : ""
+				}${searchInfo?.q ? `&q=${searchInfo.q}` : ""}`,
+				{
+					headers: new Headers({
+						Authorization: `Bearer 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`,
+					}),
+				}
+			);
+			const data = await res.json();
+			console.log(data);
+			setIssueList(data.items);
+		}
+		console.log(searchInfoObjectPack);
+		getIssuesLists(searchInfoObjectPack);
+	}, [searchInfoObjectPack, queryString]);
+
+	useEffect(() => {
+		async function getLabelLists(username, reponame) {
+			const res = await fetch(
+				`https://api.github.com/repos/${username}/${reponame}/labels`,
+				{
+					headers: new Headers({
+						Authorization: `Bearer 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`,
+					}),
+				}
+			);
+			const data = await res.json();
+			console.log(data);
+			setLabelListData(data);
+		}
+		getLabelLists(username, reponame);
+	}, []);
+
+	useEffect(() => {
+		setSearchInfoObjectPack({
+			...searchInfoObjectPack,
+			sort: sortItemsQueryTable[sortOnClickItem].sort,
+			order: sortItemsQueryTable[sortOnClickItem].order,
+		});
+	}, [sortOnClickItem]);
+
+	useEffect(() => {
+		setQueryString({
+			...filterItemsQueryTable[filterOnClickItem],
+			repo: `${username}/${reponame}`,
+		});
+		setSearchInfoObjectPack({
+			...searchInfoObjectPack,
+			q: makeQueryString({
+				...filterItemsQueryTable[filterOnClickItem],
+				repo: `${username}/${reponame}`,
+			}),
+		});
+		setSortOnClickItem(0);
+	}, [filterOnClickItem]);
+
+	useEffect(() => {
+		setQueryString({
+			...queryString,
+			assignee: selectedAssignee,
+		});
+		setSearchInfoObjectPack({
+			...searchInfoObjectPack,
+			q: makeQueryString({
+				...queryString,
+				assignee: selectedAssignee,
+			}),
+		});
+	}, [selectedAssignee]);
+
+	// const {
+	// 	data: LabelListData,
+	// 	isSuccess: labelSuccess,
+	// 	isLoading: labelIsLoading,
+	// 	isError: labelError,
+	// } = useGetLabelListsQuery({
+	// 	username: username,
+	// 	reponame: reponame,
+	// });
+
+	// const { data: AssigneeListData } = useGetAssigneeListsQuery({
+	// 	username: username,
+	// 	reponame: reponame,
+	// });
+
+	// if (IssueIsSuccess) {
+	// 	console.log(IssueListData);
+	// }
+	// if (labelSuccess) {
+	// 	console.log(LabelListData);
+	// }
+	// if (labelError) {
+	// 	console.log(LabelListData);
+	// }
+
+	// if (isLoading) {
+	// 	console.log("why you are loading");
+	// }
+
+	// if (labelIsLoading) {
+	// 	console.log("is loading");
+	// }
+
+	// console.log(AssigneeListData);
+	// console.log(status);
 
 	function countRestTime(timeString) {
 		const time = new Date(timeString);
@@ -144,18 +328,18 @@ export default function IssuesListManagement() {
 								<button className="py-[4px] px-4 border border-solid borderrounded-l-md border-[#d0d7de] rounded-l-md flex items-center hover:bg-[#f3f4f6]">
 									<TagIcon size={16} className="left-2 top-[9px]" />
 									<span className="mx-[3px]">Labels</span>
-									<span className="px-1.5 pt-[2px] bg-[rgba(175,184,193,0.2)] border border-solid border-[rgba(0,0,0,0)] rounded-[2em] text-xs font-medium	leading-[18px] text-[#24292f] text-center hidden md:block">
-										{LabelListData.length}
-									</span>
+									{/* <span className="px-1.5 pt-[2px] bg-[rgba(175,184,193,0.2)] border border-solid border-[rgba(0,0,0,0)] rounded-[2em] text-xs font-medium	leading-[18px] text-[#24292f] text-center hidden md:block">
+										{LabelListData?.length}
+									</span> */}
 								</button>
 							</div>
 							<div>
 								<button className="py-[4px] px-4 border border-solid borderrounded-l-md border-[#d0d7de] rounded-r-md flex items-center flex-nowrap hover:bg-[#f3f4f6]">
 									<MilestoneIcon size={16} className="left-2 top-[9px]" />
 									<span className="mx-[3px]">MileStones</span>
-									<span className="px-1.5 pt-[2px] bg-[rgba(175,184,193,0.2)] border border-solid border-[rgba(0,0,0,0)] rounded-[2em] text-xs font-medium	leading-[18px] text-[#24292f] text-center hidden md:block">
+									{/* <span className="px-1.5 pt-[2px] bg-[rgba(175,184,193,0.2)] border border-solid border-[rgba(0,0,0,0)] rounded-[2em] text-xs font-medium	leading-[18px] text-[#24292f] text-center hidden md:block">
 										0
-									</span>
+									</span> */}
 								</button>
 							</div>
 						</div>
@@ -182,6 +366,11 @@ export default function IssuesListManagement() {
 								]}
 								position="right"
 								isCenter={true}
+								clickItemActions={setFilterOnClickItem}
+								currentItemIndex={filterOnClickItem}
+								cancelActions={() => {
+									setFilterButtonClick(false);
+								}}
 							/>
 						</div>
 						<div className="relative w-full">
@@ -257,6 +446,8 @@ export default function IssuesListManagement() {
 										type={"label"}
 										Lists={LabelListData}
 										isDisplayDropDown={labelButtonClick}
+										setSelectedList={setSelectedLabelList}
+										cancelActions={() => setLabelButtonClick(false)}
 									/>
 								</div>
 								<div className="px-[16px] hidden md:block cursor-pointer">
@@ -267,16 +458,17 @@ export default function IssuesListManagement() {
 									Milestones
 									<span className="hidden sm:inline-block align-middle border-solid border-x-4 border-t-4 border-x-transparent border-b-transparent ml-1" />
 								</div>
-								<div
-									onClick={() => setAssigneeButtonClick((prev) => !prev)}
-									className="px-[16px] cursor-pointer"
-								>
-									Assignee
-									<span className="hidden sm:inline-block align-middle border-solid border-x-4 border-t-4 border-x-transparent border-b-transparent ml-1" />
+								<div className="px-[16px] cursor-pointer">
+									<div onClick={() => setAssigneeButtonClick((prev) => !prev)}>
+										Assignee
+										<span className="hidden sm:inline-block align-middle border-solid border-x-4 border-t-4 border-x-transparent border-b-transparent ml-1" />
+									</div>
 									<FilterDropList
 										type={"assignee"}
 										Lists={AssigneeListData}
 										isDisplayDropDown={assigneeButtonClick}
+										setSelectedList={setSelectedAssignee}
+										cancelActions={() => setAssigneeButtonClick(false)}
 									/>
 								</div>
 								<div className="px-[16px] cursor-pointer">
@@ -301,18 +493,33 @@ export default function IssuesListManagement() {
 										]}
 										position={"left"}
 										isCenter={false}
+										clickItemActions={setSortOnClickItem}
+										currentItemIndex={sortOnClickItem}
+										cancelActions={() => setSortButtonClick(false)}
 									/>
 								</div>
 							</div>
 						</div>
 					</div>
-					{IssueListData ? (
-						IssueListData.map((element, index) => {
+					{IssueListData?.length != 0 ? (
+						IssueListData?.map((element, index) => {
 							return (
 								<>
 									<div>
 										<div className=" px-[16px] py-[8px] flex border-b border-solid border-[#d0d7de] hover:bg-[rgba(234,238,242,0.5)]">
-											{element.state === "open" ? (
+											{element?.pull_request ? (
+												element.state === "open" ? (
+													<GitPullRequestIcon
+														className="fill-primary"
+														fill="#127f37"
+													/>
+												) : (
+													<GitPullRequestClosedIcon
+														className="fill-primary"
+														fill={"#cf222e"}
+													/>
+												)
+											) : element.state === "open" ? (
 												<IssueOpenedIcon
 													className="fill-primary"
 													fill="#127f37"
@@ -323,6 +530,7 @@ export default function IssuesListManagement() {
 													fill={"#8250df"}
 												/>
 											)}
+
 											<div className="px-2 mt-[-3px]">
 												<span className="text-[16px] font-semibold leading-[21.6px] mr-[5px] ">
 													{element.title}

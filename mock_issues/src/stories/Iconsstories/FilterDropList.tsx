@@ -1,4 +1,5 @@
 import { TriangleDownIcon, XIcon, CheckIcon } from "@primer/octicons-react";
+import { useEffect, useState } from "react";
 // import { useGetLabelListsQuery } from "../../api/githubApiSlice";
 import styled from "styled-components";
 
@@ -37,7 +38,19 @@ const labelslist = [
 	},
 ];
 
-export default function FilterDropList({ type, Lists, isDisplayDropDown }) {
+export default function FilterDropList({
+	type,
+	Lists,
+	isDisplayDropDown,
+	setSelectedList,
+	cancelActions,
+}) {
+	const [inputFilterLists, setInputFilterLists] = useState(Lists);
+
+	useEffect(() => {
+		setInputFilterLists(Lists);
+	}, [Lists]);
+
 	return (
 		<div className="sm:relative">
 			<div className="text-[14px] sm:text-[12px]">
@@ -57,7 +70,10 @@ export default function FilterDropList({ type, Lists, isDisplayDropDown }) {
 									? "Filter by Label"
 									: "Filter by who’s assigned"}
 							</span>
-							<button className="cursor-pointer p-4 m-[-16px] leading-none rounded-none">
+							<button
+								className="cursor-pointer p-4 m-[-16px] leading-none rounded-none"
+								onClick={cancelActions}
+							>
 								<XIcon fill={"#57606a"} />
 							</button>
 						</header>
@@ -65,62 +81,106 @@ export default function FilterDropList({ type, Lists, isDisplayDropDown }) {
 							<input
 								placeholder="Filter labels"
 								className="block w-full py-[5px] px-[12px] text-sm leading-5 rounded-md border border-solid border-[#d0d7de] focus:border focus:border-solid focus:border-[#0969da] focus:outline-none focus:shadow-innerblue"
+								onChange={(e) => {
+									if (type === "label") {
+										if (e.target.value === "" || e.target.value === null) {
+											setInputFilterLists(Lists);
+											return;
+										}
+										const newList = Lists.filter((element) => {
+											return (
+												element?.name?.includes(e.target.value) ||
+												element?.description?.includes(e.target.value)
+											);
+										});
+										setInputFilterLists(newList);
+									} else {
+										if (e.target.value === "" || e.target.value === null) {
+											setInputFilterLists(Lists);
+											return;
+										}
+										const newList = Lists.filter((element) => {
+											return element?.login?.includes(e.target.value);
+										});
+										setInputFilterLists(newList);
+									}
+								}}
 							/>
 						</div>
 						<div className="overflow-y-auto max-h-[calc(100%-126px)] sm:max-h-[calc(485px-89px)]">
-							<a className="flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b border-solid border-b-[hsla(210,18%,87%,1)] sm:pt-[7px] sm:pb-[7px] hover:bg-[rgba(234,238,242,0.5)]">
+							<div
+								className="flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b border-solid border-b-[hsla(210,18%,87%,1)] sm:pt-[7px] sm:pb-[7px] hover:bg-[rgba(234,238,242,0.5)]"
+								onClick={() => {
+									type === "label"
+										? setSelectedList(["no:label"])
+										: setSelectedList("no:assignee");
+									cancelActions();
+								}}
+							>
 								<div className="flex items-start mr-2">
 									<CheckIcon fill={"#ffffff"} />
 								</div>
 								<span className="font-semibold">
 									{type === "label" ? "Unlabeled" : "Assigned to nobody"}
 								</span>
-							</a>
-							{Lists.map((element, index) => {
-								return (
-									<a
-										className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b ${
-											Lists.length - 1 != index ? "border-solid" : "border-none"
-										} hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] sm:pt-[7px] sm:pb-[7px]`}
-									>
-										<div className="flex items-start mr-2">
-											<CheckIcon fill={"#000000"} />
-										</div>
-										{type === "label" ? (
-											<span
-												style={{ backgroundColor: `#${element?.color}` }}
-												className={`mt-px rounded-[2em] w-[1em] h-[1em] mr-2 text-[14px]`}
-											/>
-										) : (
-											<img
-												src={element.avatar_url}
-												className={`shadow-[0_0px_0px_1px_rgba(27,31,36,0.15)] mt-px rounded-[2em] w-[1em] h-[1em] mr-2 text-[14px]`}
-											/>
-										)}
-										<div className="leading-tight min-w-0">
-											<div className="flex items-center">
-												<div className="font-semibold text-[#24292f] truncate sm:pt-[2px]">
-													{type === "label" ? element.name : element.login}
-												</div>
-												{/* {element?.usercustomname != "" ? (
+							</div>
+							{inputFilterLists ? (
+								inputFilterLists.map((element, index) => {
+									return (
+										<div
+											className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b ${
+												inputFilterLists.length - 1 != index
+													? "border-solid"
+													: "border-none"
+											} hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] sm:pt-[7px] sm:pb-[7px]`}
+											onClick={() => {
+												type === "label"
+													? setSelectedList((prev) => [...prev, element.name])
+													: setSelectedList(element.login);
+												cancelActions();
+											}}
+										>
+											<div className="flex items-start mr-2">
+												<CheckIcon fill={"#000000"} />
+											</div>
+											{type === "label" ? (
+												<span
+													style={{ backgroundColor: `#${element?.color}` }}
+													className={`mt-px rounded-[2em] w-[1em] h-[1em] mr-2 text-[14px]`}
+												/>
+											) : (
+												<img
+													src={element.avatar_url}
+													className={`shadow-[0_0px_0px_1px_rgba(27,31,36,0.15)] mt-px rounded-[2em] w-[1em] h-[1em] mr-2 text-[14px]`}
+												/>
+											)}
+											<div className="leading-tight min-w-0">
+												<div className="flex items-center">
+													<div className="font-semibold text-[#24292f] truncate sm:pt-[2px]">
+														{type === "label" ? element.name : element.login}
+													</div>
+													{/* {element?.usercustomname != "" ? (
 													<div className="font-normal text-[#57606a] ml-2 truncate sm:pt-[2px]">
 														{element?.des}
 													</div>
 												) : (
 													<></>
 												)} */}
-											</div>
-											{element?.description != "" ? (
-												<div className="font-medium text-[#57606a] mt-1 truncate">
-													{element?.description}
 												</div>
-											) : (
-												<></>
-											)}
+												{element?.description != "" ? (
+													<div className="font-medium text-[#57606a] mt-1 truncate sm:w-[210px]">
+														{element?.description}
+													</div>
+												) : (
+													<></>
+												)}
+											</div>
 										</div>
-									</a>
-								);
-							})}
+									);
+								})
+							) : (
+								<></>
+							)}
 						</div>
 					</div>
 				</div>

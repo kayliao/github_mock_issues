@@ -4,6 +4,8 @@ import { Reset } from "styled-reset";
 
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
+import store from "./store/store";
+import { Provider } from "react-redux";
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -29,13 +31,15 @@ const GlobalStyle = createGlobalStyle`
 function App() {
 	return (
 		<>
-			<Reset />
-			<GlobalStyle />
+			<Provider store={store}>
+				<Reset />
+				<GlobalStyle />
 
-			<Header />
-			<Outlet />
+				<Header />
+				<Outlet />
 
-			<Footer />
+				<Footer />
+			</Provider>
 		</>
 	);
 }

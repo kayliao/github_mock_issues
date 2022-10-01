@@ -1,6 +1,6 @@
 import { githubApiSlice } from "./githubApiSlice";
 
-const githubApiExtend = githubApiSlice.injectEndpoints({
+const assigneeApiExtend = githubApiSlice.injectEndpoints({
 	endpoints: (builder) => ({
 		getAssigneeLists: builder.query({
 			query: (repoInfo) => ({
@@ -11,4 +11,4 @@ const githubApiExtend = githubApiSlice.injectEndpoints({
 	overrideExisting: false,
 });
 
-export const { useGetAssigneeListsQuery } = githubApiExtend;
+export const { useGetAssigneeListsQuery } = assigneeApiExtend;

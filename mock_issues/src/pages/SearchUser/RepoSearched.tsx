@@ -1,30 +1,26 @@
 import { useEffect, useState } from "react";
-import { RootState } from "./store/store";
-import { Link } from "react-router-dom";
+import { RootState } from "../../store/store";
+import { Link, useParams } from "react-router-dom";
 
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
-import { currentRepoInfoActions } from "./reducer/currentRepoInfoReducer";
+import { currentRepoInfoActions } from "../../reducer/currentRepoInfoReducer";
 
-function Repo() {
-	// const token = useSelector<RootState>(
-	// 	(state) => state.sessionStore["session"]?.provider_token
-	// );
-	// const token = useSelector<RootState>((state) => state.sessionStore.token);
+function RepoSearched() {
 	const dispatch = useDispatch();
-
+	const { username } = useParams();
 	const token = useSelector((state: RootState) => state.supaBaseInfo.token);
 	const user = useSelector((state: RootState) => state.supaBaseInfo.user);
 
 	console.log(token);
 	console.log(user);
 
-	const [repolist, setrepolist] = useState([]);
+	const [repolist, setrepolist] = useState(null);
 
 	useEffect(() => {
 		async function getRepos() {
 			const res = await fetch(
-				`https://api.github.com/user/repos?visibility=all`,
+				`https://api.github.com/search/repositories?q=user:${username}&sort=stars&per_page=100`,
 				{
 					method: `GET`,
 					headers: new Headers({
@@ -56,27 +52,29 @@ function Repo() {
 			{token && user ? (
 				<>
 					<RepoListBox>
-						{repolist.map((element) => (
+						{repolist?.items?.map((element) => (
 							<RepoBox>
-								<RepoA
-									onClick={() => {
-										window.scrollTo({
-											top: 0,
-											behavior: "smooth",
-										});
-										dispatch(
-											currentRepoInfoActions.setCurrentRepoInfo({
-												repoInfo: element,
-											})
-										);
+								<WrapWord>
+									<RepoA
+										onClick={() => {
+											window.scrollTo({
+												top: 0,
+												behavior: "smooth",
+											});
+											dispatch(
+												currentRepoInfoActions.setCurrentRepoInfo({
+													repoInfo: element,
+												})
+											);
 
-										// if (navigateCallback) navigateCallback(navigateUrl);
-									}}
-									to={`/${element.full_name}/issues`}
-								>
-									{element.name}
-								</RepoA>
-								<VisibilityTag>{element.visibility}</VisibilityTag>
+											// if (navigateCallback) navigateCallback(navigateUrl);
+										}}
+										to={`/${element.full_name}/issues`}
+									>
+										{element.name}
+									</RepoA>
+									<VisibilityTag>{element.visibility}</VisibilityTag>
+								</WrapWord>
 								<UpdateTime>
 									{`Updated on `}
 									{getTime(element.updated_at)}
@@ -98,7 +96,7 @@ function Repo() {
 	);
 }
 
-export default Repo;
+export default RepoSearched;
 
 const WelcomeBox = styled.div`
 	display: flex;
@@ -118,6 +116,8 @@ const RepoBox = styled.div`
 		border-bottom: 1px solid #000;
 	}
 `;
+
+const WrapWord = styled.div``;
 
 const RepoA = styled(Link)`
 	font-size: 20px;

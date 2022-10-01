@@ -6,6 +6,8 @@ import App from "./App";
 import Repo from "./Repo";
 import LabelManagement from "./pages/Label/LabelManagement";
 import IssuesListManagement from "pages/IssuesList/IssuesListManagement";
+import UsersLists from "pages/SearchUser/UsersLists";
+import RepoSearched from "pages/SearchUser/RepoSearched";
 
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -26,6 +28,9 @@ root.render(
 				}
 			>
 				<Route path="/" element={<Repo />} />
+				<Route path="/SearchUsers/:searchname" element={<UsersLists />} />
+				<Route path="/:username/repos" element={<RepoSearched />} />
+
 				<Route
 					path="/:username/:reponame/labels"
 					element={<LabelManagement />}

@@ -1,6 +1,6 @@
 import { githubApiSlice } from "./githubApiSlice";
 
-const githubApiExtend = githubApiSlice.injectEndpoints({
+const issueApiExtend = githubApiSlice.injectEndpoints({
 	endpoints: (builder) => ({
 		getIssueLists: builder.query({
 			query: (repoInfo) => ({
@@ -23,4 +23,4 @@ const githubApiExtend = githubApiSlice.injectEndpoints({
 	overrideExisting: false,
 });
 
-export const { useGetIssueListsQuery } = githubApiExtend;
+export const { useGetIssueListsQuery } = issueApiExtend;

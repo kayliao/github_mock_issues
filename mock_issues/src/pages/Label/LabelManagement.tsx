@@ -25,6 +25,7 @@ import {
 	useUpdateLabelMutation,
 	useCreateLabelMutation,
 } from "../../api/labelApiSlice";
+import { useGetIssueListsQuery } from "../../api/issueApiSlice";
 
 export default function LabelManagement() {
 	const [editClick, setEditClick] = useState(false);
@@ -45,6 +46,18 @@ export default function LabelManagement() {
 		username: username,
 		reponame: reponame,
 	});
+
+	// const { data: IssueListData, isSuccess: IssueIsSuccess } =
+	// 	useGetIssueListsQuery({
+	// 		username: username,
+	// 		reponame: reponame,
+	// 		state: "all",
+	// 		page: 2,
+	// 	});
+
+	// if (IssueIsSuccess) {
+	// 	console.log(IssueListData);
+	// }
 
 	console.log("username", username, "reponame", reponame);
 	const [deleteLabel] = useDeleteLabelMutation();
