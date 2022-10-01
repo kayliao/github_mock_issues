@@ -19,7 +19,7 @@ function Repo() {
 	console.log(token);
 	console.log(user);
 
-	const [repolist, setrepolist] = useState([]);
+	const [repolist, setRepolist] = useState(null);
 
 	useEffect(() => {
 		async function getRepos() {
@@ -34,7 +34,7 @@ function Repo() {
 			);
 			const resjson = await res.json();
 			console.log(resjson);
-			setrepolist(resjson);
+			setRepolist(resjson);
 		}
 		if (token) getRepos();
 	}, [token]);
@@ -50,13 +50,13 @@ function Repo() {
 			year: "numeric",
 		});
 	}
-
+	if (repolist?.message === "Bad credentials") setRepolist(null);
 	return (
 		<>
 			{token && user ? (
 				<>
 					<RepoListBox>
-						{repolist.map((element) => (
+						{repolist?.map((element) => (
 							<RepoBox>
 								<RepoA
 									onClick={() => {

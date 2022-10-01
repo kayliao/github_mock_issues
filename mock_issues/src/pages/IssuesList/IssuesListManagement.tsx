@@ -16,12 +16,10 @@ import {
 	GitPullRequestIcon,
 	GitPullRequestClosedIcon,
 } from "@primer/octicons-react";
-import { useGetIssueListsQuery } from "api/issueApiSlice";
-import { useGetLabelListsQuery } from "api/labelApiSlice";
-import { useGetAssigneeListsQuery } from "api/assigneeApiSlice";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import NormalDropList from "stories/Iconsstories/NormalDropList";
+import MidHead from "components/MidHead/MidHead";
 
 const sortItemsQueryTable = [
 	{
@@ -58,10 +56,12 @@ const filterItemsQueryTable = [
 	{
 		type: "issue",
 		state: "open",
+		author: "@me ",
 	},
 	{
 		type: "pr",
 		state: "open",
+		author: "@me",
 	},
 	{
 		type: "all",
@@ -86,8 +86,12 @@ export default function IssuesListManagement() {
 	const [AssigneeListData, setAssigneeListData] = useState(null);
 	const [selectedLabelList, setSelectedLabelList] = useState([]);
 	const [selectedAssignee, setSelectedAssignee] = useState("");
+	const [resetQuery, setResetQuery] = useState(false);
 
 	const { username, reponame } = useParams();
+	const visibility = useSelector(
+		(state: RootState) => state.currentRepoInfo.repoInfo.visibility
+	);
 	const [sortOnClickItem, setSortOnClickItem] = useState(0);
 	const [filterOnClickItem, setFilterOnClickItem] = useState(-1);
 
@@ -98,17 +102,23 @@ export default function IssuesListManagement() {
 		assignee?: string;
 		label?: string[];
 	};
-	// const token = useSelector((state: RootState) => state.supaBaseInfo.token);
+	const token = useSelector((state: RootState) => state.supaBaseInfo.token);
 	const [queryString, setQueryString] = useState<queryType>({
 		state: "open",
 		repo: `${username}/${reponame}`,
 		type: "issue",
 	});
-	const [searchInfoObjectPack, setSearchInfoObjectPack] = useState({
-		q: makeQueryString(queryString),
-		sort: "created",
-		order: "desc",
-	});
+	type searchInfoType = {
+		q?: string;
+		sort?: string;
+		order?: string;
+	};
+	const [searchInfoObjectPack, setSearchInfoObjectPack] =
+		useState<searchInfoType>({
+			q: makeQueryString(queryString),
+			sort: "created",
+			order: "desc",
+		});
 
 	function makeQueryString(stringObjects) {
 		let result = "";
@@ -122,23 +132,13 @@ export default function IssuesListManagement() {
 
 	console.log(selectedAssignee);
 
-	// const initialSearchInput = ["is:issue", "is:open"];
-
-	// const { data: IssueListData, isSuccess: IssueIsSuccess } =
-	// 	useGetIssueListsQuery({
-	// 		username: username,
-	// 		reponame: reponame,
-	// 		state: "all",
-	// 		page: 2,
-	// 	});
-
 	useEffect(() => {
 		async function getAssigneeLists(username, reponame) {
 			const res = await fetch(
 				`https://api.github.com/repos/${username}/${reponame}/assignees`,
 				{
 					headers: new Headers({
-						Authorization: `Bearer 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`,
+						Authorization: `Bearer ${token}`,
 					}),
 				}
 			);
@@ -159,7 +159,7 @@ export default function IssuesListManagement() {
 				}${searchInfo?.q ? `&q=${searchInfo.q}` : ""}`,
 				{
 					headers: new Headers({
-						Authorization: `Bearer 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`,
+						Authorization: `Bearer ${token}`,
 					}),
 				}
 			);
@@ -169,7 +169,20 @@ export default function IssuesListManagement() {
 		}
 		console.log(searchInfoObjectPack);
 		getIssuesLists(searchInfoObjectPack);
-	}, [searchInfoObjectPack, queryString]);
+	}, [searchInfoObjectPack]);
+
+	useEffect(() => {
+		setSearchInfoObjectPack({
+			q: makeQueryString({
+				state: "open",
+				repo: `${username}/${reponame}`,
+				type: "issue",
+			}),
+			sort: sortItemsQueryTable[0].sort,
+			order: sortItemsQueryTable[0].order,
+		});
+		setSortOnClickItem(0);
+	}, [resetQuery]);
 
 	useEffect(() => {
 		async function getLabelLists(username, reponame) {
@@ -177,7 +190,7 @@ export default function IssuesListManagement() {
 				`https://api.github.com/repos/${username}/${reponame}/labels`,
 				{
 					headers: new Headers({
-						Authorization: `Bearer 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`,
+						Authorization: `Bearer ${token}`,
 					}),
 				}
 			);
@@ -209,6 +222,8 @@ export default function IssuesListManagement() {
 			}),
 		});
 		setSortOnClickItem(0);
+		setSelectedAssignee("");
+		setSelectedLabelList([]);
 	}, [filterOnClickItem]);
 
 	useEffect(() => {
@@ -304,6 +319,11 @@ export default function IssuesListManagement() {
 
 	return (
 		<>
+			<MidHead
+				username={username}
+				reponame={reponame}
+				visibility={visibility}
+			/>
 			{labelButtonClick ||
 			assigneeButtonClick ||
 			sortButtonClick ||
@@ -325,7 +345,7 @@ export default function IssuesListManagement() {
 					<div className="flex w-full justify-between md:flex-nowrap md:w-auto">
 						<div className="flex text-[#24292f] md:ml-auto  md:ml-2 md:pl-2">
 							<div>
-								<button className="py-[4px] px-4 border border-solid borderrounded-l-md border-[#d0d7de] rounded-l-md flex items-center hover:bg-[#f3f4f6]">
+								<button className="py-[4px] px-4 border border-solid borderrounded-l-md border-[#d0d7de] rounded-l-md flex items-center border-r-0 hover:bg-[#f3f4f6]">
 									<TagIcon size={16} className="left-2 top-[9px]" />
 									<span className="mx-[3px]">Labels</span>
 									{/* <span className="px-1.5 pt-[2px] bg-[rgba(175,184,193,0.2)] border border-solid border-[rgba(0,0,0,0)] rounded-[2em] text-xs font-medium	leading-[18px] text-[#24292f] text-center hidden md:block">
@@ -350,7 +370,7 @@ export default function IssuesListManagement() {
 					</div>
 					<div className="flex w-full my-6 md:order-first md:w-auto md:mt-0 md:grow">
 						<div onClick={() => setFilterButtonClick((prev) => !prev)}>
-							<button className="flex items-center h-8 text-[#24292f] bg-[#f6f8fa] border border-solid border-[rgba(27,31,36,0.15)] shadow-[0 1px 0 rgba(27,31,36,0.04), inset 0 1px 0rgba(255,255,255,0.25)] py-[5px] px-16px  font-medium py-[5px] px-4 rounded-l-md hover:bg-[#f3f4f6]">
+							<button className="flex items-center h-8 text-[#24292f] bg-[#f6f8fa] border border-solid border-[rgba(27,31,36,0.15)] shadow-[0 1px 0 rgba(27,31,36,0.04), inset 0 1px 0rgba(255,255,255,0.25)] py-[5px] px-16px  font-medium py-[5px] px-4 rounded-l-md border-r-0 hover:bg-[#f3f4f6]">
 								Filters
 								<span className="inline-block w-0 h-0 ml-1 mt-1 border-transparent border-t-[#24292f] border-solid border-4 border-b-0 content-['']"></span>
 							</button>
@@ -390,6 +410,9 @@ export default function IssuesListManagement() {
 				<a
 					onMouseEnter={() => setNoQueryHover(true)}
 					onMouseLeave={() => setNoQueryHover(false)}
+					onClick={() => {
+						setResetQuery((prev) => !prev);
+					}}
 					className="flex items-center text-[#57606a] font-semibold mb-[16px] w-full hover:text-[#0969da] w-[780px]"
 				>
 					<div
@@ -540,7 +563,7 @@ export default function IssuesListManagement() {
 														return (
 															<div
 																style={{ backgroundColor: `#${label.color}` }}
-																className="font-semibold inline-block h-[20px] bg-[#dcb5ac] leading-[20px] px-[7px] rounded-[10px] mr-[5px]  "
+																className="font-normal text-[12px] inline-block h-[20px] bg-[#dcb5ac] leading-[20px] px-[7px] rounded-[10px] mr-[5px]  "
 															>
 																{label.name}
 															</div>
