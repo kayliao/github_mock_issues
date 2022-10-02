@@ -252,7 +252,6 @@ export default function LabelActionBox({
 									reponame: gitInfo.reponame,
 								};
 								if (typeName === "Save Changes") {
-									console.log("new name errors:", gitInfo.labelname, name);
 									apiBodyData["labelname"] = gitInfo.labelname;
 									apiBodyData["editData"] = {
 										new_name: name,

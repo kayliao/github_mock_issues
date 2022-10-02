@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { useState } from "react";
 import { RootState } from "../../store/store";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import {
 	RepoIcon,
@@ -22,24 +23,28 @@ const ActionLists = [
 		text: "Code",
 		maxWidth: 115,
 		number: 0,
+		navigate: "code",
 	},
 	{
 		icon: <IssueOpenedIcon />,
 		text: "Issues",
 		maxWidth: 211,
 		number: 1,
+		navigate: "issues",
 	},
 	{
 		icon: <GitPullRequestIcon />,
 		text: "Pull requests",
 		maxWidth: 323,
 		number: 0,
+		navigate: "pr",
 	},
 	{
 		icon: <PlayIcon />,
 		text: "Actions",
 		maxWidth: 398,
 		number: 0,
+		navigate: "actions",
 	},
 	{
 		icon: <TableIcon />,
@@ -66,17 +71,20 @@ const ActionLists = [
 		text: "Insights",
 		maxWidthIcon: 896,
 		number: 0,
+		navigate: "insights",
 	},
 	{
 		icon: <GearIcon />,
 		text: "Settings",
 		maxWidthIcon: 998,
 		number: 0,
+		navigate: "settings",
 	},
 ];
 
 export default function MidHead({ username, reponame, visibility }) {
 	const [pageId, setPageId] = useState(1);
+	const navigate = useNavigate();
 	ActionLists[1].number = useSelector(
 		(state: RootState) => state.currentRepoInfo.repoInfo.open_issues_count
 	);
@@ -96,6 +104,9 @@ export default function MidHead({ username, reponame, visibility }) {
 						return (
 							<ActionButtonBox
 								underlineDisplay={index === pageId ? true : false}
+								onClick={() => {
+									navigate(`/${username}/${reponame}/${element.navigate}`);
+								}}
 							>
 								<ActionsIcon>{element.icon}</ActionsIcon>
 								<ActionTitle fontweight={index === pageId ? 600 : 400}>

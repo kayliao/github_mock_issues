@@ -58,6 +58,7 @@ function Header() {
 		console.log("signout", result);
 		dispatch(supaBaseInfoActions.setuser({ userInfo: null }));
 		dispatch(supaBaseInfoActions.setsession({ sessionInfo: null }));
+		navigate("/");
 	}
 
 	console.log(user);
