@@ -10,7 +10,6 @@ export default function NormalDropList({
 	currentItemIndex,
 	cancelActions,
 }) {
-	console.log(currentItemIndex);
 	return (
 		<div className="sm:relative">
 			<div className="text-[14px] sm:text-[12px]">
@@ -35,7 +34,6 @@ export default function NormalDropList({
 						</header>
 						<div className="overflow-y-auto max-h-[calc(100%-126px)] sm:max-h-[calc(485px-82px)]">
 							{lists.map((element, index) => {
-								console.log("current index", index, currentItemIndex);
 								return (
 									<div
 										className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b ${

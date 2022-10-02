@@ -158,11 +158,8 @@ export default function IssuesListManagement() {
 			else result = result + `+${key}:${value}`;
 		}
 		result = result.substring(1);
-		console.log("result", result);
 		return result;
 	}
-
-	console.log(selectedAssignee);
 
 	useEffect(() => {
 		async function getAssigneeLists(username, reponame) {
@@ -175,7 +172,6 @@ export default function IssuesListManagement() {
 				}
 			);
 			const data = await res.json();
-			console.log(data);
 			data?.unshift({
 				login: loginName,
 				avatar_url: loginAvatar,
@@ -200,11 +196,9 @@ export default function IssuesListManagement() {
 				}
 			);
 			const data = await res.json();
-			console.log(data);
 			setIssueList(data.items);
 			setTotalPages(Math.ceil(data.total_count / 25));
 		}
-		console.log(searchInfoObjectPack);
 		getIssuesLists(searchInfoObjectPack);
 	}, [searchInfoObjectPack, queryString]);
 
@@ -268,7 +262,6 @@ export default function IssuesListManagement() {
 				}
 			);
 			const data = await res.json();
-			console.log(data);
 			setLabelListData(data);
 		}
 		getLabelLists(username, reponame);
@@ -319,7 +312,6 @@ export default function IssuesListManagement() {
 			if (changeQuery?.noassignee === "assignee") {
 				delete changeQuery.noassignee;
 			}
-			console.log("change query", changeQuery);
 
 			setQueryString(changeQuery);
 			setSearchInfoObjectPack({
@@ -335,7 +327,6 @@ export default function IssuesListManagement() {
 				noassignee: "assignee",
 			};
 			delete changeQuery.assignee;
-			console.log("change query", changeQuery);
 			setQueryString(changeQuery);
 			setSearchInfoObjectPack({
 				...searchInfoObjectPack,
@@ -347,12 +338,8 @@ export default function IssuesListManagement() {
 		setCurrentPage(1);
 	}, [selectedAssignee]);
 
-	console.log(selectedLabelList);
-
 	useEffect(() => {
-		console.log("why you didn't render");
 		const stringSelectedLabel = JSON.stringify(selectedLabelList);
-		console.log(stringSelectedLabel);
 		if (
 			stringSelectedLabel != null &&
 			stringSelectedLabel != undefined &&
@@ -366,7 +353,6 @@ export default function IssuesListManagement() {
 			if (changeQuery?.nolabel === "label") {
 				delete changeQuery.nolabel;
 			}
-			console.log("change query", changeQuery);
 
 			setQueryString(changeQuery);
 			setSearchInfoObjectPack({
@@ -382,7 +368,6 @@ export default function IssuesListManagement() {
 				nolabel: "label",
 			};
 			delete changeQuery.label;
-			console.log("change query", changeQuery);
 			setQueryString(changeQuery);
 			setSearchInfoObjectPack({
 				...searchInfoObjectPack,
@@ -434,8 +419,6 @@ export default function IssuesListManagement() {
 			})}`;
 		}
 	}
-
-	console.log("assignee", AssigneeListData);
 
 	return (
 		<>
@@ -509,7 +492,7 @@ export default function IssuesListManagement() {
 								clickItemActions={setFilterOnClickItem}
 								currentItemIndex={filterOnClickItem}
 								cancelActions={() => {
-									setFilterButtonClick(false);
+									setFilterButtonClick(true); // weird! need to check
 								}}
 							/>
 						</div>
@@ -521,7 +504,8 @@ export default function IssuesListManagement() {
 							<input
 								type="text"
 								placeholder="Search all issues"
-								value="is:issue is:open"
+								defaultValue="is:issue is:open"
+								value={makeQueryString(queryString)}
 								className="bg-[#f6f8fa] py-[5px] pl-8 pr-3 outline-none border border-solid border-[rgba(27,31,36,0.15)] rounded-r-md focus:border-[#0969da] focus:shadow-[0_0_0_1px_#0969da] w-full text-[#57606a]"
 							/>
 						</div>
@@ -634,18 +618,80 @@ export default function IssuesListManagement() {
 					<div className="border-b border-solid border-[#d0d7de]">
 						<div className="rounded-tl-md rounded-tr-md bg-[#f6f8fa] p-[16px] flex justify-between items-center">
 							<h2 className="hidden lg:block">
-								<div className="flex items-center">
-									<a href="#/">
-										<IssueOpenedIcon size={16} className="mb-[2px] mr-1" />
-										<span className="font-semibold">Open</span>
-									</a>
-									<a href="#/" className="ml-2.5">
+								<div className="flex items-center cursor-pointer">
+									<div
+										onClick={() => {
+											setQueryString({
+												...queryString,
+												state: "open",
+											});
+											setSearchInfoObjectPack({
+												...searchInfoObjectPack,
+												q: makeQueryString({
+													...queryString,
+													state: "open",
+												}),
+												page: 1,
+											});
+											setFilterOnClickItem(-1);
+											setCurrentPage(1);
+										}}
+									>
+										<IssueOpenedIcon
+											size={16}
+											className={`mb-[2px] mr-1 ${
+												queryString?.state === "open"
+													? "fill-[#000000]"
+													: "fill-[#57606a]"
+											}`}
+										/>
+										<span
+											className={
+												queryString?.state === "open"
+													? "font-semibold"
+													: "font-normal"
+											}
+										>
+											Open
+										</span>
+									</div>
+									<div
+										className="ml-2.5 cursor-pointer"
+										onClick={() => {
+											setQueryString({
+												...queryString,
+												state: "closed",
+											});
+											setSearchInfoObjectPack({
+												...searchInfoObjectPack,
+												q: makeQueryString({
+													...queryString,
+													state: "closed",
+												}),
+												page: 1,
+											});
+											setFilterOnClickItem(-1);
+											setCurrentPage(1);
+										}}
+									>
 										<CheckIcon
 											size={16}
-											className="mb-[2px] fill-[#57606a] mr-1"
+											className={`mb-[2px] ${
+												queryString?.state === "closed"
+													? "fill-[#000000]"
+													: "fill-[#57606a]"
+											} mr-1`}
 										/>
-										<span className="">Closed</span>
-									</a>
+										<span
+											className={
+												queryString?.state === "closed"
+													? "font-semibold"
+													: "font-normal"
+											}
+										>
+											Closed
+										</span>
+									</div>
 								</div>
 							</h2>
 							<div className="flex justify-between sm:justify-start lg:justify-end grow text-sm text-[#57606a]">
