@@ -113,6 +113,7 @@ const HeaderBox = styled.div`
 const GitHubIcon = styled(MarkGithubIcon)`
 	margin-left: 20px;
 	margin-right: 20px;
+	cursor: pointer;
 `;
 
 const Title = styled.h1`
