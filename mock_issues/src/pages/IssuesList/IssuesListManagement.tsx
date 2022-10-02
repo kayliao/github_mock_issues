@@ -1,6 +1,7 @@
 import FilterDropList from "stories/Iconsstories/FilterDropList";
 import { useState, useEffect } from "react";
 import { RootState } from "../../store/store";
+import { useNavigate } from "react-router-dom";
 
 import {
 	CheckIcon,
@@ -20,7 +21,6 @@ import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import NormalDropList from "stories/Iconsstories/NormalDropList";
 import MidHead from "components/MidHead/MidHead";
-import { string } from "prop-types";
 
 const sortItemsQueryTable = [
 	{
@@ -77,6 +77,7 @@ const filterItemsQueryTable = [
 ];
 
 export default function IssuesListManagement() {
+	const navigate = useNavigate();
 	const [noQueryHover, setNoQueryHover] = useState(false);
 	const [labelButtonClick, setLabelButtonClick] = useState(false);
 	const [assigneeButtonClick, setAssigneeButtonClick] = useState(false);
@@ -450,7 +451,10 @@ export default function IssuesListManagement() {
 					<div className="flex w-full justify-between md:flex-nowrap md:w-auto">
 						<div className="flex text-[#24292f] md:ml-auto  md:ml-2 md:pl-2">
 							<div>
-								<button className="py-[4px] px-4 border border-solid borderrounded-l-md border-[#d0d7de] rounded-l-md flex items-center border-r-0 hover:bg-[#f3f4f6]">
+								<button
+									className="py-[4px] px-4 border border-solid borderrounded-l-md border-[#d0d7de] rounded-l-md flex items-center border-r-0 hover:bg-[#f3f4f6]"
+									onClick={() => navigate(`/${username}/${reponame}/labels`)}
+								>
 									<TagIcon size={16} className="left-2 top-[9px]" />
 									<span className="mx-[3px]">Labels</span>
 									{/* <span className="px-1.5 pt-[2px] bg-[rgba(175,184,193,0.2)] border border-solid border-[rgba(0,0,0,0)] rounded-[2em] text-xs font-medium	leading-[18px] text-[#24292f] text-center hidden md:block">
