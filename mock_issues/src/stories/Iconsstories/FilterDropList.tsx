@@ -1,6 +1,5 @@
-import { TriangleDownIcon, XIcon, CheckIcon } from "@primer/octicons-react";
+import { XIcon, CheckIcon } from "@primer/octicons-react";
 import { useEffect, useState } from "react";
-// import { useGetLabelListsQuery } from "../../api/githubApiSlice";
 
 export default function FilterDropList({
 	type,
@@ -19,10 +18,6 @@ export default function FilterDropList({
 	return (
 		<div className="sm:relative">
 			<div className="text-[14px] sm:text-[12px]">
-				{/* <button className=" text-[#57606a] cursor-pointer flex justify-center items-center text-sm hover:text-[#24292f]">
-					<span>Label</span>
-					<TriangleDownIcon />
-				</button> */}
 				<div
 					className={`${
 						isDisplayDropDown ? "block" : "hidden"
@@ -162,13 +157,6 @@ export default function FilterDropList({
 													<div className="font-semibold text-[#24292f] truncate sm:pt-[2px]">
 														{type === "label" ? element.name : element.login}
 													</div>
-													{/* {element?.usercustomname != "" ? (
-													<div className="font-normal text-[#57606a] ml-2 truncate sm:pt-[2px]">
-														{element?.des}
-													</div>
-												) : (
-													<></>
-												)} */}
 												</div>
 												{element?.description != "" ? (
 													<div className="font-medium text-[#57606a] mt-1 truncate sm:w-[210px]">

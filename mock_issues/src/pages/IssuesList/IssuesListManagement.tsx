@@ -95,6 +95,8 @@ export default function IssuesListManagement() {
 		middle: [],
 		nextPages: [],
 	});
+
+	//for large media query, not yet used
 	const [paginationPageSetLarge, setPaginationPageSetLarge] = useState({
 		prePages: [],
 		middle: [],

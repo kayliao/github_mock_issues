@@ -1,4 +1,3 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import "./index.css";
@@ -12,8 +11,6 @@ import RepoSearched from "pages/SearchUser/RepoSearched";
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import store from "./store/store";
-import { ApiProvider } from "@reduxjs/toolkit/dist/query/react";
-import { githubApiSlice } from "./api/githubApiSlice";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

@@ -1,5 +1,3 @@
-import React from "react";
-
 import LabelActionBox from "./LabelActionBox";
 
 export default {

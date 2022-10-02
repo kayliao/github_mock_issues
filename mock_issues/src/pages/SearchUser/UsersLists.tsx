@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { useParams, Link } from "react-router-dom";
 import { useGetSearchUsersListsQuery } from "api/searchUsersSlice";
-import { element } from "prop-types";
 
 export default function UsersLists() {
 	const { searchname } = useParams();
