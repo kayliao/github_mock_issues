@@ -21,6 +21,8 @@ import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import NormalDropList from "stories/Iconsstories/NormalDropList";
 import MidHead from "components/MidHead/MidHead";
+import EmptyPage from "./EmptyPage";
+import IssuesListItem from "./IssuesListItem";
 
 const sortItemsQueryTable = [
 	{
@@ -382,46 +384,46 @@ export default function IssuesListManagement() {
 		setCurrentPage(1);
 	}, [selectedLabelList]);
 
-	function countRestTime(timeString) {
-		const time = new Date(timeString);
-		const timeNow = Date.now();
-		const diffTime = timeNow - time.getTime();
+	// function countRestTime(timeString) {
+	// 	const time = new Date(timeString);
+	// 	const timeNow = Date.now();
+	// 	const diffTime = timeNow - time.getTime();
 
-		const diffDays = Math.floor(diffTime / (24 * 3600 * 1000));
-		let hours, minutes, seconds;
-		if (diffDays <= 0) {
-			const leave1 = diffTime % (24 * 3600 * 1000);
-			hours = Math.floor(leave1 / (3600 * 1000));
-			if (hours <= 0) {
-				const leave2 = leave1 % (3600 * 1000);
-				minutes = Math.floor(leave2 / (60 * 1000));
-				if (minutes <= 0) {
-					const leave3 = leave2 % (60 * 1000);
-					seconds = Math.round(leave3 / 1000);
-					return `${seconds} seconds ago`;
-				} else {
-					return `${minutes} minutes ago`;
-				}
-			} else {
-				return `${hours} hours ago`;
-			}
-		} else if (diffDays <= 30) {
-			return `${diffDays} days ago`;
-		} else {
-			time.toLocaleString("default", { month: "short" });
+	// 	const diffDays = Math.floor(diffTime / (24 * 3600 * 1000));
+	// 	let hours, minutes, seconds;
+	// 	if (diffDays <= 0) {
+	// 		const leave1 = diffTime % (24 * 3600 * 1000);
+	// 		hours = Math.floor(leave1 / (3600 * 1000));
+	// 		if (hours <= 0) {
+	// 			const leave2 = leave1 % (3600 * 1000);
+	// 			minutes = Math.floor(leave2 / (60 * 1000));
+	// 			if (minutes <= 0) {
+	// 				const leave3 = leave2 % (60 * 1000);
+	// 				seconds = Math.round(leave3 / 1000);
+	// 				return `${seconds} seconds ago`;
+	// 			} else {
+	// 				return `${minutes} minutes ago`;
+	// 			}
+	// 		} else {
+	// 			return `${hours} hours ago`;
+	// 		}
+	// 	} else if (diffDays <= 30) {
+	// 		return `${diffDays} days ago`;
+	// 	} else {
+	// 		time.toLocaleString("default", { month: "short" });
 
-			time.toLocaleString("en-GB", {
-				day: "numeric",
-				month: "long",
-				year: "numeric",
-			});
-			return `on ${time.toLocaleString("en-GB", {
-				day: "numeric",
-				month: "long",
-				year: "numeric",
-			})}`;
-		}
-	}
+	// 		time.toLocaleString("en-GB", {
+	// 			day: "numeric",
+	// 			month: "long",
+	// 			year: "numeric",
+	// 		});
+	// 		return `on ${time.toLocaleString("en-GB", {
+	// 			day: "numeric",
+	// 			month: "long",
+	// 			year: "numeric",
+	// 		})}`;
+	// 	}
+	// }
 
 	return (
 		<>
@@ -771,136 +773,27 @@ export default function IssuesListManagement() {
 							</div>
 						</div>
 					</div>
+
 					{IssueListData?.length != 0 ? (
 						IssueListData?.map((element, index) => {
 							return (
-								<>
-									<div>
-										<div
-											className={` px-[16px] py-[8px] flex border-solid border-[#d0d7de] ${
-												index === IssueListData.length - 1
-													? "border-b-0"
-													: "border-b"
-											} hover:bg-[rgba(234,238,242,0.5)]`}
-										>
-											{element?.pull_request ? (
-												element.state === "open" ? (
-													<GitPullRequestIcon
-														className="fill-primary"
-														fill="#127f37"
-													/>
-												) : (
-													<GitPullRequestClosedIcon
-														className="fill-primary"
-														fill={"#cf222e"}
-													/>
-												)
-											) : element.state === "open" ? (
-												<IssueOpenedIcon
-													className="fill-primary"
-													fill="#127f37"
-												/>
-											) : (
-												<IssueClosedIcon
-													className="fill-primary"
-													fill={"#8250df"}
-												/>
-											)}
-
-											<div className="px-2 mt-[-3px]">
-												<span className="text-[16px] font-semibold leading-[21.6px] mr-[5px] ">
-													{element.title}
-												</span>
-												<span className="block lg:inline">
-													{element.labels.map((label) => {
-														return (
-															<div
-																style={{ backgroundColor: `#${label.color}` }}
-																className="font-normal text-[12px] inline-block h-[20px] bg-[#dcb5ac] leading-[20px] px-[7px] rounded-[10px] mr-[5px]  "
-															>
-																{label.name}
-															</div>
-														);
-													})}
-												</span>
-												{element.state === "open" ? (
-													<div className="text-text text-sm mt-2">
-														{`#${element.number} opened ${countRestTime(
-															element.created_at
-														)} by `}
-														<a className="cursor-pointer hover:text-[#0969da]">
-															{element.user.login}
-														</a>
-													</div>
-												) : (
-													<div className="text-text text-sm mt-2">
-														{`#${element.number} by `}
-														<a className="cursor-pointer hover:text-[#0969da]">
-															{element.user.login}
-														</a>
-														{` ${countRestTime(element.closed_at)} was closed `}
-													</div>
-												)}
-											</div>
-											<div className="min-w-[20%] hidden sm:flex ml-auto ">
-												<div className="flex-1"></div>
-
-												<span className=" relative ml-auto flex flex-1 min-w-[30%] h-[20px] flex-wrap flex-row-reverse">
-													{element.assignees.map((assignee, index) => {
-														const value =
-															index === 0 ? 0 : index === 1 ? 9 : 9 + index * 2;
-														return (
-															<img
-																className={`absolute rounded-[50%] w-[20px] h-[20px] border`}
-																style={{
-																	right: `${value}px`,
-																	zIndex: element.assignees.length - index,
-																}}
-																src={assignee.avatar_url}
-																alt=""
-															/>
-														);
-													})}
-												</span>
-
-												<span className="ml-[15px] flex-nowrap flex-1 flex justify-end">
-													<CommentIcon size={16} fill={"#57606a"} />
-													<span className="ml-[3px] text-[#57606a] text-[8px]">
-														{element.comments}
-													</span>
-												</span>
-											</div>
-										</div>
-									</div>
-								</>
+								<IssuesListItem
+									issuesItemData={element}
+									currentItemIndex={index}
+									totalItemsCount={IssueListData.length}
+								/>
 							);
 						})
+					) : makeQueryString({
+							state: "open",
+							repo: `${username}/${reponame}`,
+							type: "issue",
+					  }) === makeQueryString(queryString) &&
+					  sortOnClickItem === 0 &&
+					  filterOnClickItem === -1 ? (
+						<EmptyPage isOrgin={true} />
 					) : (
-						<div className="max-w-3xl mx-auto">
-							<div className="py-20 px-10 relative text-center">
-								<IssueOpenedIcon
-									size={24}
-									fill={"#57606a"}
-									className="mx-1 mb-2"
-								/>
-								<h3 className="my-4 text-[24px] leading-[1.5] font-semibold">
-									No results matched your search.
-								</h3>
-								<p className="text-[16px] text-[#57606a] mt-[0px] mb-[10px]">
-									You could search
-									<a className="cursor-pointer text-[#0969da]">
-										{" "}
-										all of GitHub
-									</a>{" "}
-									or try an
-									<a className="cursor-pointer text-[#0969da]">
-										{" "}
-										advanced search
-									</a>
-									.
-								</p>
-							</div>
-						</div>
+						<EmptyPage isOrgin={false} />
 					)}
 				</div>
 				{totalPages > 1 ? (
