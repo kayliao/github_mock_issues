@@ -3,13 +3,6 @@ const userActionTypes = {
 };
 
 const initialState = {
-	// user: (() => {
-	// 	async function checkUser() {
-	// 		const result = await github.checkUser;
-	// 		return result;
-	// 	}
-	// 	return checkUser();
-	// })(),
 	user: null,
 };
 

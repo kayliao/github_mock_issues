@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { KebabHorizontalIcon } from "@primer/octicons-react";
-import ButtonShare from "../../stories/Iconsstories/ButtonShare";
 import LabelActionBox from "./LabelActionBox";
 import { useState } from "react";
 import Label from "../../stories/Iconsstories/Label";
@@ -59,19 +58,6 @@ export default function LabelItem({
 				>
 					<NewKebabHorizontalIcon fill={sortClick ? "#fff" : "#57606a"} />
 				</ActionSummaryButton>
-				{/* <ActionSortButtonBox>
-					<Button
-						textColor={sortClick ? "#24292f" : "ffffff"}
-						backgroundColor={sortClick ? "#0969da" : "#f6f8fa"}
-						textSize="14px"
-						displayText="..."
-						borderColor="rgba(27, 36, 31, 0.15)"
-						hoverColor="#ffffff"
-						hoverBorderColor="#0969da"
-						isAble={true}
-						onClickFunc={() => setSortClick((prev) => !prev)}
-					/>
-				</ActionSortButtonBox> */}
 				<ReviseMenuDelete display={sortClick ? "block" : "none"}>
 					<ReviseMenuContainer>
 						<ReviseMenuBtn
@@ -113,12 +99,6 @@ export default function LabelItem({
 	) : (
 		<>
 			<ListItemInnerBox>
-				{/* <LabelA
-					labelcolor={`#${gitLabelData.color}`}
-					wordcolor={lightOrDark(`#${gitLabelData.color}`)}
-				>
-					{gitLabelData.name}
-				</LabelA> */}
 				<LabelTagBox>
 					<Label
 						backgroundColor={`#${gitLabelData.color}`}
@@ -179,20 +159,6 @@ const LabelTagBox = styled.div`
 	}
 `;
 
-// const LabelDescritptionBox = styled.div`
-// 	display: none;
-// 	word-wrap: break-word;
-// 	width: 33.33333332%;
-
-// 	@media screen and (min-width: 768px) {
-// 		width: 33.33333332%;
-// 		display: block;
-// 		// display: flex;
-// 		// flex-wrap: wrap;
-// 		// flex-flow: row wrap;
-// 	}
-// `;
-
 const WrapperBox = styled.div`
 	position: relative;
 `;
@@ -246,16 +212,6 @@ const ActionSummaryButton = styled.button<PropsTypes>`
 	}
 `;
 
-const ActionSortButtonBox = styled.div`
-	position: absolute;
-	right: 0;
-	vertical-align: text-top;
-
-	@media screen and (min-width: 1012px) {
-		display: none;
-	}
-`;
-
 const NewKebabHorizontalIcon = styled(KebabHorizontalIcon)`
 	&:hover {
 		fill: #fff;
@@ -266,19 +222,6 @@ const ListItemInnerBox = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-`;
-
-const LabelA = styled.a`
-	white-space: nowrap;
-	padding: 0 10px;
-	font-size: 12px;
-	font-weight: 500;
-	line-height: 22px;
-	border: 1px solid transparent;
-	border-radius: 2em;
-	font-weight: 500;
-	background-color: ${(props: PropsTypes) => props.labelcolor};
-	color: ${(props: PropsTypes) => props.wordcolor};
 `;
 
 type PropsTypes = {

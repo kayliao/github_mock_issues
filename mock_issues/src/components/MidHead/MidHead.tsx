@@ -76,40 +76,6 @@ const ActionLists = [
 ];
 
 export default function MidHead({ username, reponame, visibility }) {
-	// function renderActionList() {
-	// 	const currentWidth = window.innerWidth;
-	// 	if (currentWidth < 544) {
-	// 		const showItems = ActionLists.filter((element) => {
-	// 			return element?.maxWidth < currentWidth;
-	// 		});
-	// 		return showItems.map((element) => {
-	// 			return (
-	// 				<ActionButtonBox>
-	// 					<span>{element.text}</span>
-	// 				</ActionButtonBox>
-	// 			);
-	// 		});
-	// 	} else if (currentWidth < 999) {
-	// 	} else {
-	// 		return ActionLists.map((element) => {
-	// 			return (
-	// 				<ActionButtonBox>
-	// 					<>{element.icon}</>
-	// 					<span>{element.text}</span>
-	// 				</ActionButtonBox>
-	// 			);
-	// 		});
-	// 	}
-	// 	return ActionLists.map((element) => {
-	// 		return (
-	// 			<ActionButtonBox>
-	// 				<>{element.icon}</>
-	// 				<span>{element.text}</span>
-	// 			</ActionButtonBox>
-	// 		);
-	// 	});
-	// }
-
 	const [pageId, setPageId] = useState(1);
 	ActionLists[1].number = useSelector(
 		(state: RootState) => state.currentRepoInfo.repoInfo.open_issues_count
@@ -256,10 +222,6 @@ const ActionsIcon = styled.div`
 const ActionsNumber = styled.div`
 	padding: 0 6px;
 	background-color: rgba(175, 184, 193, 0.2);
-	${
-		"" /* width: 24px;
-	height: 24px; */
-	}
 
 	border-radius: 2em;
 	text-align: center;

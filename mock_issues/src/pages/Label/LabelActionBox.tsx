@@ -3,7 +3,6 @@ import { SyncIcon } from "@primer/octicons-react";
 import ButtonShare from "../../stories/Iconsstories/ButtonShare";
 import { useState, useEffect } from "react";
 import Label from "../../stories/Iconsstories/Label";
-import { useForm } from "react-hook-form";
 
 const ButtonColor = {
 	darkColors: [
@@ -45,15 +44,6 @@ export default function LabelActionBox({
 	const [colorInvalid, setColorInvalid] = useState(false);
 	const [buttonColorShow, setButtonColorShow] = useState(labelcolor);
 	const [colorInputOnFocus, setColorInputOnFocus] = useState(false);
-
-	// const onFormSumbit = (formObj, e) => {
-	// 	e.preventDefault();
-	// 	console.log("Form Submitted");
-	// 	const formData = new FormData(e.target);
-	// 	for (const pair of formData.entries()) {
-	// 		console.log(`${pair[0]}: ${pair[1]}`);
-	// 	}
-	// };
 
 	useEffect(() => {
 		const checkColorValid = checkIsColor(color);
@@ -110,12 +100,6 @@ export default function LabelActionBox({
 
 	return show ? (
 		<>
-			{/* <LabelA
-				labelcolor={buttonColorShow}
-				wordcolor={lightOrDark(buttonColorShow)}
-			>
-				{name.length != 0 ? name : "label preview"}
-			</LabelA> */}
 			<Label
 				backgroundColor={buttonColorShow}
 				labelName={name.length != 0 ? name : "label preview"}
@@ -138,7 +122,7 @@ export default function LabelActionBox({
 							if (checkNameValid) {
 								if (e.target.value.length >= e.target.maxLength) {
 									e.target.value = e.target.value.slice(0, e.target.maxLength);
-									// e.preventDefault();
+
 									setName(e.target.value);
 									return;
 								}
@@ -178,8 +162,6 @@ export default function LabelActionBox({
 						<NewColorButton
 							buttonColor={buttonColorShow}
 							onClick={(e) => {
-								// e.preventDefault();
-								// e.stopPropagation();
 								const randomColor = GetRandomColor();
 								setButtonColorShow(`#${randomColor}`);
 								setColor(`#${randomColor}`);
@@ -207,7 +189,6 @@ export default function LabelActionBox({
 							onChange={(e) => {
 								if (e.target.value.length >= e.target.maxLength) {
 									e.target.value = e.target.value.slice(0, e.target.maxLength);
-									// e.preventDefault();
 
 									const isColor = checkIsColor(e.target.value);
 									if (isColor) setButtonColorShow(e.target.value);
@@ -216,7 +197,7 @@ export default function LabelActionBox({
 								}
 								if (e.target.value.length === 0) {
 									e.target.value = "#";
-									// e.preventDefault();
+
 									setColor(e.target.value);
 									return;
 								}
@@ -233,9 +214,6 @@ export default function LabelActionBox({
 								{ButtonColor.darkColors.map((item) => (
 									<ColorMenuBtn
 										onMouseDown={(e) => {
-											// e.preventDefault();
-											// e.stopPropagation();
-
 											setButtonColorShow(item);
 											setColor(item);
 										}}
@@ -247,9 +225,6 @@ export default function LabelActionBox({
 								{ButtonColor.lightColors.map((item) => (
 									<ColorMenuBtn
 										onMouseDown={(e) => {
-											// e.preventDefault();
-											// e.stopPropagation();
-
 											setButtonColorShow(item);
 											setColor(item);
 										}}
@@ -280,9 +255,6 @@ export default function LabelActionBox({
 									console.log("new name errors:", gitInfo.labelname, name);
 									apiBodyData["labelname"] = gitInfo.labelname;
 									apiBodyData["editData"] = {
-										// owner: gitInfo.username,
-										// repo: gitInfo.reponame,
-										// name: gitInfo.labelname,
 										new_name: name,
 										description: description,
 										color: buttonColorShow.slice(1, 7),
@@ -291,8 +263,6 @@ export default function LabelActionBox({
 								}
 								if (typeName === "Create Label") {
 									apiBodyData["createLabelData"] = {
-										// owner: gitInfo.username,
-										// repo: gitInfo.reponame,
 										name: name,
 										description: description,
 										color: buttonColorShow.slice(1, 7),

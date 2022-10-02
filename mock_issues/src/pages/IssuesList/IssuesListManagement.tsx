@@ -1,6 +1,7 @@
 import FilterDropList from "stories/Iconsstories/FilterDropList";
 import { useState, useEffect } from "react";
 import { RootState } from "../../store/store";
+import { useNavigate } from "react-router-dom";
 
 import {
 	CheckIcon,
@@ -76,6 +77,7 @@ const filterItemsQueryTable = [
 ];
 
 export default function IssuesListManagement() {
+	const navigate = useNavigate();
 	const [noQueryHover, setNoQueryHover] = useState(false);
 	const [labelButtonClick, setLabelButtonClick] = useState(false);
 	const [assigneeButtonClick, setAssigneeButtonClick] = useState(false);
@@ -87,11 +89,34 @@ export default function IssuesListManagement() {
 	const [selectedLabelList, setSelectedLabelList] = useState([]);
 	const [selectedAssignee, setSelectedAssignee] = useState("");
 	const [resetQuery, setResetQuery] = useState(false);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [totalPages, setTotalPages] = useState(1);
+	const [paginationPageSet, setPaginationPageSet] = useState({
+		prePages: [],
+		middle: [],
+		nextPages: [],
+	});
+
+	//for large media query, not yet used
+	const [paginationPageSetLarge, setPaginationPageSetLarge] = useState({
+		prePages: [],
+		middle: [],
+		nextPages: [],
+	});
 
 	const { username, reponame } = useParams();
 	const visibility = useSelector(
 		(state: RootState) => state.currentRepoInfo.repoInfo.visibility
 	);
+	const loginAvatar = useSelector(
+		(state: RootState) =>
+			state.supaBaseInfo.user.identities[0].identity_data.avatar_url
+	);
+	const loginName = useSelector(
+		(state: RootState) =>
+			state.supaBaseInfo.user.identities[0].identity_data.user_name
+	);
+
 	const [sortOnClickItem, setSortOnClickItem] = useState(0);
 	const [filterOnClickItem, setFilterOnClickItem] = useState(-1);
 
@@ -101,6 +126,8 @@ export default function IssuesListManagement() {
 		type: string;
 		assignee?: string;
 		label?: string[];
+		noassignee?: string;
+		nolabel?: string;
 	};
 	const token = useSelector((state: RootState) => state.supaBaseInfo.token);
 	const [queryString, setQueryString] = useState<queryType>({
@@ -112,25 +139,30 @@ export default function IssuesListManagement() {
 		q?: string;
 		sort?: string;
 		order?: string;
+		page?: number;
 	};
 	const [searchInfoObjectPack, setSearchInfoObjectPack] =
 		useState<searchInfoType>({
 			q: makeQueryString(queryString),
 			sort: "created",
 			order: "desc",
+			page: 1,
 		});
 
 	function makeQueryString(stringObjects) {
 		let result = "";
 		for (let [key, value] of Object.entries(stringObjects)) {
-			result = result + `+${key}:${value}`;
+			if (key === "noassignee") result = result + `+no:assignee`;
+			else if (key === "nolabel") result = result + `+no:label`;
+			else if (key === "label")
+				(value as []).forEach((element) => {
+					result = result + `+label:${element}`;
+				});
+			else result = result + `+${key}:${value}`;
 		}
 		result = result.substring(1);
-		console.log("result", result);
 		return result;
 	}
-
-	console.log(selectedAssignee);
 
 	useEffect(() => {
 		async function getAssigneeLists(username, reponame) {
@@ -143,7 +175,10 @@ export default function IssuesListManagement() {
 				}
 			);
 			const data = await res.json();
-			console.log(data);
+			data?.unshift({
+				login: loginName,
+				avatar_url: loginAvatar,
+			});
 			setAssigneeListData(data);
 		}
 		getAssigneeLists(username, reponame);
@@ -164,14 +199,44 @@ export default function IssuesListManagement() {
 				}
 			);
 			const data = await res.json();
-			console.log(data);
 			setIssueList(data.items);
+			setTotalPages(Math.ceil(data.total_count / 25));
 		}
-		console.log(searchInfoObjectPack);
 		getIssuesLists(searchInfoObjectPack);
-	}, [searchInfoObjectPack]);
+	}, [searchInfoObjectPack, queryString]);
 
 	useEffect(() => {
+		const middlePage = Math.ceil(totalPages / 2);
+
+		const pagingSet: {
+			prePages: number[];
+			middle: number[];
+			nextPages: number[];
+		} = { prePages: [1], middle: [], nextPages: [totalPages] };
+		if (currentPage < middlePage && currentPage > 1) {
+			pagingSet.prePages.push(currentPage);
+		} else if (
+			totalPages % 2 === 0 &&
+			(currentPage === middlePage || currentPage === middlePage + 1) &&
+			currentPage > 1 &&
+			currentPage < totalPages
+		) {
+			pagingSet.middle.push(currentPage);
+		} else if (totalPages % 2 === 1 && currentPage === middlePage) {
+			pagingSet.middle.push(currentPage);
+		} else if (currentPage > middlePage && currentPage != totalPages) {
+			pagingSet.nextPages.unshift(currentPage);
+		}
+		setPaginationPageSet(pagingSet);
+		setSearchInfoObjectPack({ ...searchInfoObjectPack, page: currentPage });
+	}, [currentPage, totalPages]);
+
+	useEffect(() => {
+		setQueryString({
+			state: "open",
+			repo: `${username}/${reponame}`,
+			type: "issue",
+		});
 		setSearchInfoObjectPack({
 			q: makeQueryString({
 				state: "open",
@@ -180,8 +245,13 @@ export default function IssuesListManagement() {
 			}),
 			sort: sortItemsQueryTable[0].sort,
 			order: sortItemsQueryTable[0].order,
+			page: 1,
 		});
 		setSortOnClickItem(0);
+		setFilterOnClickItem(-1);
+		setSelectedAssignee("");
+		setSelectedLabelList([]);
+		setCurrentPage(1);
 	}, [resetQuery]);
 
 	useEffect(() => {
@@ -195,7 +265,6 @@ export default function IssuesListManagement() {
 				}
 			);
 			const data = await res.json();
-			console.log(data);
 			setLabelListData(data);
 		}
 		getLabelLists(username, reponame);
@@ -206,75 +275,112 @@ export default function IssuesListManagement() {
 			...searchInfoObjectPack,
 			sort: sortItemsQueryTable[sortOnClickItem].sort,
 			order: sortItemsQueryTable[sortOnClickItem].order,
+			page: 1,
 		});
+		setCurrentPage(1);
 	}, [sortOnClickItem]);
 
 	useEffect(() => {
-		setQueryString({
-			...filterItemsQueryTable[filterOnClickItem],
-			repo: `${username}/${reponame}`,
-		});
-		setSearchInfoObjectPack({
-			...searchInfoObjectPack,
-			q: makeQueryString({
+		if (filterOnClickItem != -1) {
+			setQueryString({
 				...filterItemsQueryTable[filterOnClickItem],
 				repo: `${username}/${reponame}`,
-			}),
-		});
-		setSortOnClickItem(0);
-		setSelectedAssignee("");
-		setSelectedLabelList([]);
+			});
+			setSearchInfoObjectPack({
+				...searchInfoObjectPack,
+				q: makeQueryString({
+					...filterItemsQueryTable[filterOnClickItem],
+					repo: `${username}/${reponame}`,
+				}),
+				page: 1,
+			});
+			setSortOnClickItem(0);
+			setSelectedAssignee("");
+			setSelectedLabelList([]);
+			setCurrentPage(1);
+		}
 	}, [filterOnClickItem]);
 
 	useEffect(() => {
-		setQueryString({
-			...queryString,
-			assignee: selectedAssignee,
-		});
-		setSearchInfoObjectPack({
-			...searchInfoObjectPack,
-			q: makeQueryString({
+		if (
+			selectedAssignee != null &&
+			selectedAssignee != undefined &&
+			selectedAssignee != "Assigned to nobody"
+		) {
+			const changeQuery = {
 				...queryString,
 				assignee: selectedAssignee,
-			}),
-		});
+			};
+
+			if (changeQuery?.noassignee === "assignee") {
+				delete changeQuery.noassignee;
+			}
+
+			setQueryString(changeQuery);
+			setSearchInfoObjectPack({
+				...searchInfoObjectPack,
+				q: makeQueryString(changeQuery),
+				page: 1,
+			});
+		}
+
+		if (selectedAssignee === "Assigned to nobody") {
+			const changeQuery = {
+				...queryString,
+				noassignee: "assignee",
+			};
+			delete changeQuery.assignee;
+			setQueryString(changeQuery);
+			setSearchInfoObjectPack({
+				...searchInfoObjectPack,
+				q: makeQueryString(changeQuery),
+				page: 1,
+			});
+		}
+
+		setCurrentPage(1);
 	}, [selectedAssignee]);
 
-	// const {
-	// 	data: LabelListData,
-	// 	isSuccess: labelSuccess,
-	// 	isLoading: labelIsLoading,
-	// 	isError: labelError,
-	// } = useGetLabelListsQuery({
-	// 	username: username,
-	// 	reponame: reponame,
-	// });
+	useEffect(() => {
+		const stringSelectedLabel = JSON.stringify(selectedLabelList);
+		if (
+			stringSelectedLabel != null &&
+			stringSelectedLabel != undefined &&
+			stringSelectedLabel != JSON.stringify(["Unlabeled"])
+		) {
+			const changeQuery = {
+				...queryString,
+				label: selectedLabelList,
+			};
 
-	// const { data: AssigneeListData } = useGetAssigneeListsQuery({
-	// 	username: username,
-	// 	reponame: reponame,
-	// });
+			if (changeQuery?.nolabel === "label") {
+				delete changeQuery.nolabel;
+			}
 
-	// if (IssueIsSuccess) {
-	// 	console.log(IssueListData);
-	// }
-	// if (labelSuccess) {
-	// 	console.log(LabelListData);
-	// }
-	// if (labelError) {
-	// 	console.log(LabelListData);
-	// }
+			setQueryString(changeQuery);
+			setSearchInfoObjectPack({
+				...searchInfoObjectPack,
+				q: makeQueryString(changeQuery),
+				page: 1,
+			});
+		}
 
-	// if (isLoading) {
-	// 	console.log("why you are loading");
-	// }
+		if (stringSelectedLabel == JSON.stringify(["Unlabeled"])) {
+			const changeQuery = {
+				...queryString,
+				nolabel: "label",
+			};
+			delete changeQuery.label;
+			setQueryString(changeQuery);
+			setSearchInfoObjectPack({
+				...searchInfoObjectPack,
+				q: makeQueryString(changeQuery),
+				page: 1,
+			});
+		}
 
-	// if (labelIsLoading) {
-	// 	console.log("is loading");
-	// }
-
-	// console.log(AssigneeListData);
-	// console.log(status);
+		setCurrentPage(1);
+	}, [selectedLabelList]);
 
 	function countRestTime(timeString) {
 		const time = new Date(timeString);
@@ -345,7 +451,10 @@ export default function IssuesListManagement() {
 					<div className="flex w-full justify-between md:flex-nowrap md:w-auto">
 						<div className="flex text-[#24292f] md:ml-auto  md:ml-2 md:pl-2">
 							<div>
-								<button className="py-[4px] px-4 border border-solid borderrounded-l-md border-[#d0d7de] rounded-l-md flex items-center border-r-0 hover:bg-[#f3f4f6]">
+								<button
+									className="py-[4px] px-4 border border-solid borderrounded-l-md border-[#d0d7de] rounded-l-md flex items-center border-r-0 hover:bg-[#f3f4f6]"
+									onClick={() => navigate(`/${username}/${reponame}/labels`)}
+								>
 									<TagIcon size={16} className="left-2 top-[9px]" />
 									<span className="mx-[3px]">Labels</span>
 									{/* <span className="px-1.5 pt-[2px] bg-[rgba(175,184,193,0.2)] border border-solid border-[rgba(0,0,0,0)] rounded-[2em] text-xs font-medium	leading-[18px] text-[#24292f] text-center hidden md:block">
@@ -389,7 +498,7 @@ export default function IssuesListManagement() {
 								clickItemActions={setFilterOnClickItem}
 								currentItemIndex={filterOnClickItem}
 								cancelActions={() => {
-									setFilterButtonClick(false);
+									setFilterButtonClick(true); // weird! need to check
 								}}
 							/>
 						</div>
@@ -401,38 +510,112 @@ export default function IssuesListManagement() {
 							<input
 								type="text"
 								placeholder="Search all issues"
-								value="is:issue is:open"
-								className="bg-[#f6f8fa] py-[5px] pl-8 pr-3 border border-solid border-[rgba(27,31,36,0.15)] rounded-r-md shadow-[inset 0 1px 0 rgb(208 215 222 / 20%)] w-full text-[#57606a]"
+								defaultValue="is:issue is:open"
+								value={makeQueryString(queryString)}
+								className="bg-[#f6f8fa] py-[5px] pl-8 pr-3 outline-none border border-solid border-[rgba(27,31,36,0.15)] rounded-r-md focus:border-[#0969da] focus:shadow-[0_0_0_1px_#0969da] w-full text-[#57606a]"
 							/>
 						</div>
 					</div>
 				</div>
-				<a
-					onMouseEnter={() => setNoQueryHover(true)}
-					onMouseLeave={() => setNoQueryHover(false)}
-					onClick={() => {
-						setResetQuery((prev) => !prev);
-					}}
-					className="flex items-center text-[#57606a] font-semibold mb-[16px] w-full hover:text-[#0969da] w-[780px]"
-				>
+				{makeQueryString({
+					state: "open",
+					repo: `${username}/${reponame}`,
+					type: "issue",
+				}) === makeQueryString(queryString) &&
+				sortOnClickItem === 0 &&
+				filterOnClickItem === -1 ? (
+					<></>
+				) : (
 					<div
-						className={`h-[18px] w-[18px] ${
-							noQueryHover ? "bg-[#0969da]" : "bg-[#617781]"
-						} flex justify-center items-center rounded-md p-px mr-[8px]`}
+						onMouseEnter={() => setNoQueryHover(true)}
+						onMouseLeave={() => setNoQueryHover(false)}
+						onClick={() => {
+							setResetQuery((prev) => !prev);
+						}}
+						className="flex cursor-pointer items-center text-[#57606a] font-semibold mb-[16px] w-full hover:text-[#0969da] w-[780px]"
 					>
-						<XIcon fill={"#ffffff"} />
+						<div
+							className={`h-[18px] w-[18px] ${
+								noQueryHover ? "bg-[#0969da]" : "bg-[#617781]"
+							} flex justify-center items-center rounded-md p-px mr-[8px]`}
+						>
+							<XIcon fill={"#ffffff"} />
+						</div>
+						Clear current search query, filters, and sorts
 					</div>
-					Clear current search query, filters, and sorts
-				</a>
-				<div className="lg:hidden flex items-center">
-					<a href="#/">
-						<IssueOpenedIcon size={16} className="mr-1" />
-						<span className="font-semibold">Open</span>
-					</a>
-					<a href="#/" className="ml-2.5">
-						<CheckIcon size={16} className="fill-[#57606a] mr-1" />
-						<span className="">Closed</span>
-					</a>
+				)}
+				<div className="lg:hidden flex items-center cursor-pointer">
+					<div
+						onClick={() => {
+							setQueryString({
+								...queryString,
+								state: "open",
+							});
+							setSearchInfoObjectPack({
+								...searchInfoObjectPack,
+								q: makeQueryString({
+									...queryString,
+									state: "open",
+								}),
+								page: 1,
+							});
+							setFilterOnClickItem(-1);
+							setCurrentPage(1);
+						}}
+					>
+						<IssueOpenedIcon
+							size={16}
+							className={`${
+								queryString?.state === "open"
+									? "fill-[#000000]"
+									: "fill-[#57606a]"
+							} mr-1`}
+						/>
+						<span
+							className={
+								queryString?.state === "open" ? "font-semibold" : "font-normal"
+							}
+						>
+							Open
+						</span>
+					</div>
+					<div
+						className="ml-2.5 cursor-pointer"
+						onClick={() => {
+							setQueryString({
+								...queryString,
+								state: "closed",
+							});
+							setSearchInfoObjectPack({
+								...searchInfoObjectPack,
+								q: makeQueryString({
+									...queryString,
+									state: "closed",
+								}),
+								page: 1,
+							});
+							setFilterOnClickItem(-1);
+							setCurrentPage(1);
+						}}
+					>
+						<CheckIcon
+							size={16}
+							className={`${
+								queryString?.state === "closed"
+									? "fill-[#000000]"
+									: "fill-[#57606a]"
+							} mr-1`}
+						/>
+						<span
+							className={
+								queryString?.state === "closed"
+									? "font-semibold"
+									: "font-normal"
+							}
+						>
+							Closed
+						</span>
+					</div>
 				</div>
 			</div>
 
@@ -441,18 +624,80 @@ export default function IssuesListManagement() {
 					<div className="border-b border-solid border-[#d0d7de]">
 						<div className="rounded-tl-md rounded-tr-md bg-[#f6f8fa] p-[16px] flex justify-between items-center">
 							<h2 className="hidden lg:block">
-								<div className="flex items-center">
-									<a href="#/">
-										<IssueOpenedIcon size={16} className="mb-[2px] mr-1" />
-										<span className="font-semibold">Open</span>
-									</a>
-									<a href="#/" className="ml-2.5">
+								<div className="flex items-center cursor-pointer">
+									<div
+										onClick={() => {
+											setQueryString({
+												...queryString,
+												state: "open",
+											});
+											setSearchInfoObjectPack({
+												...searchInfoObjectPack,
+												q: makeQueryString({
+													...queryString,
+													state: "open",
+												}),
+												page: 1,
+											});
+											setFilterOnClickItem(-1);
+											setCurrentPage(1);
+										}}
+									>
+										<IssueOpenedIcon
+											size={16}
+											className={`mb-[2px] mr-1 ${
+												queryString?.state === "open"
+													? "fill-[#000000]"
+													: "fill-[#57606a]"
+											}`}
+										/>
+										<span
+											className={
+												queryString?.state === "open"
+													? "font-semibold"
+													: "font-normal"
+											}
+										>
+											Open
+										</span>
+									</div>
+									<div
+										className="ml-2.5 cursor-pointer"
+										onClick={() => {
+											setQueryString({
+												...queryString,
+												state: "closed",
+											});
+											setSearchInfoObjectPack({
+												...searchInfoObjectPack,
+												q: makeQueryString({
+													...queryString,
+													state: "closed",
+												}),
+												page: 1,
+											});
+											setFilterOnClickItem(-1);
+											setCurrentPage(1);
+										}}
+									>
 										<CheckIcon
 											size={16}
-											className="mb-[2px] fill-[#57606a] mr-1"
+											className={`mb-[2px] ${
+												queryString?.state === "closed"
+													? "fill-[#000000]"
+													: "fill-[#57606a]"
+											} mr-1`}
 										/>
-										<span className="">Closed</span>
-									</a>
+										<span
+											className={
+												queryString?.state === "closed"
+													? "font-semibold"
+													: "font-normal"
+											}
+										>
+											Closed
+										</span>
+									</div>
 								</div>
 							</h2>
 							<div className="flex justify-between sm:justify-start lg:justify-end grow text-sm text-[#57606a]">
@@ -471,6 +716,7 @@ export default function IssuesListManagement() {
 										isDisplayDropDown={labelButtonClick}
 										setSelectedList={setSelectedLabelList}
 										cancelActions={() => setLabelButtonClick(false)}
+										selectedList={selectedLabelList}
 									/>
 								</div>
 								<div className="px-[16px] hidden md:block cursor-pointer">
@@ -492,6 +738,7 @@ export default function IssuesListManagement() {
 										isDisplayDropDown={assigneeButtonClick}
 										setSelectedList={setSelectedAssignee}
 										cancelActions={() => setAssigneeButtonClick(false)}
+										selectedList={selectedAssignee}
 									/>
 								</div>
 								<div className="px-[16px] cursor-pointer">
@@ -529,7 +776,13 @@ export default function IssuesListManagement() {
 							return (
 								<>
 									<div>
-										<div className=" px-[16px] py-[8px] flex border-b border-solid border-[#d0d7de] hover:bg-[rgba(234,238,242,0.5)]">
+										<div
+											className={` px-[16px] py-[8px] flex border-solid border-[#d0d7de] ${
+												index === IssueListData.length - 1
+													? "border-b-0"
+													: "border-b"
+											} hover:bg-[rgba(234,238,242,0.5)]`}
+										>
 											{element?.pull_request ? (
 												element.state === "open" ? (
 													<GitPullRequestIcon
@@ -650,40 +903,92 @@ export default function IssuesListManagement() {
 						</div>
 					)}
 				</div>
-
-				<div className="flex justify-center items-center text-sm my-4 px-1">
-					<button className="grid place-items-center grid-flow-col	text-[#8c959f] flex items-center py-5px px-2.5 border border-solid border-transparent hover:border-primary-border hover:rounded-md cursor-pointer">
-						<ChevronLeftIcon size={16} className="mr-1" />
-						<span>Previous</span>
-					</button>
-					{/* {pagination.prePages.map((page) => {
-						return (
-							<a className="grid place-items-center text-primary-text py-5px px-2.5 min-w-[32px] border border-solid border-transparent hover:border-primary-border hover:rounded-md cursor-pointer">
-								{page}
-							</a>
-						);
-					})} */}
-					{/* <span className="py-5px px-2.5 min-w-[32px]">...</span>
-					{pagination.middle.map((page) => {
-						return (
-							<a className="grid place-items-center text-primary-text py-5px px-2.5 min-w-[32px] border border-solid border-transparent hover:border-primary-border hover:rounded-md cursor-pointer">
-								{page}
-							</a>
-						);
-					})} */}
-					{/* <span className="py-5px px-2.5 min-w-[32px]">...</span> */}
-					{/* {pagination.nextPages.map((page) => {
-						return (
-							<a className="grid place-items-center text-primary-text py-5px px-2.5 min-w-[32px] border border-solid border-transparent hover:border-primary-border hover:rounded-md cursor-pointer">
-								{page}
-							</a>
-						);
-					})} */}
-					<button className="grid place-items-center grid-flow-col text-[#0969da] flex items-center py-5px px-2.5 border border-solid border-transparent hover:border-primary-border hover:rounded-md cursor-pointer">
-						<span>Next</span>
-						<ChevronRightIcon size={16} className="ml-1" />
-					</button>
-				</div>
+				{totalPages > 1 ? (
+					<div className="flex justify-center items-center text-sm my-4 px-1">
+						<button
+							disabled={currentPage === 1 ? true : false}
+							className={`grid place-items-center grid-flow-col ${
+								currentPage === 1 ? "text-[#8c959f]" : "text-[#0969da]"
+							} flex items-center py-5px px-2.5 border border-solid border-transparent hover:border-primary-border hover:rounded-md ${
+								currentPage === 1 ? "" : "cursor-pointer"
+							}`}
+							onClick={() => setCurrentPage((prev) => prev - 1)}
+						>
+							<ChevronLeftIcon size={16} className="mr-1" />
+							<span>Previous</span>
+						</button>
+						{paginationPageSet.prePages.map((page) => {
+							return (
+								<div
+									className={`grid rounded-md place-items-center text-primary-text h-[32px] py-5px px-2.5 min-w-[32px] border border-solid border-transparent hover:border-[#d0d7de] hover:rounded-md cursor-pointer ${
+										page === currentPage
+											? "text-[#ffffff] border-[#0969da] bg-[#0969da]"
+											: "text-[#000000]"
+									}`}
+									onClick={() => setCurrentPage(page)}
+								>
+									{page}
+								</div>
+							);
+						})}
+						{totalPages > 2 ? (
+							<span className="py-5px px-2.5 min-w-[32px] text-[#8c959f]">
+								...
+							</span>
+						) : (
+							<></>
+						)}
+						{paginationPageSet.middle.map((page) => {
+							return (
+								<div
+									className={`cursor-pointer rounded-md grid place-items-center text-primary-text py-5px px-2.5 min-w-[32px] h-[32px] border border-solid border-transparent hover:border-[#d0d7de] hover:rounded-md cursor-pointer ${
+										page === currentPage
+											? "text-[#ffffff] border-[#0969da] bg-[#0969da]"
+											: "text-[#000000]"
+									}`}
+									onClick={() => setCurrentPage(page)}
+								>
+									{page}
+								</div>
+							);
+						})}
+						{JSON.stringify(paginationPageSet.middle) != JSON.stringify([]) ? (
+							<span className="py-5px px-2.5 min-w-[32px] text-[#8c959f]">
+								...
+							</span>
+						) : (
+							<></>
+						)}
+						{paginationPageSet.nextPages.map((page) => {
+							return (
+								<div
+									className={`grid rounded-md place-items-center text-primary-text h-[32px] py-5px px-2.5 min-w-[32px] border border-solid border-transparent hover:border-[#d0d7de] hover:rounded-md cursor-pointer ${
+										page === currentPage
+											? "text-[#ffffff] border-[#0969da] bg-[#0969da]"
+											: "text-[#000000]"
+									}`}
+									onClick={() => setCurrentPage(page)}
+								>
+									{page}
+								</div>
+							);
+						})}
+						<button
+							disabled={currentPage === totalPages ? true : false}
+							className={`grid place-items-center grid-flow-col ${
+								currentPage === totalPages ? "text-[#8c959f]" : "text-[#0969da]"
+							} flex items-center py-5px px-2.5 border border-solid border-transparent hover:border-primary-border hover:rounded-md ${
+								currentPage === totalPages ? "" : "cursor-pointer"
+							}`}
+							onClick={() => setCurrentPage((prev) => prev + 1)}
+						>
+							<span>Next</span>
+							<ChevronRightIcon size={16} className="ml-1" />
+						</button>
+					</div>
+				) : (
+					<></>
+				)}
 			</div>
 		</>
 	);

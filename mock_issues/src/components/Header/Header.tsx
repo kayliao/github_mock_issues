@@ -1,56 +1,33 @@
 import styled from "styled-components";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { RootState } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 
 import github from "../../utils/github";
 import { useDispatch, useSelector } from "react-redux";
-import {
-	userActionTypes,
-	userStateType,
-	userType,
-} from "../../reducer/userReducer";
-// import { sessionActionTypes } from "../../reducer/sessionReducer";
-import store from "../../store/store";
+import { userType } from "../../reducer/userReducer";
 import { supaBaseInfoActions } from "../../reducer/supaBaseReducer";
 
 import { MarkGithubIcon } from "@primer/octicons-react";
-// import { useGetSearchUsersListsQuery } from "../../api/searchUsersSlice";
 
 function Header() {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	// const [searchInputName, setSearchInputName] = useState("");
-	// const user = useSelector<RootState>((state) => state.userStore["user"]);
 
 	const user = useSelector((state: RootState) => state.supaBaseInfo.user);
-	// const { data: searchUsersData } =
-	// 	useGetSearchUsersListsQuery(searchInputName);
-	// console.log(searchUsersData);
-	// const supaBaseInfo = store
 
 	useEffect(() => {
 		async function checkUser() {
 			const result = await github.checkUser();
 
 			console.log(result);
-			// dispatch({
-			// 	type: userActionTypes.SET_USER_INFO,
-			// 	payload: { userInfo: result.user },
-			// });
-			// dispatch({
-			// 	type: sessionActionTypes.SET_SESSION_INFO,
-			// 	payload: { sessionInfo: result.session },
-			// });
+
 			dispatch(supaBaseInfoActions.setuser({ userInfo: result.user }));
 			dispatch(supaBaseInfoActions.setsession({ sessionInfo: result.session }));
 
 			if ("provider_token" in result.session) {
 				localStorage.setItem("provider_token", result.session.provider_token);
-				// dispatch({
-				// 	type: sessionActionTypes.SET_SESSION_TOKEN,
-				// 	payload: { sessionToken: result.session.provider_token },
-				// });
+
 				dispatch(
 					supaBaseInfoActions.settoken({
 						sessionToken: result.session.provider_token,
@@ -58,10 +35,7 @@ function Header() {
 				);
 			} else {
 				const token = localStorage.getItem("provider_token") ?? null;
-				// dispatch({
-				// 	type: sessionActionTypes.SET_SESSION_TOKEN,
-				// 	payload: { sessionToken: token },
-				// });
+
 				dispatch(supaBaseInfoActions.settoken({ sessionToken: token }));
 
 				console.log(token);
@@ -82,16 +56,7 @@ function Header() {
 		const result = await github.signOut();
 
 		console.log("signout", result);
-
-		// dispatch({
-		// 	type: userActionTypes.SET_USER_INFO,
-		// 	payload: { userInfo: null },
-		// });
 		dispatch(supaBaseInfoActions.setuser({ userInfo: null }));
-		// dispatch({
-		// 	type: sessionActionTypes.SET_SESSION_INFO,
-		// 	payload: { sessionInfo: null },
-		// });
 		dispatch(supaBaseInfoActions.setsession({ sessionInfo: null }));
 	}
 
@@ -106,8 +71,6 @@ function Header() {
 				<SearchBox
 					onKeyDown={(e) => {
 						if (e.key === "Enter" || e.keyCode === 13) {
-							// setSearchInputName(e.currentTarget.value);
-							// console.log(e.currentTarget.value);
 							const searchName = e.currentTarget.value;
 							e.currentTarget.value = "";
 							e.currentTarget.blur();

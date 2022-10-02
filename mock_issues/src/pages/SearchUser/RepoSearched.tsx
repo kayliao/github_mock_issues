@@ -66,8 +66,6 @@ function RepoSearched() {
 													repoInfo: element,
 												})
 											);
-
-											// if (navigateCallback) navigateCallback(navigateUrl);
 										}}
 										to={`/${element.full_name}/issues`}
 									>

@@ -7,10 +7,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { currentRepoInfoActions } from "./reducer/currentRepoInfoReducer";
 
 function Repo() {
-	// const token = useSelector<RootState>(
-	// 	(state) => state.sessionStore["session"]?.provider_token
-	// );
-	// const token = useSelector<RootState>((state) => state.sessionStore.token);
 	const dispatch = useDispatch();
 
 	const token = useSelector((state: RootState) => state.supaBaseInfo.token);
@@ -69,8 +65,6 @@ function Repo() {
 												repoInfo: element,
 											})
 										);
-
-										// if (navigateCallback) navigateCallback(navigateUrl);
 									}}
 									to={`/${element.full_name}/issues`}
 								>
