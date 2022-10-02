@@ -12,9 +12,6 @@ function RepoSearched() {
 	const token = useSelector((state: RootState) => state.supaBaseInfo.token);
 	const user = useSelector((state: RootState) => state.supaBaseInfo.user);
 
-	console.log(token);
-	console.log(user);
-
 	const [repolist, setrepolist] = useState(null);
 
 	useEffect(() => {
@@ -29,7 +26,7 @@ function RepoSearched() {
 				}
 			);
 			const resjson = await res.json();
-			console.log(resjson);
+
 			setrepolist(resjson);
 		}
 		if (token) getRepos();

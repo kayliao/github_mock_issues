@@ -37,27 +37,17 @@ export default function LabelManagement() {
 		reponame: reponame,
 	});
 
-	console.log("username", username, "reponame", reponame);
 	const [deleteLabel] = useDeleteLabelMutation();
 	const [updateLabel] = useUpdateLabelMutation();
 	const [createLabel] = useCreateLabelMutation();
 
 	if (isLoading) {
-		console.log("isloading");
 		return (
 			<LoadingWrapper>
 				<p>...loading</p>
 			</LoadingWrapper>
 		);
 	}
-	if (isSuccess) {
-		console.log("issuccess");
-	}
-	if (isError) {
-		console.log("iserror", error);
-	}
-
-	console.log(labelListData);
 
 	return (
 		<>
