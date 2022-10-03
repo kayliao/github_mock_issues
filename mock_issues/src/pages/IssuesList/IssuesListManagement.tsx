@@ -166,6 +166,21 @@ export default function IssuesListManagement() {
 		return result;
 	}
 
+	function makeInputQueryString(stringObjects) {
+		let result = "";
+		for (let [key, value] of Object.entries(stringObjects)) {
+			if (key === "noassignee") result = result + ` no:assignee`;
+			else if (key === "nolabel") result = result + ` no:label`;
+			else if (key === "label")
+				(value as []).forEach((element) => {
+					result = result + ` label:${element}`;
+				});
+			else result = result + ` ${key}:${value}`;
+		}
+		result = result.substring(1);
+		return result;
+	}
+
 	useEffect(() => {
 		async function getAssigneeLists(username, reponame) {
 			const res = await fetch(
@@ -513,7 +528,7 @@ export default function IssuesListManagement() {
 								type="text"
 								placeholder="Search all issues"
 								defaultValue="is:issue is:open"
-								value={makeQueryString(queryString)}
+								value={makeInputQueryString(queryString)}
 								className="bg-[#f6f8fa] py-[5px] pl-8 pr-3 outline-none border border-solid border-[rgba(27,31,36,0.15)] rounded-r-md focus:border-[#0969da] focus:shadow-[0_0_0_1px_#0969da] w-full text-[#57606a]"
 							/>
 						</div>
@@ -546,7 +561,7 @@ export default function IssuesListManagement() {
 						Clear current search query, filters, and sorts
 					</div>
 				)}
-				<div className="lg:hidden flex items-center cursor-pointer">
+				<div className="lg:hidden flex items-center cursor-pointer w-full">
 					<div
 						onClick={() => {
 							setQueryString({
