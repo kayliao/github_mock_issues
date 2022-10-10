@@ -5,6 +5,7 @@ module.exports = {
 		screens: {
 			xs: "368px",
 			sm: "544px",
+			smd: "767px",
 			md: "768px",
 			lg: "1012px",
 			xl: "1280px",
@@ -15,5 +16,5 @@ module.exports = {
 			},
 		},
 	},
-	plugins: [],
+	plugins: [require("@tailwindcss/typography")],
 };

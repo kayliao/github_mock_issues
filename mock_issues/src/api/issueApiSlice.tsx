@@ -19,8 +19,15 @@ const issueApiExtend = githubApiSlice.injectEndpoints({
 				}`,
 			}),
 		}),
+		newIssue: builder.mutation({
+			query: (createInfo) => ({
+				url: `/repos/${createInfo.username}/${createInfo.reponame}/issues`,
+				method: "POST",
+				body: createInfo.createIssueData,
+			}),
+		}),
 	}),
 	overrideExisting: false,
 });
 
-export const { useGetIssueListsQuery } = issueApiExtend;
+export const { useGetIssueListsQuery, useNewIssueMutation } = issueApiExtend;

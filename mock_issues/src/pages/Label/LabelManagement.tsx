@@ -100,7 +100,7 @@ export default function LabelManagement() {
 						/>
 					</LabelListBoxHeader>
 
-					{labelListData.map((element) => {
+					{labelListData?.map((element) => {
 						return (
 							<ListItemBox>
 								<LabelItem

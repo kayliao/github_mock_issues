@@ -14,6 +14,7 @@ export default function ButtonShare({
 	return (
 		<NewButton
 			disabled={!isAble}
+			isAble={isAble}
 			textColor={textColor}
 			backgroundColor={backgroundColor}
 			textSize={textSize}
@@ -28,8 +29,10 @@ export default function ButtonShare({
 }
 
 const NewButton = styled.button`
-	color: ${(props: NewButtonType) => props.textColor};
-	background-color: ${(props) => props.backgroundColor};
+	color: ${(props: NewButtonType) =>
+		props.isAble ? props.textColor : "rgba(255,255,255,0.8)"};
+	background-color: ${(props) =>
+		props.isAble ? props.backgroundColor : "#94d3a2"};
 	border: 1px solid;
 	border-color: ${(props) => props.borderColor};
 	border-radius: 6px;
@@ -59,4 +62,6 @@ type NewButtonType = {
 	hoverColor?: string;
 	hoverBorderColor?: string;
 	onClickFunc?: React.MouseEventHandler<HTMLButtonElement>;
+	isAble?: boolean;
+	// param?:{disableTextColor?:string,disableBackgroundColor?:string,disableBorderColor?:string}
 };

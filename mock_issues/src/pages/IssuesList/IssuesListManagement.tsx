@@ -489,7 +489,12 @@ export default function IssuesListManagement() {
 								</button>
 							</div>
 						</div>
-						<button className="bg-[#2da44e] text-white border border-solid border-[rgba(27,31,36,0.15)] py-[5px] px-4 font-medium whitespace-nowrap rounded-md ml-4 hover:bg-[#2c974b]">
+						<button
+							onClick={() => {
+								navigate(`/${username}/${reponame}/issues/new`);
+							}}
+							className="bg-[#2da44e] text-white border border-solid border-[rgba(27,31,36,0.15)] py-[5px] px-4 font-medium whitespace-nowrap rounded-md ml-4 hover:bg-[#2c974b]"
+						>
 							<span className="hidden md:block">New issue</span>
 							<span className="md:hidden">New</span>
 						</button>
