@@ -7,6 +7,7 @@ import LabelManagement from "./pages/Label/LabelManagement";
 import IssuesListManagement from "pages/IssuesList/IssuesListManagement";
 import UsersLists from "pages/SearchUser/UsersLists";
 import RepoSearched from "pages/SearchUser/RepoSearched";
+import NewIssuePage from "pages/NewIssue/NewIssuePage";
 
 import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -35,6 +36,10 @@ root.render(
 				<Route
 					path="/:username/:reponame/issues"
 					element={<IssuesListManagement />}
+				/>
+				<Route
+					path="/:username/:reponame/issues/new"
+					element={<NewIssuePage />}
 				/>
 			</Route>
 		</Routes>

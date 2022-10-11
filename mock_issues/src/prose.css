@@ -1,0 +1,110 @@
+.prose {
+	max-width: 100%;
+	color: #24292f;
+}
+.prose h1 {
+	width: 100%;
+	font-size: 28px;
+	margin: 24px 0px 16px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid rgb(208, 215, 222);
+}
+.prose h2 {
+	font-size: 21px;
+	margin: 24px 0px 16px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid rgb(208, 215, 222);
+}
+.prose em {
+	font-style: italic;
+}
+.prose table {
+	width: unset;
+	border: 1px solid rgb(208, 215, 222);
+}
+.prose table tr {
+	border-bottom: 1px solid rgb(208, 215, 222);
+}
+.prose table td,
+.prose table th {
+	padding: 6px 13px;
+	border-right: 1px solid rgb(208, 215, 222);
+}
+.prose blockquote {
+	color: #57606a;
+	border-left: 0.25em solid #d0d7de;
+	padding: 0 1em;
+	font-style: normal;
+	font-weight: normal;
+}
+.prose blockquote p::before,
+.prose blockquote p::after {
+	content: none;
+}
+.prose code {
+	padding: 0.2em 0.4em;
+	margin: 0;
+	font-size: 85%;
+	background-color: rgba(175, 184, 193, 0.2);
+	border-radius: 6px;
+	color: #24292f;
+	font-weight: normal;
+}
+.prose code::before,
+.prose code::after {
+	content: none;
+}
+.prose a {
+	color: #0969da;
+	text-decoration: none;
+	font-weight: normal;
+}
+.prose a:hover {
+	text-decoration: underline;
+}
+.prose ul {
+	padding-left: 2em;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+.prose li {
+	color: #24292f;
+	line-height: 1.5;
+	padding-left: 0;
+}
+.prose li::marker {
+	color: #24292f;
+	font-size: small;
+}
+.prose ol {
+	padding-left: 2em;
+	margin-top: 0;
+	margin-bottom: 16px;
+	color: #24292f;
+}
+.check {
+	list-style: none;
+	margin-left: -1.5em;
+	display: block;
+}
+.check input {
+	margin-right: 0.2em;
+}
+.mention {
+	background-color: #fff8c5;
+	padding: 0px 2px;
+	margin: 0px -2px;
+	display: block;
+	font-weight: bold;
+}
+.mention:hover {
+	text-decoration: underline;
+}
+.hash {
+	display: block;
+	color: #0969da;
+	display: block;
+}
+.check:hover {
+	text-decoration: underline;
+}
