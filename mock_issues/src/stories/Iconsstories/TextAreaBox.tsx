@@ -861,10 +861,12 @@ export default function TextAreaBox({ setTextData, param }) {
 		paragraph(text: string) {
 			const mentionText = text.match(/^\@/g);
 			const hashText = text.match(/^\#/g);
-			if (hashText) {
-				return `<button class="hash">${text}</button>`;
+			if (!hashText && !mentionText) {
+				return `<p>${text}</p>`;
 			}
-			return `<button ${mentionText ? "class=mention" : null}>${text}</button>`;
+			return `<button ${
+				mentionText ? "class=mention" : "class=hash"
+			}>${text}</button>`;
 		},
 	};
 

@@ -1,5 +1,5 @@
 import { PencilIcon, XIcon, CheckIcon } from "@primer/octicons-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function SideBarDropList({
 	isDisplayDropDown,
@@ -10,11 +10,14 @@ export default function SideBarDropList({
 	settingSelectData,
 }) {
 	const [selectedData, setSelectedData] = useState<string[]>([]);
-	const [inputFilterLists, setInputFilterLists] = useState(listData);
+	const [inputFilterLists, setInputFilterLists] = useState([]);
+	const inputRef = useRef(null);
 
 	// console.log("sidebar data", selectedData);
 	useEffect(() => {
 		settingSelectData(selectedData);
+		setInputFilterLists(listData);
+		inputRef.current.value = "";
 	}, [isDisplayDropDown]);
 
 	return (
@@ -34,6 +37,7 @@ export default function SideBarDropList({
 						</header>
 						<div className="p-4 m-0 border-b border-solid border-b-[hsla(210,18%,87%,1)] sm:p-2">
 							<input
+								ref={inputRef}
 								placeholder={inputTitle}
 								className="block w-full py-[5px] px-[12px] text-sm leading-5 rounded-md border border-solid border-[#d0d7de] focus:border focus:border-solid focus:border-[#0969da] focus:outline-none focus:shadow-innerblue"
 								onChange={(e) => {
