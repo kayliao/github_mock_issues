@@ -1,0 +1,307 @@
+import ButtonShare from "stories/Iconsstories/ButtonShare";
+import { IssueOpenedIcon } from "@primer/octicons-react";
+import { useState } from "react";
+import CommentBox from "./CommentBox";
+import React from "react";
+
+type MyProps = {};
+type MyState = { editOnClick: boolean };
+
+export default function IssueInfo() {
+	const [editOnClick, setEditOnClick] = useState(false);
+
+	return (
+		<div>
+			<div className="pr-4 pl-4 mt-6 xl:max-w-[1280px] xl:mx-auto">
+				<div>
+					<div className="mb-4 bg-[#ffffff]">
+						<div className={`${editOnClick ? "hidden" : "block"}`}>
+							<div className="flex flex-col md:flex-row md:justify-between">
+								<div className="flex mb-4 ml-[0px] mt-[0px] mb-4 items-start shrink-0 float-right md:mt-2 md:order-1 md:mb-0">
+									<ButtonShare
+										textColor="#24292f"
+										backgroundColor="#f6f8fa"
+										textSize="12px"
+										displayText="Edit"
+										borderColor="rgba(27,31,36,0.15)"
+										hoverColor="#f3f4f6"
+										hoverBorderColor="rgba(27,31,36,0.15)"
+										isAble={true}
+										onClickFunc={() => {
+											setEditOnClick(true);
+										}}
+										param={{ padding: "3px 12px" }}
+									/>
+									<div className="ml-2 float-left">
+										<ButtonShare
+											textColor="#ffffff"
+											backgroundColor="#2da44e"
+											textSize="12px"
+											displayText="New Issue"
+											borderColor="rgba(27,31,36,0.15)"
+											hoverColor="#2c974b"
+											hoverBorderColor="rgba(27,31,36,0.15)"
+											isAble={true}
+											onClickFunc={() => {}}
+											param={{ padding: "3px 12px" }}
+										/>
+									</div>
+									<div className="flex-auto text-right md:hidden">
+										<button className="py-1 text-[#0969da] cursor-pointer">
+											Jump to bottom
+										</button>
+									</div>
+								</div>
+								<h1 className="font-normal break-words mb-2 ">
+									<span className="text-[26px] md:text-[32px]">幫你留言!</span>
+									<span className="font-light ml-2 text-[26px] text-[#57606a] md:text-[32px]">
+										#10
+									</span>
+								</h1>
+							</div>
+						</div>
+						<div className={`${editOnClick ? "block" : "hidden"}`}>
+							<div className="mb-2 relative">
+								<div className="flex flex-col md:flex-row md:items-center">
+									<div className="flex flex-auto">
+										<input
+											autoFocus
+											autoComplete="off"
+											type={"text"}
+											className="flex flex-auto leading-[20px] text-[16px] py-[5px] px-[12px] border border-solid border-[#d0d7de] rounded-[6px] shadow-[inset_0_1px_0_rgba(208,215,222,0.2)] bg-[#f6f8fa] focus:bg-[#ffffff] focus:border-[#0969da] focus:outline-0 focus:shadow-[inset_0_0_0_1px_#0969da]"
+										/>
+									</div>
+									<div className="mt-2 flex items-center md:mt-0 md:ml-4">
+										<ButtonShare
+											textColor="#24292f"
+											backgroundColor="#f6f8fa"
+											textSize="14px"
+											displayText="Save"
+											borderColor="rgba(27,31,36,0.15)"
+											hoverColor="#f3f4f6"
+											hoverBorderColor="rgba(27,31,36,0.15)"
+											isAble={true}
+											onClickFunc={() => {}}
+											param={{}}
+										/>
+										<button
+											className="ml-2 text-[14px] leading-[21px] text-[#0969da] hover:underline"
+											onClick={() => setEditOnClick(false)}
+										>
+											Cancel
+										</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div className="flex text-[14px] pb-2 mb-4 items-center flex-wrap border-b border-solid border-[#d0d7de]">
+							<div className="mb-2 shrink-0 self-start flex">
+								<span className="mr-2 text-[#ffffff] text-[14px] leading-5 bg-[#2da44e] border border-solid border-[transparent] py-[5px] px-[12px] rounded-[2em]">
+									<IssueOpenedIcon /> Open{" "}
+								</span>
+							</div>
+							<div className="flex flex-auto mb-2 text-[#57606a] font-normal whitespace-pre">
+								<div className="font-semibold text-[#57606a] text-[14px] cursor-pointer">
+									yarchiee{" "}
+								</div>{" "}
+								opened this issue <div className="">15 days ago</div> · 0
+								comments
+							</div>
+						</div>
+					</div>
+				</div>
+				<div>
+					<div>
+						<CommentBox
+							avatar={"https://avatars.githubusercontent.com/u/34449805?v=4"}
+							param={{
+								boxBlue: false,
+								isFirst: false,
+								reactions: {
+									good: { number: 1, isClicked: true },
+									bad: { number: 1, isClicked: true },
+									confused: { number: 5, isClicked: false },
+									eyes: { number: 1, isClicked: true },
+									heart: { number: 1, isClicked: true },
+									hooray: { number: 1, isClicked: true },
+									laugh: { number: 1, isClicked: true },
+									rocket: { number: 1, isClicked: true },
+									total_count: 5,
+								},
+							}}
+							showMessage={"abcd"}
+						/>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+// export default class IssueInfo extends React.Component<MyProps, MyState> {
+// 	constructor(props) {
+// 		super(props);
+// 		this.state = {
+// 			editOnClick: false,
+// 		};
+// 	}
+
+// 	render() {
+// 		console.log(this.state);
+// 		return (
+// 			<div>
+// 				<div className="pr-4 pl-4 mt-6 xl:max-w-[1280px] xl:mx-auto">
+// 					<div>
+// 						<div className="mb-4 bg-[#ffffff]">
+// 							<div className={`${this.state.editOnClick ? "hidden" : "block"}`}>
+// 								<div className="flex flex-col md:flex-row md:justify-between">
+// 									<div className="flex mb-4 ml-[0px] mt-[0px] mb-4 items-start shrink-0 float-right md:mt-2 md:order-1 md:mb-0">
+// 										<ButtonShare
+// 											textColor="#24292f"
+// 											backgroundColor="#f6f8fa"
+// 											textSize="12px"
+// 											displayText="Edit"
+// 											borderColor="rgba(27,31,36,0.15)"
+// 											hoverColor="#f3f4f6"
+// 											hoverBorderColor="rgba(27,31,36,0.15)"
+// 											isAble={true}
+// 											onClickFunc={() => {
+// 												this.setState({ editOnClick: true });
+// 											}}
+// 											param={{ padding: "3px 12px" }}
+// 										/>
+// 										<div className="ml-2 float-left">
+// 											<ButtonShare
+// 												textColor="#ffffff"
+// 												backgroundColor="#2da44e"
+// 												textSize="12px"
+// 												displayText="New Issue"
+// 												borderColor="rgba(27,31,36,0.15)"
+// 												hoverColor="#2c974b"
+// 												hoverBorderColor="rgba(27,31,36,0.15)"
+// 												isAble={true}
+// 												onClickFunc={() => {}}
+// 												param={{ padding: "3px 12px" }}
+// 											/>
+// 										</div>
+// 										<div className="flex-auto text-right md:hidden">
+// 											<button className="py-1 text-[#0969da] cursor-pointer">
+// 												Jump to bottom
+// 											</button>
+// 										</div>
+// 									</div>
+// 									<h1 className="font-normal break-words mb-2 ">
+// 										<span className="text-[26px] md:text-[32px]">
+// 											幫你留言!
+// 										</span>
+// 										<span className="font-light text-[26px] text-[#57606a] md:text-[32px]">
+// 											#10
+// 										</span>
+// 									</h1>
+// 								</div>
+// 							</div>
+// 							<div className={`${this.state.editOnClick ? "block" : "hidden"}`}>
+// 								<div className="mb-2 relative">
+// 									<div className="flex flex-col">
+// 										<div className="flex flex-auto">
+// 											<input
+// 												autoFocus
+// 												autoComplete="off"
+// 												type={"text"}
+// 												className="flex flex-auto leading-[20px] text-[16px] py-[5px] px-[12px] border border-solid border-[#d0d7de] rounded-[6px] shadow-[inset_0_1px_0_rgba(208,215,222,0.2)] bg-[#f6f8fa] focus:bg-[#ffffff] focus:border-[#0969da] focus:outline-0 focus:shadow-[inset_0_0_0_1px_#0969da]"
+// 											/>
+// 										</div>
+// 									</div>
+// 								</div>
+// 							</div>
+// 							<div className="flex text-[14px] pb-2 items-center flex-wrap border-b border-solid border-[#d0d7de]">
+// 								<div className="mb-2 shrink-0 self-start">
+// 									<span className="mr-2 text-[#ffffff] text-[14px] leading-5 bg-[#2da44e] border border-solid border-[transparent] py-[5px] px-[12px] rounded-[2em]">
+// 										<IssueOpenedIcon /> Open{" "}
+// 									</span>
+// 								</div>
+// 								<div className="flex flex-auto mb-2 text-[#57606a] font-normal">
+// 									<div className="font-semibold text-[#57606a] text-[14px] cursor-pointer">
+// 										yarchiee{" "}
+// 									</div>{" "}
+// 									opened this issue <div className=""> 15 days ago</div> · 0
+// 									comments
+// 								</div>
+// 							</div>
+// 						</div>
+// 					</div>
+// 				</div>
+// 			</div>
+// 		);
+// 	}
+// }
+
+// export default function IssueInfo() {
+// 	return (
+// 		<div>
+// 			<div className="pr-4 pl-4 mt-6 xl:max-w-[1280px] xl:mx-auto">
+// 				<div>
+// 					<div className="mb-4 bg-[#ffffff]">
+// 						<div>
+// 							<div className="flex flex-col md:flex-row md:justify-between">
+// 								<div className="flex mb-4 ml-[0px] mt-[0px] mb-4 items-start shrink-0 float-right md:mt-2 md:order-1 md:mb-0">
+// 									<ButtonShare
+// 										textColor="#24292f"
+// 										backgroundColor="#f6f8fa"
+// 										textSize="12px"
+// 										displayText="Edit"
+// 										borderColor="rgba(27,31,36,0.15)"
+// 										hoverColor="#f3f4f6"
+// 										hoverBorderColor="rgba(27,31,36,0.15)"
+// 										isAble={true}
+// 										onClickFunc={() => {}}
+// 										param={{ padding: "3px 12px" }}
+// 									/>
+// 									<div className="ml-2 float-left">
+// 										<ButtonShare
+// 											textColor="#ffffff"
+// 											backgroundColor="#2da44e"
+// 											textSize="12px"
+// 											displayText="New Issue"
+// 											borderColor="rgba(27,31,36,0.15)"
+// 											hoverColor="#2c974b"
+// 											hoverBorderColor="rgba(27,31,36,0.15)"
+// 											isAble={true}
+// 											onClickFunc={() => {}}
+// 											param={{ padding: "3px 12px" }}
+// 										/>
+// 									</div>
+// 									<div className="flex-auto text-right md:hidden">
+// 										<button className="py-1 text-[#0969da] cursor-pointer">
+// 											Jump to bottom
+// 										</button>
+// 									</div>
+// 								</div>
+// 								<h1 className="font-normal break-words mb-2 ">
+// 									<span className="text-[26px] md:text-[32px]">幫你留言!</span>
+// 									<span className="font-light text-[26px] text-[#57606a] md:text-[32px]">
+// 										#10
+// 									</span>
+// 								</h1>
+// 							</div>
+// 						</div>
+// 						<div className="flex text-[14px] pb-2 items-center flex-wrap border-b border-solid border-[#d0d7de]">
+// 							<div className="mb-2 shrink-0 self-start">
+// 								<span className="mr-2 text-[#ffffff] text-[14px] leading-5 bg-[#2da44e] border border-solid border-[transparent] py-[5px] px-[12px] rounded-[2em]">
+// 									<IssueOpenedIcon /> Open{" "}
+// 								</span>
+// 							</div>
+// 							<div className="flex flex-auto mb-2 text-[#57606a] font-normal">
+// 								<div className="font-semibold text-[#57606a] text-[14px] cursor-pointer">
+// 									yarchiee{" "}
+// 								</div>{" "}
+// 								opened this issue <div className=""> 15 days ago</div> · 0
+// 								comments
+// 							</div>
+// 						</div>
+// 					</div>
+// 				</div>
+// 			</div>
+// 		</div>
+// 	);
+// }

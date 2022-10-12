@@ -14,7 +14,11 @@ import { useEffect, useState } from "react";
 export default function NewIssuePage() {
 	const { username, reponame } = useParams();
 	const visibility = useSelector(
-		(state: RootState) => state.currentRepoInfo.repoInfo.visibility
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.visibility
+	);
+	const userAvatar = useSelector(
+		(state: RootState) =>
+			state.supaBaseInfo.user.identities[0].identity_data.avatar_url
 	);
 	const [textData, setTextData] = useState({ title: "", body: "" });
 	const [barData, setBarData] = useState({ assignees: [], labels: [] });
@@ -62,6 +66,7 @@ export default function NewIssuePage() {
 			<div className="px-4 mt-6 md:flex md:w-[100%] md:justify-between md:px-6">
 				<TextAreaBox
 					setTextData={setTextData}
+					avatar={userAvatar}
 					param={{
 						closeIssue: { open: false },
 						submitIssue: {

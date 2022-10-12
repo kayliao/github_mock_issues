@@ -37,7 +37,7 @@ const firebaseConfig = {
 	appId: "1:871873251584:web:1040a0e217d91d70c94be5",
 };
 
-export default function TextAreaBox({ setTextData, param }) {
+export default function TextAreaBox({ setTextData, param, avatar }) {
 	const [writeOnClick, setWriteOnClick] = useState(true);
 	const [smallScreenMarkItemShowOnClick, setSmallScreenMarkItemShowOnClick] =
 		useState(true);
@@ -880,7 +880,7 @@ export default function TextAreaBox({ setTextData, param }) {
 				<span>
 					<a className="cursor-pointer">
 						<img
-							src="https://avatars.githubusercontent.com/u/34449805?s=80&v=4"
+							src={avatar}
 							className="w-[40px] h-[40px] rounded-[50%] overflow-hidden shadow-[0_0_0_1px_rgba(27,31,36,0.15)]"
 						/>
 					</a>
@@ -1356,6 +1356,7 @@ export default function TextAreaBox({ setTextData, param }) {
 										</button>
 									</div>
 									<ButtonShare
+										param={{}}
 										textColor={"#ffffff"}
 										backgroundColor={"#2da44e"}
 										textSize={"14px"}
@@ -1370,6 +1371,7 @@ export default function TextAreaBox({ setTextData, param }) {
 							</div>
 						) : (
 							<ButtonShare
+								param={{}}
 								textColor={"#ffffff"}
 								backgroundColor={"#2da44e"}
 								textSize={"14px"}
@@ -1400,6 +1402,7 @@ export default function TextAreaBox({ setTextData, param }) {
 									</button>
 								</div>
 								<ButtonShare
+									param={{}}
 									textColor={"#ffffff"}
 									backgroundColor={"#2da44e"}
 									textSize={"14px"}

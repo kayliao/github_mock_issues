@@ -23,7 +23,7 @@ export default function LabelManagement() {
 	const [sortClick, setSortClick] = useState(false);
 	const { username, reponame } = useParams();
 	const visibility = useSelector(
-		(state: RootState) => state.currentRepoInfo.repoInfo.visibility
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.visibility
 	);
 
 	const {
@@ -73,6 +73,7 @@ export default function LabelManagement() {
 					</SearchLabelWrapper>
 					<ButtonCompoStyle>
 						<ButtonShare
+							param={{}}
 							textColor="#fff"
 							backgroundColor="#2da44e"
 							textSize="14px"

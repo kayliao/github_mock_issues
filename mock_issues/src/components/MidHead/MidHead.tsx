@@ -86,7 +86,7 @@ export default function MidHead({ username, reponame, visibility }) {
 	const [pageId, setPageId] = useState(1);
 	const navigate = useNavigate();
 	ActionLists[1].number = useSelector(
-		(state: RootState) => state.currentRepoInfo.repoInfo.open_issues_count
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.open_issues_count
 	);
 
 	return (

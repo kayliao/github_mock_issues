@@ -10,6 +10,7 @@ export default function ButtonShare({
 	hoverBorderColor,
 	isAble,
 	onClickFunc,
+	param,
 }) {
 	return (
 		<NewButton
@@ -22,6 +23,7 @@ export default function ButtonShare({
 			hoverColor={hoverColor}
 			hoverBorderColor={hoverBorderColor}
 			onClick={onClickFunc}
+			other={param}
 		>
 			{displayText}
 		</NewButton>
@@ -36,7 +38,8 @@ const NewButton = styled.button`
 	border: 1px solid;
 	border-color: ${(props) => props.borderColor};
 	border-radius: 6px;
-	padding: 5px 16px;
+	padding: ${(props) =>
+		props.other?.padding ? props.other?.padding : "5px 16px"};
 	font-size: ${(props) => props.textSize};
 	font-weight: 500;
 	line-height: 20px;
@@ -63,5 +66,6 @@ type NewButtonType = {
 	hoverBorderColor?: string;
 	onClickFunc?: React.MouseEventHandler<HTMLButtonElement>;
 	isAble?: boolean;
+	other?: { padding?: string };
 	// param?:{disableTextColor?:string,disableBackgroundColor?:string,disableBorderColor?:string}
 };

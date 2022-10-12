@@ -13,10 +13,11 @@ export const githubApiSlice = createApi({
 				headers.set("authorization", `Bearer ${token}`);
 			}
 			headers.set("Accept", "application/vnd.github+json");
+			headers.set("If-None-Match", "");
 
 			return headers;
 		},
 	}),
-	tagTypes: ["Labels"],
+	tagTypes: ["Labels", "Issue"],
 	endpoints: (builder) => ({}),
 });
