@@ -95,7 +95,7 @@ export default function FilterDropList({
 								</span>
 							</div>
 							{inputFilterLists ? (
-								inputFilterLists.map((element, index) => {
+								inputFilterLists?.map((element, index) => {
 									return (
 										<div
 											className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b ${

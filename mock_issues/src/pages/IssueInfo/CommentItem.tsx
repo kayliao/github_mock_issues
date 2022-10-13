@@ -34,17 +34,21 @@ export default function CommentItem() {
 					avatar={"https://avatars.githubusercontent.com/u/34449805?v=4"}
 					param={{
 						closeIssue: { open: false, state: 2 },
-						editComment: { open: true },
+						editComment: {
+							open: true,
+							cancelClickFunction: () => setCommentShow(true),
+						},
 						submitIssue: {
 							submitAction: () => {},
 						},
 						closeMarkdownSupportTag: true,
+						closeContributionsGuideline: true,
 						closeTitleInput: true,
 						timeline: {
-							open: false,
-							isFirst: true,
+							open: true,
+							isFirst: false,
 						},
-						topTimeline: true,
+						// topTimeline: true,
 						// ahook: useGetAssigneeListsQuery,
 					}}
 				/>

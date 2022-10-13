@@ -68,7 +68,7 @@ export default function CommentBox({ avatar, showMessage, param }) {
 									: "bg-[#f6f8fa] border-b border-solid border-[#d0d7de]"
 							} px-4 h-[37px] flex items-center rounded-t-md`}
 						>
-							<h3 className="flex flex-auto font-normal text-[14px] text-[#57606a] whitespace-pre">
+							<h3 className="flex flex-auto font-normal text-[14px] text-[#57606a] whitespace-pre flex-wrap">
 								<strong>
 									<a className="truncate max-w-[125px] font-semibold hover:underline hover:text-[#0969da] text-[#000000] whitespace-pre">
 										kayliao{" "}
@@ -238,7 +238,7 @@ export default function CommentBox({ avatar, showMessage, param }) {
 									</summary>
 									<div>aaaa</div>
 								</details>
-								<div className="flex flex-wrap">
+								<div className="flex flex-wrap mt-[-2px]">
 									<button
 										className={`${
 											param?.reactions?.good?.number ? "flex" : "hidden"
@@ -246,7 +246,7 @@ export default function CommentBox({ avatar, showMessage, param }) {
 											param?.reactions?.good?.isClicked
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
-										} ml-2`}
+										} ml-2 mt-[2px]`}
 									>
 										<div className="w-4 h-4 text-[1em] ">👍</div>
 										<span
@@ -266,7 +266,7 @@ export default function CommentBox({ avatar, showMessage, param }) {
 											param?.reactions?.bad?.isClicked
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
-										} ml-2`}
+										} ml-2 mt-[2px]`}
 									>
 										<div className="w-4 h-4 text-[1em] ">👎</div>
 										<span
@@ -286,7 +286,7 @@ export default function CommentBox({ avatar, showMessage, param }) {
 											param?.reactions?.laugh?.isClicked
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
-										} ml-2`}
+										} ml-2 mt-[2px]`}
 									>
 										<div className="w-4 h-4 text-[1em] ">😄</div>
 										<span
@@ -306,7 +306,7 @@ export default function CommentBox({ avatar, showMessage, param }) {
 											param?.reactions?.hooray?.isClicked
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
-										} ml-2`}
+										} ml-2 mt-[2px]`}
 									>
 										<div className="w-4 h-4 text-[1em] ">🎉</div>
 										<span
@@ -326,7 +326,7 @@ export default function CommentBox({ avatar, showMessage, param }) {
 											param?.reactions?.confused?.isClicked
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
-										} ml-2`}
+										} ml-2 mt-[2px]`}
 									>
 										<div className="w-4 h-4 text-[1em] ">😕</div>
 										<span
@@ -346,7 +346,7 @@ export default function CommentBox({ avatar, showMessage, param }) {
 											param?.reactions?.heart?.isClicked
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
-										} ml-2`}
+										} ml-2 mt-[2px]`}
 									>
 										<div className="w-4 h-4 text-[1em] ">❤️</div>
 										<span
@@ -366,7 +366,7 @@ export default function CommentBox({ avatar, showMessage, param }) {
 											param?.reactions?.rocket?.isClicked
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
-										} ml-2`}
+										} ml-2 mt-[2px]`}
 									>
 										<div className="w-4 h-4 text-[1em] ">🚀</div>
 										<span
@@ -386,7 +386,7 @@ export default function CommentBox({ avatar, showMessage, param }) {
 											param?.reactions?.eyes?.isClicked
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
-										} ml-2`}
+										} ml-2 mt-[2px]`}
 									>
 										<div className="w-4 h-4 text-[1em] ">👀</div>
 										<span

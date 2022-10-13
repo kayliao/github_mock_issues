@@ -2,16 +2,21 @@ import ButtonShare from "stories/Iconsstories/ButtonShare";
 import { IssueOpenedIcon } from "@primer/octicons-react";
 import { useCallback, useRef, useState } from "react";
 import CommentItem from "./CommentItem";
+import SettingsBar from "stories/Iconsstories/SettingsBar";
 import { useGetAssigneeListsQuery } from "api/assigneeApiSlice";
 import CommentBox from "./CommentBox";
 import TextAreaBox from "stories/Iconsstories/TextAreaBox";
+import Label from "stories/Iconsstories/Label";
 import React from "react";
+import { useParams } from "react-router-dom";
 
 type MyProps = {};
 type MyState = { editOnClick: boolean };
 
 export default function IssueInfo() {
 	const [editOnClick, setEditOnClick] = useState(false);
+	const { username, reponame, issuenumber } = useParams();
+
 	const observer = useRef<IntersectionObserver | null>(null);
 	const headerBottom = useCallback((node: HTMLDivElement) => {
 		if (node) {
@@ -179,6 +184,40 @@ export default function IssueInfo() {
           </header> */}
 					</div>
 				</div>
+				<div className="block md:hidden text-[12px] mb-6 border-b border-solid border-[#d0d7de]">
+					<div className="flex items-center mb-4">
+						<span className="font-semibold text-[#57606a] w-[24.99%] sm:w-[16.99%]">
+							Assignees
+						</span>
+						<div className="flex flex-wrap">
+							<a className="mr-1">
+								<img
+									src="https://avatars.githubusercontent.com/u/34449805?s=40&v=4"
+									className="w-[20px] h-[20px] rounded-[50%] shadow-[0_0_0_1px_rgba(27,31,36,0.15)]"
+								/>
+							</a>
+							<a className="mr-1">
+								<img
+									src="https://avatars.githubusercontent.com/u/34449805?s=40&v=4"
+									className="w-[20px] h-[20px] rounded-[50%] shadow-[0_0_0_1px_rgba(27,31,36,0.15)]"
+								/>
+							</a>
+						</div>
+					</div>
+					<div className="flex items-center mb-4">
+						<span className="font-semibold text-[#57606a] w-[24.99%] sm:w-[16.99%]">
+							Labels
+						</span>
+						<div className="flex flex-wrap">
+							<div className="mr-1 mb-1">
+								<Label backgroundColor={"#ffffff"} labelName={"abcded"} />
+							</div>
+							<div className="mr-1 mb-1">
+								<Label backgroundColor={"#ffffff"} labelName={"abcded"} />
+							</div>
+						</div>
+					</div>
+				</div>
 				<div className="hidden">
 					{/* <div>
 						<CommentBox
@@ -221,8 +260,49 @@ export default function IssueInfo() {
 						/>
 					</div> */}
 				</div>
-				<div>
-					<CommentItem />
+				<div className=" mt-6 md:flex md:w-[100%] md:justify-between ">
+					<div className="w-[inherit]">
+						<CommentItem />
+						<CommentItem />
+						<CommentItem />
+						<TextAreaBox
+							setTextData={() => {}}
+							avatar={"https://avatars.githubusercontent.com/u/34449805?v=4"}
+							param={{
+								closeIssue: { open: true, state: 2 },
+								editComment: {
+									open: false,
+								},
+								submitIssue: {
+									submitAction: () => {},
+								},
+								closeMarkdownSupportTag: true,
+								closeContributionsGuideline: false,
+								closeTitleInput: true,
+								timeline: {
+									open: false,
+									isFirst: false,
+								},
+								topTimeline: true,
+								// ahook: useGetAssigneeListsQuery,
+							}}
+						/>
+					</div>
+					<div className="ml-4">
+						<SettingsBar
+							setBarData={() => {}}
+							param={{
+								openDevelop: true,
+								Notifications: { open: true, subscribe: false },
+								Participant: { open: true },
+								IssueActions: { open: true },
+							}}
+							username={username}
+							reponame={reponame}
+							assigneeList={[]}
+							labelList={[]}
+						/>
+					</div>
 				</div>
 			</div>
 		</div>
