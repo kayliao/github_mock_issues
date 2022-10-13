@@ -98,9 +98,75 @@ export default function CommentBox({ avatar, showMessage, param }) {
 								>
 									Author
 								</span>
-								<div className="hidden md:block cursor-pointer py-2 px-1">
-									<SmileyIcon className="fill-[#57606a] ml-1" />
-								</div>
+								<details className="relative hidden md:inline-block cursor-pointer py-2 px-1">
+									<summary className="inline-block">
+										<SmileyIcon className="fill-[#57606a] ml-1" />
+									</summary>
+									<div className="absolute flex z-[15] mr-2 left-[auto] top-[10px] right-full w-[auto] py-0 px-[2px] rounded-[6px] border border-solid border-[#d0d7de] shadow-[0_8px_24px_rgba(140,149,159,0.2)] bg-[#ffffff]">
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.good?.isClicked ? "bg-[#ddf4ff]" : ""
+											}`}
+										>
+											👍
+										</button>
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.bad?.isClicked ? "bg-[#ddf4ff]" : ""
+											}`}
+										>
+											👎
+										</button>
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.laugh?.isClicked ? "bg-[#ddf4ff]" : ""
+											}`}
+										>
+											😄
+										</button>
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.hooray?.isClicked
+													? "bg-[#ddf4ff]"
+													: ""
+											}`}
+										>
+											🎉
+										</button>
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.confused?.isClicked
+													? "bg-[#ddf4ff]"
+													: ""
+											}`}
+										>
+											😕
+										</button>
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.heart?.isClicked ? "bg-[#ddf4ff]" : ""
+											}`}
+										>
+											❤️
+										</button>
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.rocket?.isClicked
+													? "bg-[#ddf4ff]"
+													: ""
+											}`}
+										>
+											🚀
+										</button>
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.eyes?.isClicked ? "bg-[#ddf4ff]" : ""
+											}`}
+										>
+											👀
+										</button>
+									</div>
+								</details>
 								<details className="inline-block cursor-pointer relative">
 									<summary className="inline-flex py-2 px-1">
 										<KebabHorizontalIcon className="fill-[#57606a] ml-1" />
@@ -108,6 +174,43 @@ export default function CommentBox({ avatar, showMessage, param }) {
 									<div className="w-[185px] right-[-6px] mt-[-4px] left-[auto] absolute top-[110%] z-[15] py-1 bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[6px] shadow-[0_8px_24px_rgba(140,149,159,0.2)]">
 										<button className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#24292f] text-left hover:bg-[#0969da] hover:text-[#ffffff]">
 											Copy link
+										</button>
+										<button className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#24292f] text-left hover:bg-[#0969da] hover:text-[#ffffff]">
+											Quote reply
+										</button>
+										{param?.isFirst ? (
+											<></>
+										) : (
+											<button className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#24292f] text-left hover:bg-[#0969da] hover:text-[#ffffff]">
+												Reference in new issue
+											</button>
+										)}
+										<div className="h-[0px] my-2 mx-0 border-t border-solid border-[#d0d7de]"></div>
+										<button
+											className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#24292f] text-left hover:bg-[#0969da] hover:text-[#ffffff]"
+											onClick={() => {
+												param?.editClickFunction();
+											}}
+										>
+											Edit
+										</button>
+										{param?.isFirst ? (
+											<></>
+										) : (
+											<button className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#24292f] text-left hover:bg-[#0969da] hover:text-[#ffffff]">
+												Hide
+											</button>
+										)}
+										{param?.isFirst ? (
+											<></>
+										) : (
+											<button className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#cf222e] text-left hover:bg-[#cf222e] hover:text-[#ffffff]">
+												Delete
+											</button>
+										)}
+										<div className="h-[0px] my-2 mx-0 border-t border-solid border-[#d0d7de]"></div>
+										<button className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#24292f] text-left hover:bg-[#0969da] hover:text-[#ffffff]">
+											Report content
 										</button>
 									</div>
 								</details>

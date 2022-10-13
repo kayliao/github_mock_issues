@@ -50,6 +50,10 @@ const NewButton = styled.button`
 	&:hover:enabled {
 		border-color: ${(props) => props.hoverBorderColor};
 		background-color: ${(props) => props.hoverColor};
+		color: ${(props) =>
+			props?.other?.hoverTextColor
+				? props?.other?.hoverTextColor
+				: props.textColor};
 	}
 
 	&:disabled {
@@ -66,6 +70,6 @@ type NewButtonType = {
 	hoverBorderColor?: string;
 	onClickFunc?: React.MouseEventHandler<HTMLButtonElement>;
 	isAble?: boolean;
-	other?: { padding?: string };
+	other?: { padding?: string; hoverTextColor?: string };
 	// param?:{disableTextColor?:string,disableBackgroundColor?:string,disableBorderColor?:string}
 };
