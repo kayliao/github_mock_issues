@@ -5,12 +5,16 @@ import {
 	GitPullRequestIcon,
 	GitPullRequestClosedIcon,
 } from "@primer/octicons-react";
+import { useNavigate } from "react-router-dom";
 
 export default function IssuesListItem({
 	issuesItemData,
 	currentItemIndex,
 	totalItemsCount,
+	param,
 }) {
+	const navigate = useNavigate();
+
 	function countRestTime(timeString) {
 		const time = new Date(timeString);
 		const timeNow = Date.now();
@@ -83,7 +87,12 @@ export default function IssuesListItem({
 				<div
 					className={` px-[16px] py-[8px] flex border-solid border-[#d0d7de] ${
 						currentItemIndex === totalItemsCount - 1 ? "border-b-0" : "border-b"
-					} hover:bg-[rgba(234,238,242,0.5)]`}
+					} hover:bg-[rgba(234,238,242,0.5)] cursor-pointer `}
+					onClick={() => {
+						navigate(
+							`/${param?.username}/${param?.reponame}/issues/${issuesItemData.number}`
+						);
+					}}
 				>
 					{issuesItemData?.pull_request ? (
 						issuesItemData.state === "open" ? (

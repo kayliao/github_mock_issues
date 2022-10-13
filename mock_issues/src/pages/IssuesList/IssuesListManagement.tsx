@@ -106,6 +106,8 @@ export default function IssuesListManagement() {
 		nextPages: [],
 	});
 
+	console.log(IssueListData);
+
 	const { username, reponame } = useParams();
 	const visibility = useSelector(
 		(state: RootState) => state?.currentRepoInfo?.repoInfo?.visibility
@@ -801,6 +803,7 @@ export default function IssuesListManagement() {
 									issuesItemData={element}
 									currentItemIndex={index}
 									totalItemsCount={IssueListData.length}
+									param={{ username: username, reponame: reponame }}
 								/>
 							);
 						})
