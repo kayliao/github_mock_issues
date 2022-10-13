@@ -106,17 +106,19 @@ export default function IssuesListManagement() {
 		nextPages: [],
 	});
 
+	console.log(IssueListData);
+
 	const { username, reponame } = useParams();
 	const visibility = useSelector(
-		(state: RootState) => state.currentRepoInfo.repoInfo.visibility
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.visibility
 	);
 	const loginAvatar = useSelector(
 		(state: RootState) =>
-			state.supaBaseInfo.user.identities[0].identity_data.avatar_url
+			state?.supaBaseInfo?.user?.identities[0].identity_data.avatar_url
 	);
 	const loginName = useSelector(
 		(state: RootState) =>
-			state.supaBaseInfo.user.identities[0].identity_data.user_name
+			state?.supaBaseInfo?.user?.identities[0].identity_data.user_name
 	);
 
 	const [sortOnClickItem, setSortOnClickItem] = useState(0);
@@ -801,6 +803,7 @@ export default function IssuesListManagement() {
 									issuesItemData={element}
 									currentItemIndex={index}
 									totalItemsCount={IssueListData.length}
+									param={{ username: username, reponame: reponame }}
 								/>
 							);
 						})

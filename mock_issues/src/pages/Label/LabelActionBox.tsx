@@ -246,6 +246,7 @@ export default function LabelActionBox({
 							hoverColor="#2c974b"
 							hoverBorderColor="rgba(27,31,36,0.15)"
 							isAble={isSubmitOk}
+							param={{}}
 							onClickFunc={() => {
 								let apiBodyData = {
 									username: gitInfo.username,
@@ -274,6 +275,7 @@ export default function LabelActionBox({
 					</ButtonCompoStyleBox>
 					<ButtonCompoStyleBox2>
 						<ButtonShare
+							param={{}}
 							textColor="#24292f"
 							backgroundColor="#f6f8fa"
 							textSize="14px"

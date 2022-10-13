@@ -21,6 +21,14 @@ export default {
 			},
 		},
 
+		avatar: {
+			description: "user image",
+			type: { required: true },
+			table: {
+				type: { summary: "string" },
+			},
+		},
+
 		param: {
 			description: "The background color of the button.",
 			type: { name: "object", required: true },
@@ -35,6 +43,7 @@ const Template = (args) => <TextAreaBox {...args} />;
 export const Default = Template.bind({});
 Default.args = {
 	setTextData: () => {},
+	avatar: "https://avatars.githubusercontent.com/u/34449805?v=4",
 	param: {
 		closeIssue: { open: false },
 		submitIssue: {
