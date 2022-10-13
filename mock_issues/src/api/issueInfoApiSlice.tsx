@@ -6,6 +6,7 @@ const issueInfoApiExtend = githubApiSlice.injectEndpoints({
 			query: (issueInfo) => ({
 				url: `/repos/${issueInfo.username}/${issueInfo.reponame}/issues/${issueInfo.issuenumber}`,
 			}),
+			providesTags: ["Issue"],
 		}),
 		updateIssue: builder.mutation({
 			query: (updateInfo) => ({
@@ -20,4 +21,5 @@ const issueInfoApiExtend = githubApiSlice.injectEndpoints({
 	overrideExisting: false,
 });
 
-export const { useGetIssueInfoQuery } = issueInfoApiExtend;
+export const { useGetIssueInfoQuery, useUpdateIssueMutation } =
+	issueInfoApiExtend;
