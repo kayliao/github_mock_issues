@@ -18,6 +18,6 @@ export const githubApiSlice = createApi({
 			return headers;
 		},
 	}),
-	tagTypes: ["Labels", "Issue", "Comment", "Reactions"],
+	tagTypes: ["Labels", "Issue", "Comment", "Reactions", "IssueReactions"],
 	endpoints: (builder) => ({}),
 });

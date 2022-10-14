@@ -1,5 +1,9 @@
 import ButtonShare from "stories/Iconsstories/ButtonShare";
-import { IssueOpenedIcon } from "@primer/octicons-react";
+import {
+	IssueOpenedIcon,
+	IssueClosedIcon,
+	SkipIcon,
+} from "@primer/octicons-react";
 import { useCallback, useRef, useState } from "react";
 import CommentItem from "./CommentItem";
 import SettingsBar from "stories/Iconsstories/SettingsBar";
@@ -9,6 +13,10 @@ import TextAreaBox from "stories/Iconsstories/TextAreaBox";
 import Label from "stories/Iconsstories/Label";
 import React from "react";
 import { useParams } from "react-router-dom";
+import { useGetIssueInfoQuery } from "../../api/issueInfoApiSlice";
+import { useSelector } from "react-redux";
+import { RootState } from "store/store";
+import { useGetLabelListsQuery } from "api/labelApiSlice";
 
 type MyProps = {};
 type MyState = { editOnClick: boolean };
@@ -16,6 +24,24 @@ type MyState = { editOnClick: boolean };
 export default function IssueInfo() {
 	const [editOnClick, setEditOnClick] = useState(false);
 	const { username, reponame, issuenumber } = useParams();
+	const [barData, setBarData] = useState({ assignees: [], labels: [] });
+
+	console.log(barData);
+
+	const { data: issueInformation } = useGetIssueInfoQuery({
+		username,
+		reponame,
+		issuenumber,
+	});
+	const { data: labelListData } = useGetLabelListsQuery({
+		username: username,
+		reponame: reponame,
+	});
+
+	const loginName = useSelector(
+		(state: RootState) =>
+			state?.supaBaseInfo?.user?.identities[0].identity_data.user_name
+	);
 
 	const observer = useRef<IntersectionObserver | null>(null);
 	const headerBottom = useCallback((node: HTMLDivElement) => {
@@ -35,6 +61,49 @@ export default function IssueInfo() {
 			observer.current.observe(node);
 		}
 	}, []);
+
+	console.log("info", issueInformation);
+
+	function countRestTime(timeString) {
+		const time = new Date(timeString);
+		const timeNow = Date.now();
+		const diffTime = timeNow - time.getTime();
+
+		const diffDays = Math.floor(diffTime / (24 * 3600 * 1000));
+		let hours, minutes, seconds;
+		if (diffDays <= 0) {
+			const leave1 = diffTime % (24 * 3600 * 1000);
+			hours = Math.floor(leave1 / (3600 * 1000));
+			if (hours <= 0) {
+				const leave2 = leave1 % (3600 * 1000);
+				minutes = Math.floor(leave2 / (60 * 1000));
+				if (minutes <= 0) {
+					const leave3 = leave2 % (60 * 1000);
+					seconds = Math.round(leave3 / 1000);
+					return `${seconds} seconds ago`;
+				} else {
+					return `${minutes} minutes ago`;
+				}
+			} else {
+				return `${hours} hours ago`;
+			}
+		} else if (diffDays <= 30) {
+			return `${diffDays} days ago`;
+		} else {
+			time.toLocaleString("default", { month: "short" });
+
+			time.toLocaleString("en-GB", {
+				day: "numeric",
+				month: "long",
+				year: "numeric",
+			});
+			return `on ${time.toLocaleString("en-GB", {
+				day: "numeric",
+				month: "long",
+				year: "numeric",
+			})}`;
+		}
+	}
 
 	return (
 		<div>
@@ -79,9 +148,11 @@ export default function IssueInfo() {
 									</div>
 								</div>
 								<h1 className="font-normal break-words mb-2 ">
-									<span className="text-[26px] md:text-[32px]">幫你留言!</span>
+									<span className="text-[26px] md:text-[32px]">
+										{issueInformation?.title}
+									</span>
 									<span className="font-light ml-2 text-[26px] text-[#57606a] md:text-[32px]">
-										#10
+										{`#${issuenumber}`}
 									</span>
 								</h1>
 							</div>
@@ -125,16 +196,29 @@ export default function IssueInfo() {
 							ref={headerBottom}
 						>
 							<div className="mb-2 shrink-0 self-start flex">
-								<span className="mr-2 text-[#ffffff] text-[14px] leading-5 bg-[#2da44e] border border-solid border-[transparent] py-[5px] px-[12px] rounded-[2em]">
-									<IssueOpenedIcon /> Open{" "}
-								</span>
+								{issueInformation?.state === "open" ? (
+									<span className="mr-2 text-[#ffffff] text-[14px] leading-5 bg-[#2da44e] border border-solid border-[transparent] py-[5px] px-[12px] rounded-[2em]">
+										<IssueOpenedIcon /> Open{" "}
+									</span>
+								) : issueInformation?.state_reason === "not_planned" ? (
+									<span className="mr-2 text-[#ffffff] text-[14px] leading-5 bg-[#6e7781] border border-solid border-[transparent] py-[5px] px-[12px] rounded-[2em]">
+										<SkipIcon /> Closed{" "}
+									</span>
+								) : (
+									<span className="mr-2 text-[#ffffff] text-[14px] leading-5 bg-[#8250df] border border-solid border-[transparent] py-[5px] px-[12px] rounded-[2em]">
+										<IssueClosedIcon /> Closed{" "}
+									</span>
+								)}
 							</div>
 							<div className="flex flex-auto mb-2 text-[#57606a] font-normal whitespace-pre">
 								<div className="font-semibold text-[#57606a] text-[14px] cursor-pointer">
-									yarchiee{" "}
+									{`${issueInformation?.user?.login} `}
 								</div>{" "}
-								opened this issue <div className="">15 days ago</div> · 0
-								comments
+								opened this issue{" "}
+								<div className="">
+									{`${countRestTime(issueInformation?.created_at)}`}
+								</div>
+								{` · ${issueInformation?.comments} comments`}
 							</div>
 						</div>
 					</div>
@@ -262,14 +346,51 @@ export default function IssueInfo() {
 				</div>
 				<div className=" mt-6 md:flex md:w-[100%] md:justify-between ">
 					<div className="w-[inherit]">
-						<CommentItem />
-						<CommentItem />
-						<CommentItem />
+						<CommentItem
+							param={{
+								isFirst: true,
+								isOwner:
+									issueInformation?.author_association === "OWNER"
+										? true
+										: false,
+								isCollaborator:
+									issueInformation?.author_association === "Collaborator"
+										? true
+										: false,
+								boxBlue:
+									issueInformation?.user.login === loginName ? true : false,
+							}}
+							showMessage={issueInformation?.body ? issueInformation?.body : ""}
+						/>
+						<CommentItem
+							param={{
+								isAuthor:
+									issueInformation?.user.login === loginName ? true : false,
+								boxBlue:
+									issueInformation?.user.login === loginName ? true : false,
+							}}
+							showMessage=""
+						/>
+						<CommentItem
+							param={{
+								boxBlue:
+									issueInformation?.user.login === loginName ? true : false,
+							}}
+							showMessage=""
+						/>
 						<TextAreaBox
 							setTextData={() => {}}
 							avatar={"https://avatars.githubusercontent.com/u/34449805?v=4"}
 							param={{
-								closeIssue: { open: true, state: 2 },
+								closeIssue: {
+									open: true,
+									state:
+										issueInformation?.state === "open"
+											? 0
+											: issueInformation?.state_reason === "not_planned"
+											? 1
+											: 2,
+								},
 								editComment: {
 									open: false,
 								},
@@ -289,19 +410,37 @@ export default function IssueInfo() {
 						/>
 					</div>
 					<div className="ml-4">
-						<SettingsBar
-							setBarData={() => {}}
-							param={{
-								openDevelop: true,
-								Notifications: { open: true, subscribe: false },
-								Participant: { open: true },
-								IssueActions: { open: true },
-							}}
-							username={username}
-							reponame={reponame}
-							assigneeList={[]}
-							labelList={[]}
-						/>
+						{issueInformation?.labels && issueInformation.assignees ? (
+							<SettingsBar
+								setBarData={setBarData}
+								param={{
+									openDevelop: true,
+									Notifications: { open: true, subscribe: false },
+									Participant: { open: true },
+									IssueActions: { open: true },
+									initialLabels: issueInformation?.labels?.map((element) => {
+										return element.name;
+									}),
+									initialAssignees: issueInformation?.assignees?.map(
+										(element) => {
+											return element.login;
+										}
+									),
+								}}
+								username={username}
+								reponame={reponame}
+								assigneeList={[]}
+								labelList={labelListData?.map((element) => {
+									return {
+										color: `#${element.color}`,
+										name: element.name,
+										des: element.description,
+									};
+								})}
+							/>
+						) : (
+							<></>
+						)}
 					</div>
 				</div>
 			</div>

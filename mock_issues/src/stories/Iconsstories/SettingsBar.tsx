@@ -26,7 +26,12 @@ export default function SettingsBar({
 	const [assigneesOnClick, setAssigneesOnClick] = useState(false);
 	const [assigneeSelected, setAssigneeSelected] = useState([]);
 	const [labelsOnClick, setLabelsOnClick] = useState(false);
-	const [labelsSelected, setLabelsSelected] = useState([]);
+	const [labelsSelected, setLabelsSelected] = useState(
+		param?.initialLabels ? param?.initialLabels : []
+	);
+	console.log(Boolean(param?.initialLabels));
+
+	console.log(param?.initialLabels, labelsSelected);
 
 	useEffect(() => {
 		setBarData({ assignees: assigneeSelected, labels: labelsSelected });
@@ -102,6 +107,7 @@ export default function SettingsBar({
 							openItemClose: true,
 							linkTitle: "Edit labels",
 							linkFunction: () => navigate(`/${username}/${reponame}/labels`),
+							initialSelectedData: labelsSelected,
 						}}
 						inputTitle={"Filter labels"}
 						title={"Apply labels to this issue"}
@@ -112,8 +118,8 @@ export default function SettingsBar({
 
 					{labelsSelected?.length != 0 ? (
 						<div className="flex flex-wrap">
-							{labelList.map((element) => {
-								if (labelsSelected.includes(element.name)) {
+							{labelList?.map((element) => {
+								if (labelsSelected?.includes(element.name)) {
 									return (
 										<div className="mr-1 mb-1">
 											<Label

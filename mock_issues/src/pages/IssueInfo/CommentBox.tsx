@@ -1,5 +1,6 @@
 import { KebabHorizontalIcon, SmileyIcon } from "@primer/octicons-react";
 import { marked } from "marked";
+import "../../prose.css";
 
 export default function CommentBox({ avatar, showMessage, param }) {
 	const renderer = {
@@ -80,24 +81,45 @@ export default function CommentBox({ avatar, showMessage, param }) {
 								</a>
 							</h3>
 							<div className="sm:flex items-center">
-								<span
-									className={`hidden sm:block border border-solid ${
-										param?.boxBlue
-											? "border-[rgba(84,174,255,0.4)]"
-											: "border-[#d0d7de]"
-									} py-0 px-[7px] rounded-[2em] ml-1 font-medium text-[#57606a] text-[12px]`}
-								>
-									Owner
-								</span>
-								<span
-									className={`hidden sm:block border border-solid ${
-										param?.boxBlue
-											? "border-[rgba(84,174,255,0.4)]"
-											: "border-[#d0d7de]"
-									} py-0 px-[7px] rounded-[2em] ml-1 font-medium text-[#57606a] text-[12px]`}
-								>
-									Author
-								</span>
+								{param?.relation?.isOwner ? (
+									<span
+										className={`hidden sm:block border border-solid ${
+											param?.boxBlue
+												? "border-[rgba(84,174,255,0.4)]"
+												: "border-[#d0d7de]"
+										} py-0 px-[7px] rounded-[2em] ml-1 font-medium text-[#57606a] text-[12px]`}
+									>
+										Owner
+									</span>
+								) : (
+									<></>
+								)}
+								{param?.relation?.isCollaborator ? (
+									<span
+										className={`hidden sm:block border border-solid ${
+											param?.boxBlue
+												? "border-[rgba(84,174,255,0.4)]"
+												: "border-[#d0d7de]"
+										} py-0 px-[7px] rounded-[2em] ml-1 font-medium text-[#57606a] text-[12px]`}
+									>
+										Collaborator
+									</span>
+								) : (
+									<></>
+								)}
+								{param?.relation?.isAuthor ? (
+									<span
+										className={`hidden sm:block border border-solid ${
+											param?.boxBlue
+												? "border-[rgba(84,174,255,0.4)]"
+												: "border-[#d0d7de]"
+										} py-0 px-[7px] rounded-[2em] ml-1 font-medium text-[#57606a] text-[12px]`}
+									>
+										Author
+									</span>
+								) : (
+									<></>
+								)}
 								<details className="relative hidden md:inline-block cursor-pointer py-2 px-1">
 									<summary className="inline-block">
 										<SmileyIcon className="fill-[#57606a] ml-1" />
@@ -219,7 +241,7 @@ export default function CommentBox({ avatar, showMessage, param }) {
 						<div>
 							<div className="p-4 bg-[#ffffff] rounded-b-md">
 								<div
-									className=""
+									className="prose"
 									dangerouslySetInnerHTML={{
 										__html: marked(showMessage),
 									}}

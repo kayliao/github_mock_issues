@@ -109,7 +109,10 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 	const [writeOnClick, setWriteOnClick] = useState(true);
 	const [smallScreenMarkItemShowOnClick, setSmallScreenMarkItemShowOnClick] =
 		useState(true);
-	const [inputData, setInputData] = useState({ title: "", body: "" });
+	const [inputData, setInputData] = useState({
+		title: "",
+		body: param?.inputData ? param?.inputData : "",
+	});
 	// const textAreaMarkRef = useRef<TextareaMarkdownRef>(null);
 	const textAreaMarkRef = useRef(null);
 	const [selectedFile, setSelectedFile] = useState(null);

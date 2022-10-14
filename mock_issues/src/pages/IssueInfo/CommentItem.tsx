@@ -2,7 +2,7 @@ import CommentBox from "./CommentBox";
 import TextAreaBox from "stories/Iconsstories/TextAreaBox";
 import { useState } from "react";
 
-export default function CommentItem() {
+export default function CommentItem({ param, showMessage }) {
 	const [commentShow, setCommentShow] = useState(true);
 
 	return (
@@ -11,8 +11,8 @@ export default function CommentItem() {
 				<CommentBox
 					avatar={"https://avatars.githubusercontent.com/u/34449805?v=4"}
 					param={{
-						boxBlue: false,
-						isFirst: false,
+						boxBlue: param?.boxBlue ? param?.boxBlue : false,
+						isFirst: param?.isFirst ? param?.isFirst : false,
 						reactions: {
 							good: { number: 1, isClicked: true },
 							bad: { number: 1, isClicked: true },
@@ -25,8 +25,15 @@ export default function CommentItem() {
 							total_count: 5,
 						},
 						editClickFunction: () => setCommentShow(false),
+						relation: {
+							isOwner: param?.isOwner ? param?.isOwner : false,
+							isCollaborator: param?.isCollaborator
+								? param?.isCollaborator
+								: false,
+							isAuthor: param?.isAuthor ? param?.isAuthor : false,
+						},
 					}}
-					showMessage={"abcd"}
+					showMessage={showMessage}
 				/>
 			) : (
 				<TextAreaBox
@@ -46,8 +53,9 @@ export default function CommentItem() {
 						closeTitleInput: true,
 						timeline: {
 							open: true,
-							isFirst: false,
+							isFirst: param?.isFirst ? param?.isFirst : false,
 						},
+						inputData: showMessage,
 						// topTimeline: true,
 						// ahook: useGetAssigneeListsQuery,
 					}}

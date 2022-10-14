@@ -9,9 +9,13 @@ export default function SideBarDropList({
 	listData,
 	settingSelectData,
 }) {
-	const [selectedData, setSelectedData] = useState<string[]>([]);
+	const [selectedData, setSelectedData] = useState<string[]>(
+		param?.initialSelectedData ? param?.initialSelectedData : []
+	);
 	const [inputFilterLists, setInputFilterLists] = useState([]);
 	const inputRef = useRef(null);
+
+	console.log(param?.initialSelectedData, selectedData);
 
 	// console.log("sidebar data", selectedData);
 	useEffect(() => {
