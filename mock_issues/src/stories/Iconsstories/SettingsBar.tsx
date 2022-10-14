@@ -24,14 +24,15 @@ export default function SettingsBar({
 	const navigate = useNavigate();
 
 	const [assigneesOnClick, setAssigneesOnClick] = useState(false);
-	const [assigneeSelected, setAssigneeSelected] = useState([]);
+	const [assigneeSelected, setAssigneeSelected] = useState(
+		param?.initialAssignees ? param?.initialAssignees : []
+	);
 	const [labelsOnClick, setLabelsOnClick] = useState(false);
 	const [labelsSelected, setLabelsSelected] = useState(
 		param?.initialLabels ? param?.initialLabels : []
 	);
-	console.log(Boolean(param?.initialLabels));
 
-	console.log(param?.initialLabels, labelsSelected);
+	console.log(param?.initialAssignees, assigneeSelected);
 
 	useEffect(() => {
 		setBarData({ assignees: assigneeSelected, labels: labelsSelected });
@@ -56,6 +57,7 @@ export default function SettingsBar({
 							subtitle: "Suggestions",
 							openItemClose: false,
 							allClearTitle: "Clear assignees",
+							initialSelectedData: assigneeSelected,
 						}}
 						inputTitle={"Type or choose a user"}
 						title={"Assign up to 10 people to this issue"}

@@ -17,6 +17,7 @@ import { useGetIssueInfoQuery } from "../../api/issueInfoApiSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "store/store";
 import { useGetLabelListsQuery } from "api/labelApiSlice";
+import { useGetIssueTimelineQuery } from "api/issueTimelineApiSlice";
 
 type MyProps = {};
 type MyState = { editOnClick: boolean };
@@ -36,6 +37,17 @@ export default function IssueInfo() {
 	const { data: labelListData } = useGetLabelListsQuery({
 		username: username,
 		reponame: reponame,
+	});
+
+	const { data: assigneeListData } = useGetAssigneeListsQuery({
+		username: username,
+		reponame: reponame,
+	});
+
+	const { data: timelineData } = useGetIssueTimelineQuery({
+		username,
+		reponame,
+		issuenumber,
 	});
 
 	const loginName = useSelector(
@@ -63,6 +75,32 @@ export default function IssueInfo() {
 	}, []);
 
 	console.log("info", issueInformation);
+	// console.log(
+	// 	Array.from(
+	// 		assigneeListData
+	// 			?.map((element) => {
+	// 				return {
+	// 					avatar_url: element.avatar_url,
+	// 					name: element.login,
+	// 				};
+	// 			})
+	// 			.concat(
+	// 				timelineData?.map((element) => {
+	// 					if (element.event === "mentioned")
+	// 						return {
+	// 							avatar_url: element.actor.avatar_url,
+	// 							name: element.actor.login,
+	// 						};
+	// 					return;
+	// 				})
+	// 			)
+	// 			.filter((element) => {
+	// 				return element != undefined;
+	// 			})
+	// 			.reduce((map, obj) => map.set(obj.name, obj), new Map())
+	// 			.values()
+	// 	)
+	// );
 
 	function countRestTime(timeString) {
 		const time = new Date(timeString);
@@ -429,7 +467,30 @@ export default function IssueInfo() {
 								}}
 								username={username}
 								reponame={reponame}
-								assigneeList={[]}
+								assigneeList={Array.from(
+									assigneeListData
+										?.map((element) => {
+											return {
+												avatar_url: element.avatar_url,
+												name: element.login,
+											};
+										})
+										.concat(
+											timelineData?.map((element) => {
+												if (element.event === "mentioned")
+													return {
+														avatar_url: element.actor.avatar_url,
+														name: element.actor.login,
+													};
+												return;
+											})
+										)
+										.filter((element) => {
+											return element != undefined;
+										})
+										.reduce((map, obj) => map.set(obj.name, obj), new Map())
+										.values()
+								)}
 								labelList={labelListData?.map((element) => {
 									return {
 										color: `#${element.color}`,
