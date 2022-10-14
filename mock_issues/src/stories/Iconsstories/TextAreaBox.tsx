@@ -1748,7 +1748,17 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 											hoverBorderColor={"rgba(27,31,36,0.15)"}
 											isAble={true}
 											onClickFunc={() => {
-												param.submitIssue.submitAction();
+												console.log(
+													param?.editComment?.updateCommentActionApiHook
+												);
+												param?.editComment?.updateCommentActionApiHook?.();
+
+												param?.editComment?.updateIssueActionApiHook({
+													...param?.editComment?.editApiData,
+													editData: {
+														body: inputData.body,
+													},
+												});
 											}}
 										/>
 									</>
@@ -2035,7 +2045,18 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 											hoverBorderColor={"rgba(27,31,36,0.15)"}
 											isAble={true}
 											onClickFunc={() => {
-												param.submitIssue.submitAction();
+												console.log(
+													param?.editComment?.updateCommentActionApiHook
+												);
+
+												param?.editComment?.updateCommentActionApiHook?.();
+
+												param?.editComment?.updateIssueActionApiHook({
+													...param?.editComment?.editApiData,
+													editData: {
+														body: inputData.body,
+													},
+												});
 											}}
 										/>
 									</>

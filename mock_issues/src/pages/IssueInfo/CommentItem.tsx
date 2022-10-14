@@ -44,6 +44,9 @@ export default function CommentItem({ param, showMessage }) {
 						editComment: {
 							open: true,
 							cancelClickFunction: () => setCommentShow(true),
+							updateCommentActionApiHook: param?.updateCommentActionApiHook,
+							updateIssueActionApiHook: param?.updateIssueActionApiHook,
+							editApiData: param?.editApiData ? param?.editApiData : {},
 						},
 						submitIssue: {
 							submitAction: () => {},

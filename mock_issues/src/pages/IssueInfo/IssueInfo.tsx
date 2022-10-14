@@ -13,7 +13,10 @@ import TextAreaBox from "stories/Iconsstories/TextAreaBox";
 import Label from "stories/Iconsstories/Label";
 import React from "react";
 import { useParams } from "react-router-dom";
-import { useGetIssueInfoQuery } from "../../api/issueInfoApiSlice";
+import {
+	useGetIssueInfoQuery,
+	useUpdateIssueMutation,
+} from "../../api/issueInfoApiSlice";
 import { useSelector } from "react-redux";
 import { RootState } from "store/store";
 import { useGetLabelListsQuery } from "api/labelApiSlice";
@@ -34,6 +37,9 @@ export default function IssueInfo() {
 		reponame,
 		issuenumber,
 	});
+
+	const [updateIssue] = useUpdateIssueMutation();
+
 	const { data: labelListData } = useGetLabelListsQuery({
 		username: username,
 		reponame: reponame,
@@ -397,6 +403,9 @@ export default function IssueInfo() {
 										: false,
 								boxBlue:
 									issueInformation?.user.login === loginName ? true : false,
+								// updateCommentActionApiHook:updateIssue
+								updateIssueActionApiHook: updateIssue,
+								editApiData: { username, reponame, issuenumber },
 							}}
 							showMessage={issueInformation?.body ? issueInformation?.body : ""}
 						/>
