@@ -30,7 +30,7 @@ export default function IssueInfo() {
 	const navigate = useNavigate();
 	const [editOnClick, setEditOnClick] = useState(false);
 	const { username, reponame, issuenumber } = useParams();
-	const [barData, setBarData] = useState({ assignees: [], labels: [] });
+	const [barData, setBarData] = useState(null);
 	const inputTitleRef = useRef(null);
 	const [stateUpdateInfo, setStateUpdateInfo] = useState({
 		state: "",
@@ -89,26 +89,30 @@ export default function IssueInfo() {
 	console.log("info", issueInformation);
 
 	useEffect(() => {
-		updateIssue({
-			username,
-			reponame,
-			issuenumber,
-			editData: {
-				assignees: barData.assignees,
-			},
-		});
-	}, [barData.assignees]);
+		if (barData != null) {
+			updateIssue({
+				username,
+				reponame,
+				issuenumber,
+				editData: {
+					assignees: barData.assignees,
+				},
+			});
+		}
+	}, [barData?.assignees]);
 
 	useEffect(() => {
-		updateIssue({
-			username,
-			reponame,
-			issuenumber,
-			editData: {
-				labels: barData.labels,
-			},
-		});
-	}, [barData.labels]);
+		if (barData != null) {
+			updateIssue({
+				username,
+				reponame,
+				issuenumber,
+				editData: {
+					labels: barData.labels,
+				},
+			});
+		}
+	}, [barData?.labels]);
 
 	useEffect(() => {
 		if (!isIssueUpdating) setEditOnClick(false);
