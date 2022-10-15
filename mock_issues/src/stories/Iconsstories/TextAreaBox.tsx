@@ -910,6 +910,68 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 		}
 	}
 
+	function getIssueStateReason() {
+		if (
+			JSON.stringify(issueState) == JSON.stringify(closureStates.closeIssue)
+		) {
+			return {
+				state: "closed",
+				state_reason: "completed",
+				stateID: 0,
+			};
+		} else if (
+			JSON.stringify(issueState) == JSON.stringify(closureStates.closeComment)
+		) {
+			return {
+				state: "closed",
+				state_reason: "completed",
+				stateID: 1,
+			};
+		} else if (
+			JSON.stringify(issueState) == JSON.stringify(closureStates.closeComplete)
+		) {
+			return {
+				state: "closed",
+				state_reason: "completed",
+				stateID: 2,
+			};
+		} else if (
+			JSON.stringify(issueState) == JSON.stringify(closureStates.closeSkip)
+		) {
+			return {
+				state: "closed",
+				state_reason: "not_planned",
+				stateID: 3,
+			};
+		} else if (
+			JSON.stringify(issueState) ==
+			JSON.stringify(closureStates.closeSkipComment)
+		) {
+			return {
+				state: "closed",
+				state_reason: "not_planned",
+				stateID: 4,
+			};
+		} else if (
+			JSON.stringify(issueState) == JSON.stringify(closureStates.reopen)
+		) {
+			return {
+				state: "open",
+				state_reason: "reopened",
+				stateID: 5,
+			};
+		} else if (
+			JSON.stringify(issueState) ==
+			JSON.stringify(closureStates.closeNotPlanned)
+		) {
+			return {
+				state: "closed",
+				state_reason: "not_planned",
+				stateID: 6,
+			};
+		}
+	}
+
 	function handleTask() {
 		const result = checkBlockorCaret();
 		const nextlinePos =
@@ -1494,7 +1556,14 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 											{param?.closeIssue?.state === 0 ||
 											!param?.closeIssue?.state ? (
 												<div className="flex justify-center mr-1">
-													<button className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]">
+													<button
+														className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
+														onClick={() => {
+															param?.closeIssue?.setStateInfoFunction?.(
+																getIssueStateReason()
+															);
+														}}
+													>
 														{issueState}
 													</button>
 													<button
@@ -1518,7 +1587,24 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 																}}
 															>
 																<div className="flex items-start mr-1">
-																	<CheckIcon fill={"#000000"} />
+																	<CheckIcon
+																		className={`${
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeIssue
+																				) ||
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeComment
+																				) ||
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeComplete
+																				)
+																				? "fill-[#000000]"
+																				: "fill-[#ffffff]"
+																		}`}
+																	/>
 																</div>
 
 																<div className="leading-tight min-w-0">
@@ -1548,7 +1634,24 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 																}}
 															>
 																<div className="flex items-start mr-1">
-																	<CheckIcon fill={"#000000"} />
+																	<CheckIcon
+																		className={`${
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeSkip
+																				) ||
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeSkipComment
+																				) ||
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeNotPlanned
+																				)
+																				? "fill-[#000000]"
+																				: "fill-[#ffffff]"
+																		}`}
+																	/>
 																</div>
 
 																<div className="leading-tight min-w-0">
@@ -1570,7 +1673,14 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 												</div>
 											) : param?.closeIssue?.state === 1 ? (
 												<div className="flex justify-center mr-1">
-													<button className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]">
+													<button
+														className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
+														onClick={() => {
+															param?.closeIssue?.setStateInfoFunction?.(
+																getIssueStateReason()
+															);
+														}}
+													>
 														{issueState}
 													</button>
 													<button
@@ -1596,7 +1706,14 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 																}}
 															>
 																<div className="flex items-start mr-1">
-																	<CheckIcon fill={"#000000"} />
+																	<CheckIcon
+																		className={`${
+																			JSON.stringify(issueState) ==
+																			JSON.stringify(closureStates.reopen)
+																				? "fill-[#000000]"
+																				: "fill-[#ffffff]"
+																		}`}
+																	/>
 																</div>
 
 																<div className="leading-tight min-w-0">
@@ -1618,7 +1735,24 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 																}}
 															>
 																<div className="flex items-start mr-1">
-																	<CheckIcon fill={"#000000"} />
+																	<CheckIcon
+																		className={`${
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeIssue
+																				) ||
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeComment
+																				) ||
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeComplete
+																				)
+																				? "fill-[#000000]"
+																				: "fill-[#ffffff]"
+																		}`}
+																	/>
 																</div>
 
 																<div className="leading-tight min-w-0">
@@ -1636,7 +1770,14 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 												</div>
 											) : (
 												<div className="flex justify-center mr-1">
-													<button className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]">
+													<button
+														className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
+														onClick={() => {
+															param?.closeIssue?.setStateInfoFunction?.(
+																getIssueStateReason()
+															);
+														}}
+													>
 														{issueState}
 													</button>
 													<button
@@ -1662,7 +1803,14 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 																}}
 															>
 																<div className="flex items-start mr-1">
-																	<CheckIcon fill={"#000000"} />
+																	<CheckIcon
+																		className={`${
+																			JSON.stringify(issueState) ==
+																			JSON.stringify(closureStates.reopen)
+																				? "fill-[#000000]"
+																				: "fill-[#ffffff]"
+																		}`}
+																	/>
 																</div>
 
 																<div className="leading-tight min-w-0">
@@ -1684,7 +1832,24 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 																}}
 															>
 																<div className="flex items-start mr-1">
-																	<CheckIcon fill={"#000000"} />
+																	<CheckIcon
+																		className={`${
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeSkip
+																				) ||
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeSkipComment
+																				) ||
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeNotPlanned
+																				)
+																				? "fill-[#000000]"
+																				: "fill-[#ffffff]"
+																		}`}
+																	/>
 																</div>
 
 																<div className="leading-tight min-w-0">
@@ -1792,7 +1957,14 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 											{param?.closeIssue?.state === 0 ||
 											!param?.closeIssue?.state ? (
 												<div className="flex justify-center mr-1">
-													<button className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]">
+													<button
+														className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
+														onClick={() => {
+															param?.closeIssue?.setStateInfoFunction?.(
+																getIssueStateReason()
+															);
+														}}
+													>
 														{issueState}
 													</button>
 													<button
@@ -1816,7 +1988,24 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 																}}
 															>
 																<div className="flex items-start mr-1">
-																	<CheckIcon fill={"#000000"} />
+																	<CheckIcon
+																		className={`${
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeIssue
+																				) ||
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeComment
+																				) ||
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeComplete
+																				)
+																				? "fill-[#000000]"
+																				: "fill-[#ffffff]"
+																		}`}
+																	/>
 																</div>
 
 																<div className="leading-tight min-w-0">
@@ -1846,7 +2035,24 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 																}}
 															>
 																<div className="flex items-start mr-1">
-																	<CheckIcon fill={"#000000"} />
+																	<CheckIcon
+																		className={`${
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeSkip
+																				) ||
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeSkipComment
+																				) ||
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeNotPlanned
+																				)
+																				? "fill-[#000000]"
+																				: "fill-[#ffffff]"
+																		}`}
+																	/>
 																</div>
 
 																<div className="leading-tight min-w-0">
@@ -1868,7 +2074,14 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 												</div>
 											) : param?.closeIssue?.state === 1 ? (
 												<div className="flex justify-center mr-1">
-													<button className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]">
+													<button
+														className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
+														onClick={() => {
+															param?.closeIssue?.setStateInfoFunction?.(
+																getIssueStateReason()
+															);
+														}}
+													>
 														{issueState}
 													</button>
 													<button
@@ -1894,7 +2107,14 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 																}}
 															>
 																<div className="flex items-start mr-1">
-																	<CheckIcon fill={"#000000"} />
+																	<CheckIcon
+																		className={`${
+																			JSON.stringify(issueState) ==
+																			JSON.stringify(closureStates.reopen)
+																				? "fill-[#000000]"
+																				: "fill-[#ffffff]"
+																		}`}
+																	/>
 																</div>
 
 																<div className="leading-tight min-w-0">
@@ -1916,7 +2136,24 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 																}}
 															>
 																<div className="flex items-start mr-1">
-																	<CheckIcon fill={"#000000"} />
+																	<CheckIcon
+																		className={`${
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeIssue
+																				) ||
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeComment
+																				) ||
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeComplete
+																				)
+																				? "fill-[#000000]"
+																				: "fill-[#ffffff]"
+																		}`}
+																	/>
 																</div>
 
 																<div className="leading-tight min-w-0">
@@ -1934,7 +2171,14 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 												</div>
 											) : (
 												<div className="flex justify-center mr-1">
-													<button className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]">
+													<button
+														className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
+														onClick={() => {
+															param?.closeIssue?.setStateInfoFunction?.(
+																getIssueStateReason()
+															);
+														}}
+													>
 														{issueState}
 													</button>
 													<button
@@ -1960,7 +2204,14 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 																}}
 															>
 																<div className="flex items-start mr-1">
-																	<CheckIcon fill={"#000000"} />
+																	<CheckIcon
+																		className={`${
+																			JSON.stringify(issueState) ==
+																			JSON.stringify(closureStates.reopen)
+																				? "fill-[#000000]"
+																				: "fill-[#ffffff]"
+																		}`}
+																	/>
 																</div>
 
 																<div className="leading-tight min-w-0">
@@ -1982,7 +2233,24 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 																}}
 															>
 																<div className="flex items-start mr-1">
-																	<CheckIcon fill={"#000000"} />
+																	<CheckIcon
+																		className={`${
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeSkip
+																				) ||
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeSkipComment
+																				) ||
+																			JSON.stringify(issueState) ==
+																				JSON.stringify(
+																					closureStates.closeNotPlanned
+																				)
+																				? "fill-[#000000]"
+																				: "fill-[#ffffff]"
+																		}`}
+																	/>
 																</div>
 
 																<div className="leading-tight min-w-0">
