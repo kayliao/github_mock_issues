@@ -147,9 +147,13 @@ export default function SideBarDropList({
 														</div>
 													</div>
 													{param?.openItemClose ? (
-														<button className="absolute cursor-pointer py-4 m-[-16px] leading-none rounded-none right-0 ml-2 mr-[10px]">
-															<XIcon fill={"#57606a"} />
-														</button>
+														selectedData?.includes(element?.name) ? (
+															<button className="absolute cursor-pointer py-4 m-[-16px] leading-none rounded-none right-0 ml-2 mr-[10px]">
+																<XIcon fill={"#57606a"} />
+															</button>
+														) : (
+															<></>
+														)
 													) : (
 														<></>
 													)}
@@ -239,9 +243,13 @@ export default function SideBarDropList({
 														</div>
 													</div>
 													{param?.openItemClose ? (
-														<button className="absolute cursor-pointer py-4 m-[-16px] leading-none rounded-none right-0 ml-2 mr-[10px]">
-															<XIcon fill={"#57606a"} />
-														</button>
+														selectedData?.includes(element?.name) ? (
+															<button className="absolute cursor-pointer py-4 m-[-16px] leading-none rounded-none right-0 ml-2 mr-[10px]">
+																<XIcon fill={"#57606a"} />
+															</button>
+														) : (
+															<></>
+														)
 													) : (
 														<></>
 													)}
