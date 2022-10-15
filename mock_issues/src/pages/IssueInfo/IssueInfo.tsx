@@ -12,7 +12,7 @@ import CommentBox from "./CommentBox";
 import TextAreaBox from "stories/Iconsstories/TextAreaBox";
 import Label from "stories/Iconsstories/Label";
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
 	useGetIssueInfoQuery,
 	useUpdateIssueMutation,
@@ -26,6 +26,7 @@ type MyProps = {};
 type MyState = { editOnClick: boolean };
 
 export default function IssueInfo() {
+	const navigate = useNavigate();
 	const [editOnClick, setEditOnClick] = useState(false);
 	const { username, reponame, issuenumber } = useParams();
 	const [barData, setBarData] = useState({ assignees: [], labels: [] });
@@ -177,7 +178,9 @@ export default function IssueInfo() {
 											hoverColor="#2c974b"
 											hoverBorderColor="rgba(27,31,36,0.15)"
 											isAble={true}
-											onClickFunc={() => {}}
+											onClickFunc={() => {
+												navigate(`/${username}/${reponame}/issues/new`);
+											}}
 											param={{ padding: "3px 12px" }}
 										/>
 									</div>
