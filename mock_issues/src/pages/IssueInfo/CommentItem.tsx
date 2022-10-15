@@ -2,7 +2,12 @@ import CommentBox from "./CommentBox";
 import TextAreaBox from "stories/Iconsstories/TextAreaBox";
 import { useState } from "react";
 
-export default function CommentItem({ param, showMessage }) {
+export default function CommentItem({
+	param,
+	showMessage,
+	authorName,
+	createTime,
+}) {
 	const [commentShow, setCommentShow] = useState(true);
 
 	return (
@@ -10,6 +15,8 @@ export default function CommentItem({ param, showMessage }) {
 			{commentShow ? (
 				<CommentBox
 					avatar={"https://avatars.githubusercontent.com/u/34449805?v=4"}
+					authorName={authorName}
+					createTime={createTime}
 					param={{
 						boxBlue: param?.boxBlue ? param?.boxBlue : false,
 						isFirst: param?.isFirst ? param?.isFirst : false,

@@ -22,6 +22,12 @@ import { useSelector } from "react-redux";
 import { RootState } from "store/store";
 import { useGetLabelListsQuery } from "api/labelApiSlice";
 import { useGetIssueTimelineQuery } from "api/issueTimelineApiSlice";
+import {
+	useGetCommentInfoQuery,
+	useUpdateCommentMutation,
+	useDeleteCommentMutation,
+	useCreateCommentMutation,
+} from "api/issueCommentApiSlice";
 
 type MyProps = {};
 type MyState = { editOnClick: boolean };
@@ -43,8 +49,22 @@ export default function IssueInfo() {
 		issuenumber,
 	});
 
+	const { data: issueCommentInformation } = useGetCommentInfoQuery({
+		username,
+		reponame,
+		issuenumber,
+	});
+
+	console.log(issueCommentInformation);
+
 	const [updateIssue, { isLoading: isIssueUpdating }] =
 		useUpdateIssueMutation();
+
+	const [updateIssueComment, { isLoading: isUpdateCommentLoading }] =
+		useUpdateCommentMutation();
+
+	const [createIssueComment, { isLoading: isCreateCommentLoading }] =
+		useCreateCommentMutation();
 
 	const { data: labelListData } = useGetLabelListsQuery({
 		username: username,
@@ -436,6 +456,8 @@ export default function IssueInfo() {
 				<div className=" mt-6 md:flex md:w-[100%] md:justify-between ">
 					<div className="w-[inherit]">
 						<CommentItem
+							authorName={issueInformation?.user.login}
+							createTime={issueInformation?.created_at}
 							param={{
 								isFirst: true,
 								isOwner:
@@ -454,22 +476,38 @@ export default function IssueInfo() {
 							}}
 							showMessage={issueInformation?.body ? issueInformation?.body : ""}
 						/>
-						<CommentItem
-							param={{
-								isAuthor:
-									issueInformation?.user.login === loginName ? true : false,
-								boxBlue:
-									issueInformation?.user.login === loginName ? true : false,
-							}}
-							showMessage=""
-						/>
-						<CommentItem
-							param={{
-								boxBlue:
-									issueInformation?.user.login === loginName ? true : false,
-							}}
-							showMessage=""
-						/>
+
+						{issueCommentInformation?.map((element) => {
+							return (
+								<CommentItem
+									authorName={element?.user.login}
+									createTime={element?.created_at}
+									param={{
+										isFirst: false,
+										isOwner:
+											element?.author_association === "OWNER" ? true : false,
+										isCollaborator:
+											element?.author_association === "Collaborator"
+												? true
+												: false,
+										isAuthor:
+											element?.user?.login === issueInformation?.user?.login
+												? true
+												: false,
+										boxBlue: element?.user?.login === loginName ? true : false,
+										updateCommentActionApiHook: updateIssueComment,
+
+										editApiData: {
+											username,
+											reponame,
+											commentid: element?.id,
+										},
+									}}
+									showMessage={element?.body ? element?.body : ""}
+								/>
+							);
+						})}
+
 						<a id="jumpToNewComment">
 							<TextAreaBox
 								setTextData={() => {}}
@@ -484,6 +522,12 @@ export default function IssueInfo() {
 												? 1
 												: 2,
 										setStateInfoFunction: (info) => setStateUpdateInfo(info),
+										commentActionHook: createIssueComment,
+										editApiData: {
+											username,
+											reponame,
+											issuenumber,
+										},
 									},
 									editComment: {
 										open: false,

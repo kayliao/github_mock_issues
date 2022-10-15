@@ -1880,7 +1880,16 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 														? true
 														: false
 												}
-												onClickFunc={() => {}}
+												onClickFunc={() => {
+													param?.closeIssue?.commentActionHook?.({
+														...param?.closeIssue?.editApiData,
+														editData: { body: inputData.body },
+													});
+													setInputData({
+														...inputData,
+														body: "",
+													});
+												}}
 											/>
 										</div>
 									</div>
@@ -1913,12 +1922,14 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 											hoverBorderColor={"rgba(27,31,36,0.15)"}
 											isAble={true}
 											onClickFunc={() => {
-												console.log(
-													param?.editComment?.updateCommentActionApiHook
-												);
-												param?.editComment?.updateCommentActionApiHook?.();
+												param?.editComment?.updateCommentActionApiHook?.({
+													...param?.editComment?.editApiData,
+													editData: {
+														body: inputData.body,
+													},
+												});
 
-												param?.editComment?.updateIssueActionApiHook({
+												param?.editComment?.updateIssueActionApiHook?.({
 													...param?.editComment?.editApiData,
 													editData: {
 														body: inputData.body,
@@ -2281,7 +2292,16 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 														? true
 														: false
 												}
-												onClickFunc={() => {}}
+												onClickFunc={() => {
+													param?.closeIssue?.commentActionHook?.({
+														...param?.closeIssue?.editApiData,
+														editData: { body: inputData.body },
+													});
+													setInputData({
+														...inputData,
+														body: "",
+													});
+												}}
 											/>
 										</div>
 									</div>
@@ -2314,13 +2334,14 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 											hoverBorderColor={"rgba(27,31,36,0.15)"}
 											isAble={true}
 											onClickFunc={() => {
-												console.log(
-													param?.editComment?.updateCommentActionApiHook
-												);
+												param?.editComment?.updateCommentActionApiHook?.({
+													...param?.editComment?.editApiData,
+													editData: {
+														body: inputData.body,
+													},
+												});
 
-												param?.editComment?.updateCommentActionApiHook?.();
-
-												param?.editComment?.updateIssueActionApiHook({
+												param?.editComment?.updateIssueActionApiHook?.({
 													...param?.editComment?.editApiData,
 													editData: {
 														body: inputData.body,

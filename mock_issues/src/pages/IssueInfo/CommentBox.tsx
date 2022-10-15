@@ -2,7 +2,54 @@ import { KebabHorizontalIcon, SmileyIcon } from "@primer/octicons-react";
 import { marked } from "marked";
 import "../../prose.css";
 
-export default function CommentBox({ avatar, showMessage, param }) {
+export default function CommentBox({
+	avatar,
+	showMessage,
+	param,
+	authorName,
+	createTime,
+}) {
+	function countRestTime(timeString) {
+		const time = new Date(timeString);
+		const timeNow = Date.now();
+		const diffTime = timeNow - time.getTime();
+
+		const diffDays = Math.floor(diffTime / (24 * 3600 * 1000));
+		let hours, minutes, seconds;
+		if (diffDays <= 0) {
+			const leave1 = diffTime % (24 * 3600 * 1000);
+			hours = Math.floor(leave1 / (3600 * 1000));
+			if (hours <= 0) {
+				const leave2 = leave1 % (3600 * 1000);
+				minutes = Math.floor(leave2 / (60 * 1000));
+				if (minutes <= 0) {
+					const leave3 = leave2 % (60 * 1000);
+					seconds = Math.round(leave3 / 1000);
+					return `${seconds} seconds ago`;
+				} else {
+					return `${minutes} minutes ago`;
+				}
+			} else {
+				return `${hours} hours ago`;
+			}
+		} else if (diffDays <= 30) {
+			return `${diffDays} days ago`;
+		} else {
+			time.toLocaleString("default", { month: "short" });
+
+			time.toLocaleString("en-GB", {
+				day: "numeric",
+				month: "long",
+				year: "numeric",
+			});
+			return `on ${time.toLocaleString("en-GB", {
+				day: "numeric",
+				month: "long",
+				year: "numeric",
+			})}`;
+		}
+	}
+
 	const renderer = {
 		listitem(text: string, booleantask: boolean, checked: boolean) {
 			if (checked !== undefined) {
@@ -72,12 +119,12 @@ export default function CommentBox({ avatar, showMessage, param }) {
 							<h3 className="flex flex-auto font-normal text-[14px] text-[#57606a] whitespace-pre flex-wrap">
 								<strong>
 									<a className="truncate max-w-[125px] font-semibold hover:underline hover:text-[#0969da] text-[#000000] whitespace-pre">
-										kayliao{" "}
+										{`${authorName} `}
 									</a>
 								</strong>
 								commented{" "}
 								<a className="truncate hover:underline hover:text-[#0969da]">
-									29 minutes ago
+									{countRestTime(createTime)}
 								</a>
 							</h3>
 							<div className="sm:flex items-center">
