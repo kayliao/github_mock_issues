@@ -273,7 +273,12 @@ export default function CommentBox({
 										{param?.isFirst ? (
 											<></>
 										) : (
-											<button className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#cf222e] text-left hover:bg-[#cf222e] hover:text-[#ffffff]">
+											<button
+												className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#cf222e] text-left hover:bg-[#cf222e] hover:text-[#ffffff]"
+												onClick={() => {
+													param?.deleteItemAction?.();
+												}}
+											>
 												Delete
 											</button>
 										)}

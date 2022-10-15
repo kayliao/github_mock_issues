@@ -39,6 +39,7 @@ export default function CommentItem({
 								: false,
 							isAuthor: param?.isAuthor ? param?.isAuthor : false,
 						},
+						deleteItemAction: param?.deleteItemAction,
 					}}
 					showMessage={showMessage}
 				/>

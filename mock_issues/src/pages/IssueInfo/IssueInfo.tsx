@@ -66,6 +66,9 @@ export default function IssueInfo() {
 	const [createIssueComment, { isLoading: isCreateCommentLoading }] =
 		useCreateCommentMutation();
 
+	const [deleteIssueComment, { isLoading: isDeleteCommentLoading }] =
+		useDeleteCommentMutation();
+
 	const { data: labelListData } = useGetLabelListsQuery({
 		username: username,
 		reponame: reponame,
@@ -496,11 +499,17 @@ export default function IssueInfo() {
 												: false,
 										boxBlue: element?.user?.login === loginName ? true : false,
 										updateCommentActionApiHook: updateIssueComment,
-
 										editApiData: {
 											username,
 											reponame,
 											commentid: element?.id,
+										},
+										deleteItemAction: () => {
+											deleteIssueComment({
+												username,
+												reponame,
+												commentid: element?.id,
+											});
 										},
 									}}
 									showMessage={element?.body ? element?.body : ""}
