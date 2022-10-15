@@ -4,7 +4,7 @@ import {
 	IssueClosedIcon,
 	SkipIcon,
 } from "@primer/octicons-react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import CommentItem from "./CommentItem";
 import SettingsBar from "stories/Iconsstories/SettingsBar";
 import { useGetAssigneeListsQuery } from "api/assigneeApiSlice";
@@ -81,32 +81,28 @@ export default function IssueInfo() {
 	}, []);
 
 	console.log("info", issueInformation);
-	// console.log(
-	// 	Array.from(
-	// 		assigneeListData
-	// 			?.map((element) => {
-	// 				return {
-	// 					avatar_url: element.avatar_url,
-	// 					name: element.login,
-	// 				};
-	// 			})
-	// 			.concat(
-	// 				timelineData?.map((element) => {
-	// 					if (element.event === "mentioned")
-	// 						return {
-	// 							avatar_url: element.actor.avatar_url,
-	// 							name: element.actor.login,
-	// 						};
-	// 					return;
-	// 				})
-	// 			)
-	// 			.filter((element) => {
-	// 				return element != undefined;
-	// 			})
-	// 			.reduce((map, obj) => map.set(obj.name, obj), new Map())
-	// 			.values()
-	// 	)
-	// );
+
+	useEffect(() => {
+		updateIssue({
+			username,
+			reponame,
+			issuenumber,
+			editData: {
+				assignees: barData.assignees,
+			},
+		});
+	}, [barData.assignees]);
+
+	useEffect(() => {
+		updateIssue({
+			username,
+			reponame,
+			issuenumber,
+			editData: {
+				labels: barData.labels,
+			},
+		});
+	}, [barData.labels]);
 
 	function countRestTime(timeString) {
 		const time = new Date(timeString);

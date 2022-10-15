@@ -1733,7 +1733,7 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 												hoverBorderColor={"rgba(27,31,36,0.15)"}
 												isAble={true}
 												onClickFunc={() => {
-													param?.editComment?.cancelClickFunction();
+													param?.editComment?.cancelClickFunction?.();
 												}}
 											/>
 										</div>
@@ -1759,6 +1759,7 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 														body: inputData.body,
 													},
 												});
+												param?.editComment?.cancelClickFunction?.();
 											}}
 										/>
 									</>
@@ -2030,7 +2031,7 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 												hoverBorderColor={"rgba(27,31,36,0.15)"}
 												isAble={true}
 												onClickFunc={() => {
-													param?.editComment?.cancelClickFunction();
+													param?.editComment?.cancelClickFunction?.();
 												}}
 											/>
 										</div>
@@ -2057,6 +2058,7 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 														body: inputData.body,
 													},
 												});
+												param?.editComment?.cancelClickFunction?.();
 											}}
 										/>
 									</>
