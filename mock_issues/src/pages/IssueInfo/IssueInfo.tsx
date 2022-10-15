@@ -501,13 +501,39 @@ export default function IssueInfo() {
 						</a>
 					</div>
 					<div className="ml-4">
-						{issueInformation?.labels && issueInformation.assignees ? (
+						{issueInformation?.labels && issueInformation?.assignees ? (
 							<SettingsBar
 								setBarData={setBarData}
 								param={{
 									openDevelop: true,
 									Notifications: { open: true, subscribe: false },
-									Participant: { open: true },
+									Participant: {
+										open: true,
+										participantList: Array.from(
+											assigneeListData
+												?.map((element) => {
+													return {
+														avatar_url: element.avatar_url,
+														name: element.login,
+													};
+												})
+												.concat(
+													timelineData?.map((element) => {
+														if (element.event === "mentioned")
+															return {
+																avatar_url: element.actor.avatar_url,
+																name: element.actor.login,
+															};
+														return;
+													})
+												)
+												.filter((element) => {
+													return element != undefined;
+												})
+												.reduce((map, obj) => map.set(obj.name, obj), new Map())
+												.values()
+										),
+									},
 									IssueActions: { open: true },
 									initialLabels: issueInformation?.labels?.map((element) => {
 										return element.name;

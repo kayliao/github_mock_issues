@@ -233,16 +233,20 @@ export default function SettingsBar({
 					<div className="pt-4 mt-4 border-t-[1px] border-solid border-[hsla(210,18%,87%,1)]">
 						<div className="flex items-center justify-between py-1 mt-[-4px] mb-1">
 							<span className=" text-[12px] text-[#57606a] font-semibold">
-								1 participant
+								{`${param?.Participant?.participantList?.length} participant`}
 							</span>
 						</div>
-						<div className="flex items-center text-[12px]">
-							<a className="cursor-pointer">
-								<img
-									src="https://avatars.githubusercontent.com/u/105163825?s=52&v=4"
-									className="shadow-[0_0_0_1px_rgba(27,31,36,0.15)] mt-[4px] ml-[4px] w-[26px] h-[26px] rounded-[50%]"
-								/>
-							</a>
+						<div className="flex items-center flex-wrap text-[12px]">
+							{param?.Participant?.participantList?.map((element) => {
+								return (
+									<a className="cursor-pointer">
+										<img
+											src={element.avatar_url}
+											className="shadow-[0_0_0_1px_rgba(27,31,36,0.15)] mt-[4px] ml-[4px] w-[26px] h-[26px] rounded-[50%]"
+										/>
+									</a>
+								);
+							})}
 						</div>
 					</div>
 				) : (
