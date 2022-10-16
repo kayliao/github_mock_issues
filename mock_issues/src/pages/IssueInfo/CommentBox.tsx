@@ -1,6 +1,7 @@
 import { KebabHorizontalIcon, SmileyIcon } from "@primer/octicons-react";
 import { marked } from "marked";
 import "../../prose.css";
+import { useRef } from "react";
 
 export default function CommentBox({
 	avatar,
@@ -9,6 +10,10 @@ export default function CommentBox({
 	authorName,
 	createTime,
 }) {
+	const commentBoxActionsRef = useRef(null);
+	const topSmileListRef = useRef(null);
+	const bottomSmileListRef = useRef(null);
+
 	function countRestTime(timeString) {
 		const time = new Date(timeString);
 		const timeNow = Date.now();
@@ -167,7 +172,10 @@ export default function CommentBox({
 								) : (
 									<></>
 								)}
-								<details className="relative hidden md:inline-block cursor-pointer py-2 px-1">
+								<details
+									ref={topSmileListRef}
+									className="relative hidden md:inline-block cursor-pointer py-2 px-1"
+								>
 									<summary className="inline-block">
 										<SmileyIcon className="fill-[#57606a] ml-1" />
 									</summary>
@@ -176,6 +184,21 @@ export default function CommentBox({
 											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
 												param?.reactions?.good?.isClicked ? "bg-[#ddf4ff]" : ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.good?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.good?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "+1" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											👍
 										</button>
@@ -236,7 +259,10 @@ export default function CommentBox({
 										</button>
 									</div>
 								</details>
-								<details className="inline-block cursor-pointer relative">
+								<details
+									ref={commentBoxActionsRef}
+									className="inline-block cursor-pointer relative"
+								>
 									<summary className="inline-flex py-2 px-1">
 										<KebabHorizontalIcon className="fill-[#57606a] ml-1" />
 									</summary>
@@ -277,6 +303,7 @@ export default function CommentBox({
 												className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#cf222e] text-left hover:bg-[#cf222e] hover:text-[#ffffff]"
 												onClick={() => {
 													param?.deleteItemAction?.();
+													commentBoxActionsRef.current.open = false;
 												}}
 											>
 												Delete
@@ -303,6 +330,7 @@ export default function CommentBox({
 						<div>
 							<div className="mb-4 ml-4 bg-[#ffffff] flex">
 								<details
+									ref={bottomSmileListRef}
 									className={`${
 										param?.reactions?.total_count ? "block" : "hidden"
 									}`}
@@ -310,7 +338,85 @@ export default function CommentBox({
 									<summary className="inline-flex bg-[#f6f8fa] w-[26px] h-[26px] border border-solid border-[hsla(210,18%,87%,1)] rounded-[50%] flex items-center cursor-pointer">
 										<SmileyIcon className="fill-[#57606a] ml-1" />
 									</summary>
-									<div>aaaa</div>
+									<div className="absolute flex z-[15] left-[16px] top-[auto] bottom-[45px] my-2 right-[auto] w-[auto] py-0 px-[2px] rounded-[6px] border border-solid border-[#d0d7de] shadow-[0_8px_24px_rgba(140,149,159,0.2)] bg-[#ffffff]">
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.good?.isClicked ? "bg-[#ddf4ff]" : ""
+											}`}
+											onClick={() => {
+												if (param?.reactions?.good?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.good?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "+1" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
+										>
+											👍
+										</button>
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.bad?.isClicked ? "bg-[#ddf4ff]" : ""
+											}`}
+										>
+											👎
+										</button>
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.laugh?.isClicked ? "bg-[#ddf4ff]" : ""
+											}`}
+										>
+											😄
+										</button>
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.hooray?.isClicked
+													? "bg-[#ddf4ff]"
+													: ""
+											}`}
+										>
+											🎉
+										</button>
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.confused?.isClicked
+													? "bg-[#ddf4ff]"
+													: ""
+											}`}
+										>
+											😕
+										</button>
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.heart?.isClicked ? "bg-[#ddf4ff]" : ""
+											}`}
+										>
+											❤️
+										</button>
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.rocket?.isClicked
+													? "bg-[#ddf4ff]"
+													: ""
+											}`}
+										>
+											🚀
+										</button>
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.eyes?.isClicked ? "bg-[#ddf4ff]" : ""
+											}`}
+										>
+											👀
+										</button>
+									</div>
 								</details>
 								<div className="flex flex-wrap mt-[-2px]">
 									<button
@@ -321,6 +427,21 @@ export default function CommentBox({
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
 										} ml-2 mt-[2px]`}
+										onClick={() => {
+											if (param?.reactions?.good?.isClicked) {
+												param?.deleteReaction?.hook?.({
+													...param?.deleteReaction?.apiParam,
+													reactionid: param?.reactions?.good?.id,
+												});
+											} else {
+												param?.createReaction?.hook?.({
+													...param?.createReaction?.apiParam,
+													editData: { content: "+1" },
+												});
+											}
+											topSmileListRef.current.open = false;
+											bottomSmileListRef.current.open = false;
+										}}
 									>
 										<div className="w-4 h-4 text-[1em] ">👍</div>
 										<span

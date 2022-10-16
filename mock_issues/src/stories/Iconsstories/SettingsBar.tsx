@@ -32,8 +32,6 @@ export default function SettingsBar({
 		param?.initialLabels ? param?.initialLabels : []
 	);
 
-	console.log(param?.initialAssignees, assigneeSelected);
-
 	useEffect(() => {
 		setBarData({ assignees: assigneeSelected, labels: labelsSelected });
 	}, [assigneeSelected, labelsSelected]);
