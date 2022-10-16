@@ -15,7 +15,6 @@ export default function SideBarDropList({
 	const [inputFilterLists, setInputFilterLists] = useState([]);
 	const inputRef = useRef(null);
 
-	// console.log("sidebar data", selectedData);
 	useEffect(() => {
 		settingSelectData(selectedData);
 		setInputFilterLists(listData);

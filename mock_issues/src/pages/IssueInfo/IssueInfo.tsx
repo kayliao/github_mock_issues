@@ -159,7 +159,6 @@ export default function IssueInfo() {
 	}, [isIssueUpdating]);
 
 	useEffect(() => {
-		console.log(stateUpdateInfo);
 		if (stateUpdateInfo?.state != "" && stateUpdateInfo?.state_reason != "")
 			updateIssue({
 				username,

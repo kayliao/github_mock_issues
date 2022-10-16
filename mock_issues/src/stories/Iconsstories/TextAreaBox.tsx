@@ -34,8 +34,6 @@ import {
 	InfoIcon,
 	MarkdownIcon,
 } from "@primer/octicons-react";
-import { NormalModuleReplacementPlugin } from "webpack";
-import { json } from "react-router-dom";
 
 const firebaseConfig = {
 	apiKey: "AIzaSyDImmIiw0sKHNpgRYkUnxDGM1q0W_iykB8",
@@ -124,14 +122,6 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 	// Initialize Firebase
 	const app = initializeApp(firebaseConfig);
 	const storage = getStorage();
-
-	// const { data } = param?.ahook
-	// 	? param?.ahook({
-	// 			username: "kayliao",
-	// 			reponame: "3rd-ML100Days",
-	// 	  })
-	// 	: { data: null };
-	// console.log(data);
 
 	useEffect(() => {
 		setTextData(inputData);
@@ -1148,10 +1138,6 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 											<button
 												className="group p-1 ml-[5px]"
 												onClick={() => {
-													// e.preventDefault();
-													// textAreaMarkRef.current?.trigger("bold");
-													// const result = checkBlockorCaret();
-													// textAreaMarkRef.current?.focus();
 													handleBold();
 												}}
 											>
