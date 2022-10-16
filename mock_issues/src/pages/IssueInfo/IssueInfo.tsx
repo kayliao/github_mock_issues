@@ -236,6 +236,7 @@ export default function IssueInfo() {
 										isAble={true}
 										onClickFunc={() => {
 											inputTitleRef.current.focus();
+											inputTitleRef.current.value = issueInformation?.title;
 											setEditOnClick(true);
 										}}
 										param={{ padding: "3px 12px" }}
@@ -314,7 +315,6 @@ export default function IssueInfo() {
 										<button
 											className="ml-2 text-[14px] leading-[21px] text-[#0969da] hover:underline"
 											onClick={() => {
-												inputTitleRef.current.value = "";
 												setEditOnClick(false);
 											}}
 										>
