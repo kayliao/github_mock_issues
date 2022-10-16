@@ -48,6 +48,7 @@ export default function IssueInfo() {
 		state: "",
 		state_reason: "",
 	});
+	const [fixedHeaderStatus, setFixedHeaderStatus] = useState(false);
 
 	const { data: issueReactionsInformation } = useGetIssueReactionInfoQuery({
 		username,
@@ -112,9 +113,9 @@ export default function IssueInfo() {
 			};
 			const callback = (entries: IntersectionObserverEntry[]) => {
 				if (entries[0].isIntersecting) {
-					console.log("in");
+					setFixedHeaderStatus(false);
 				} else {
-					console.log("out");
+					setFixedHeaderStatus(true);
 				}
 			};
 			observer.current = new IntersectionObserver(callback, options);
@@ -346,49 +347,42 @@ export default function IssueInfo() {
 						</div>
 					</div>
 					<div>
-						{/* <header
-            className={`${
-              fixedHeaderStatus ? 'block' : 'hidden'
-            } fixed top-0 left-0 right-0 z-[200] flex border-b border-solid border-borderGray bg-white px-2 py-1`}>
-            <div className='mr-1 flex whitespace-nowrap'>
-              <LabelItem
-                labelName={issueData.state === 'open' ? 'Open' : 'Closed'}
-                colorCode={
-                  issueData.state === 'open'
-                    ? '#2DA44E'
-                    : issueData.state_reason === 'completed'
-                    ? '#8250df'
-                    : '#57606a'
-                }
-                textColor={'white'}
-                icon={
-                  issueData.state === 'open' ? (
-                    <IssueOpenedIcon />
-                  ) : issueData.state_reason === 'completed' ? (
-                    <IssueClosedIcon />
-                  ) : (
-                    <SkipIcon />
-                  )
-                }
-                padding={'8px 12px'}
-              />
-            </div>
-            <div className='flex flex-col justify-between truncate'>
-              <h1 className='text-[14px] font-medium leading-[1.3]'>
-                {issueData.title}{' '}
-                <span className='text-textGray'>#{issueId}</span>
-              </h1>
-              <p className='text-[12px]'>
-                <button className='mr-[4px] font-medium text-textGray'>
-                  {issueData.user.login}
-                </button>
-                <span className='text-textGray'>
-                  opened this issue {calculateTime(issueData.created_at)} ago ·{' '}
-                  {issueData.comments} comments
-                </span>
-              </p>
-            </div>
-          </header> */}
+						<header
+							className={`${
+								fixedHeaderStatus ? "block" : "hidden"
+							} fixed top-[60px] left-0 right-0 z-[200] flex border-b border-solid border-[#d0d7de] bg-white px-2 py-1 shadow-[0_1px_0_rgba(27,31,36,0.04)]`}
+						>
+							<div className="mr-1 flex items-center whitespace-nowrap">
+								{issueInformation?.state === "open" ? (
+									<span className="mr-2 text-[#ffffff] text-[14px] leading-5 bg-[#2da44e] border border-solid border-[transparent] py-[5px] px-[12px] rounded-[2em]">
+										<IssueOpenedIcon /> Open{" "}
+									</span>
+								) : issueInformation?.state_reason === "not_planned" ? (
+									<span className="mr-2 text-[#ffffff] text-[14px] leading-5 bg-[#6e7781] border border-solid border-[transparent] py-[5px] px-[12px] rounded-[2em]">
+										<SkipIcon /> Closed{" "}
+									</span>
+								) : (
+									<span className="mr-2 text-[#ffffff] text-[14px] leading-5 bg-[#8250df] border border-solid border-[transparent] py-[5px] px-[12px] rounded-[2em]">
+										<IssueClosedIcon /> Closed{" "}
+									</span>
+								)}
+							</div>
+							<div className="flex flex-col justify-between truncate">
+								<h1 className="text-[14px] font-medium leading-[1.3]">
+									{issueInformation?.title}{" "}
+									<span className="text-textGray">{`#${issuenumber}`}</span>
+								</h1>
+								<p className="text-[12px]">
+									<button className="mr-[4px] font-medium text-textGray">
+										{`${issueInformation?.user?.login} `} opened this issue
+									</button>
+									<span className="text-textGray">
+										{` ${countRestTime(issueInformation?.created_at)}`}
+										{` · ${issueInformation?.comments} comments`}
+									</span>
+								</p>
+							</div>
+						</header>
 					</div>
 				</div>
 				<div className="block md:hidden text-[12px] mb-6 border-b border-solid border-[#d0d7de]">
@@ -424,48 +418,6 @@ export default function IssueInfo() {
 							</div>
 						</div>
 					</div>
-				</div>
-				<div className="hidden">
-					{/* <div>
-						<CommentBox
-							avatar={"https://avatars.githubusercontent.com/u/34449805?v=4"}
-							param={{
-								boxBlue: false,
-								isFirst: false,
-								reactions: {
-									good: { number: 1, isClicked: true },
-									bad: { number: 1, isClicked: true },
-									confused: { number: 5, isClicked: false },
-									eyes: { number: 1, isClicked: true },
-									heart: { number: 1, isClicked: true },
-									hooray: { number: 1, isClicked: true },
-									laugh: { number: 1, isClicked: true },
-									rocket: { number: 1, isClicked: true },
-									total_count: 5,
-								},
-							}}
-							showMessage={"abcd"}
-						/>
-						<TextAreaBox
-							setTextData={() => {}}
-							avatar={"https://avatars.githubusercontent.com/u/34449805?v=4"}
-							param={{
-								closeIssue: { open: false, state: 2 },
-								editComment: { open: true },
-								submitIssue: {
-									submitAction: () => {},
-								},
-								closeMarkdownSupportTag: true,
-								closeTitleInput: true,
-								timeline: {
-									open: false,
-									isFirst: true,
-								},
-								topTimeline: true,
-								// ahook: useGetAssigneeListsQuery,
-							}}
-						/>
-					</div> */}
 				</div>
 				<div className=" mt-6 md:flex md:w-[100%] md:justify-between ">
 					<div className="w-[inherit]">
