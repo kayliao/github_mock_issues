@@ -206,6 +206,21 @@ export default function CommentBox({
 											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
 												param?.reactions?.bad?.isClicked ? "bg-[#ddf4ff]" : ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.bad?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.bad?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "-1" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											👎
 										</button>
@@ -213,6 +228,21 @@ export default function CommentBox({
 											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
 												param?.reactions?.laugh?.isClicked ? "bg-[#ddf4ff]" : ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.laugh?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.laugh?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "laugh" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											😄
 										</button>
@@ -222,6 +252,21 @@ export default function CommentBox({
 													? "bg-[#ddf4ff]"
 													: ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.hooray?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.hooray?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "hooray" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											🎉
 										</button>
@@ -231,6 +276,21 @@ export default function CommentBox({
 													? "bg-[#ddf4ff]"
 													: ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.confused?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.confused?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "confused" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											😕
 										</button>
@@ -238,6 +298,21 @@ export default function CommentBox({
 											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
 												param?.reactions?.heart?.isClicked ? "bg-[#ddf4ff]" : ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.heart?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.heart?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "heart" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											❤️
 										</button>
@@ -247,6 +322,21 @@ export default function CommentBox({
 													? "bg-[#ddf4ff]"
 													: ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.rocket?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.rocket?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "rocket" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											🚀
 										</button>
@@ -254,6 +344,21 @@ export default function CommentBox({
 											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
 												param?.reactions?.eyes?.isClicked ? "bg-[#ddf4ff]" : ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.eyes?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.eyes?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "eyes" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											👀
 										</button>
@@ -365,6 +470,21 @@ export default function CommentBox({
 											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
 												param?.reactions?.bad?.isClicked ? "bg-[#ddf4ff]" : ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.bad?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.bad?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "-1" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											👎
 										</button>
@@ -372,6 +492,21 @@ export default function CommentBox({
 											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
 												param?.reactions?.laugh?.isClicked ? "bg-[#ddf4ff]" : ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.laugh?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.laugh?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "laugh" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											😄
 										</button>
@@ -381,6 +516,21 @@ export default function CommentBox({
 													? "bg-[#ddf4ff]"
 													: ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.hooray?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.hooray?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "hooray" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											🎉
 										</button>
@@ -390,6 +540,21 @@ export default function CommentBox({
 													? "bg-[#ddf4ff]"
 													: ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.confused?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.confused?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "confused" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											😕
 										</button>
@@ -397,6 +562,21 @@ export default function CommentBox({
 											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
 												param?.reactions?.heart?.isClicked ? "bg-[#ddf4ff]" : ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.heart?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.heart?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "heart" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											❤️
 										</button>
@@ -406,6 +586,21 @@ export default function CommentBox({
 													? "bg-[#ddf4ff]"
 													: ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.rocket?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.rocket?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "rocket" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											🚀
 										</button>
@@ -413,6 +608,21 @@ export default function CommentBox({
 											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
 												param?.reactions?.eyes?.isClicked ? "bg-[#ddf4ff]" : ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.eyes?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.eyes?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "eyes" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											👀
 										</button>
@@ -462,6 +672,21 @@ export default function CommentBox({
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
 										} ml-2 mt-[2px]`}
+										onClick={() => {
+											if (param?.reactions?.bad?.isClicked) {
+												param?.deleteReaction?.hook?.({
+													...param?.deleteReaction?.apiParam,
+													reactionid: param?.reactions?.bad?.id,
+												});
+											} else {
+												param?.createReaction?.hook?.({
+													...param?.createReaction?.apiParam,
+													editData: { content: "-1" },
+												});
+											}
+											topSmileListRef.current.open = false;
+											bottomSmileListRef.current.open = false;
+										}}
 									>
 										<div className="w-4 h-4 text-[1em] ">👎</div>
 										<span
@@ -482,6 +707,21 @@ export default function CommentBox({
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
 										} ml-2 mt-[2px]`}
+										onClick={() => {
+											if (param?.reactions?.laugh?.isClicked) {
+												param?.deleteReaction?.hook?.({
+													...param?.deleteReaction?.apiParam,
+													reactionid: param?.reactions?.laugh?.id,
+												});
+											} else {
+												param?.createReaction?.hook?.({
+													...param?.createReaction?.apiParam,
+													editData: { content: "laugh" },
+												});
+											}
+											topSmileListRef.current.open = false;
+											bottomSmileListRef.current.open = false;
+										}}
 									>
 										<div className="w-4 h-4 text-[1em] ">😄</div>
 										<span
@@ -502,6 +742,21 @@ export default function CommentBox({
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
 										} ml-2 mt-[2px]`}
+										onClick={() => {
+											if (param?.reactions?.hooray?.isClicked) {
+												param?.deleteReaction?.hook?.({
+													...param?.deleteReaction?.apiParam,
+													reactionid: param?.reactions?.hooray?.id,
+												});
+											} else {
+												param?.createReaction?.hook?.({
+													...param?.createReaction?.apiParam,
+													editData: { content: "hooray" },
+												});
+											}
+											topSmileListRef.current.open = false;
+											bottomSmileListRef.current.open = false;
+										}}
 									>
 										<div className="w-4 h-4 text-[1em] ">🎉</div>
 										<span
@@ -522,6 +777,21 @@ export default function CommentBox({
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
 										} ml-2 mt-[2px]`}
+										onClick={() => {
+											if (param?.reactions?.confused?.isClicked) {
+												param?.deleteReaction?.hook?.({
+													...param?.deleteReaction?.apiParam,
+													reactionid: param?.reactions?.confused?.id,
+												});
+											} else {
+												param?.createReaction?.hook?.({
+													...param?.createReaction?.apiParam,
+													editData: { content: "confused" },
+												});
+											}
+											topSmileListRef.current.open = false;
+											bottomSmileListRef.current.open = false;
+										}}
 									>
 										<div className="w-4 h-4 text-[1em] ">😕</div>
 										<span
@@ -542,6 +812,21 @@ export default function CommentBox({
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
 										} ml-2 mt-[2px]`}
+										onClick={() => {
+											if (param?.reactions?.heart?.isClicked) {
+												param?.deleteReaction?.hook?.({
+													...param?.deleteReaction?.apiParam,
+													reactionid: param?.reactions?.heart?.id,
+												});
+											} else {
+												param?.createReaction?.hook?.({
+													...param?.createReaction?.apiParam,
+													editData: { content: "heart" },
+												});
+											}
+											topSmileListRef.current.open = false;
+											bottomSmileListRef.current.open = false;
+										}}
 									>
 										<div className="w-4 h-4 text-[1em] ">❤️</div>
 										<span
@@ -562,6 +847,21 @@ export default function CommentBox({
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
 										} ml-2 mt-[2px]`}
+										onClick={() => {
+											if (param?.reactions?.rocket?.isClicked) {
+												param?.deleteReaction?.hook?.({
+													...param?.deleteReaction?.apiParam,
+													reactionid: param?.reactions?.rocket?.id,
+												});
+											} else {
+												param?.createReaction?.hook?.({
+													...param?.createReaction?.apiParam,
+													editData: { content: "rocket" },
+												});
+											}
+											topSmileListRef.current.open = false;
+											bottomSmileListRef.current.open = false;
+										}}
 									>
 										<div className="w-4 h-4 text-[1em] ">🚀</div>
 										<span
@@ -582,6 +882,21 @@ export default function CommentBox({
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
 										} ml-2 mt-[2px]`}
+										onClick={() => {
+											if (param?.reactions?.eyes?.isClicked) {
+												param?.deleteReaction?.hook?.({
+													...param?.deleteReaction?.apiParam,
+													reactionid: param?.reactions?.eyes?.id,
+												});
+											} else {
+												param?.createReaction?.hook?.({
+													...param?.createReaction?.apiParam,
+													editData: { content: "eyes" },
+												});
+											}
+											topSmileListRef.current.open = false;
+											bottomSmileListRef.current.open = false;
+										}}
 									>
 										<div className="w-4 h-4 text-[1em] ">👀</div>
 										<span
