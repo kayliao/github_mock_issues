@@ -35,6 +35,8 @@ import {
 	useCreateIssueReactionMutation,
 } from "api/issueReactionApiSlice";
 
+import MidHead from "../../components/MidHead/MidHead";
+
 type MyProps = {};
 type MyState = { editOnClick: boolean };
 
@@ -48,6 +50,9 @@ export default function IssueInfo() {
 		state: "",
 		state_reason: "",
 	});
+	const visibility = useSelector(
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.visibility
+	);
 	const [fixedHeaderStatus, setFixedHeaderStatus] = useState(false);
 
 	const { data: issueReactionsInformation } = useGetIssueReactionInfoQuery({
@@ -210,6 +215,11 @@ export default function IssueInfo() {
 
 	return (
 		<div>
+			<MidHead
+				username={username}
+				reponame={reponame}
+				visibility={visibility}
+			/>
 			<div className="pr-4 pl-4 mt-6 xl:max-w-[1280px] xl:mx-auto">
 				<div>
 					<div className="mb-4 bg-[#ffffff]">

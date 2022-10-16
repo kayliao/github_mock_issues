@@ -1,6 +1,7 @@
 import {
 	IssueOpenedIcon,
 	CommentIcon,
+	SkipIcon,
 	IssueClosedIcon,
 	GitPullRequestIcon,
 	GitPullRequestClosedIcon,
@@ -105,6 +106,8 @@ export default function IssuesListItem({
 						)
 					) : issuesItemData.state === "open" ? (
 						<IssueOpenedIcon className="fill-primary" fill="#127f37" />
+					) : issuesItemData.state_reason === "not_planned" ? (
+						<SkipIcon className="fill-primary" fill={"#24292f"} />
 					) : (
 						<IssueClosedIcon className="fill-primary" fill={"#8250df"} />
 					)}
