@@ -9,11 +9,12 @@ export default function SideBarDropList({
 	listData,
 	settingSelectData,
 }) {
-	const [selectedData, setSelectedData] = useState<string[]>([]);
+	const [selectedData, setSelectedData] = useState<string[]>(
+		param?.initialSelectedData ? param?.initialSelectedData : []
+	);
 	const [inputFilterLists, setInputFilterLists] = useState([]);
 	const inputRef = useRef(null);
 
-	// console.log("sidebar data", selectedData);
 	useEffect(() => {
 		settingSelectData(selectedData);
 		setInputFilterLists(listData);
@@ -143,9 +144,13 @@ export default function SideBarDropList({
 														</div>
 													</div>
 													{param?.openItemClose ? (
-														<button className="absolute cursor-pointer py-4 m-[-16px] leading-none rounded-none right-0 ml-2 mr-[10px]">
-															<XIcon fill={"#57606a"} />
-														</button>
+														selectedData?.includes(element?.name) ? (
+															<button className="absolute cursor-pointer py-4 m-[-16px] leading-none rounded-none right-0 ml-2 mr-[10px]">
+																<XIcon fill={"#57606a"} />
+															</button>
+														) : (
+															<></>
+														)
 													) : (
 														<></>
 													)}
@@ -235,9 +240,13 @@ export default function SideBarDropList({
 														</div>
 													</div>
 													{param?.openItemClose ? (
-														<button className="absolute cursor-pointer py-4 m-[-16px] leading-none rounded-none right-0 ml-2 mr-[10px]">
-															<XIcon fill={"#57606a"} />
-														</button>
+														selectedData?.includes(element?.name) ? (
+															<button className="absolute cursor-pointer py-4 m-[-16px] leading-none rounded-none right-0 ml-2 mr-[10px]">
+																<XIcon fill={"#57606a"} />
+															</button>
+														) : (
+															<></>
+														)
 													) : (
 														<></>
 													)}

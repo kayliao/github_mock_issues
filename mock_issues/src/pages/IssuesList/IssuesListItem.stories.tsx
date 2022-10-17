@@ -1,4 +1,5 @@
 import IssuesListItem from "./IssuesListItem";
+import { BrowserRouter } from "react-router-dom";
 
 export default {
 	title: "Example/IssuesList/IssuesListItem",
@@ -36,7 +37,12 @@ export default {
 	},
 };
 
-const Template = (args) => <IssuesListItem {...args} />;
+const Template = (args) => (
+	<BrowserRouter>
+		{" "}
+		<IssuesListItem {...args} />
+	</BrowserRouter>
+);
 export const Default = Template.bind({});
 Default.args = {
 	issuesItemData: {

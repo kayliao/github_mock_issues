@@ -24,9 +24,13 @@ export default function SettingsBar({
 	const navigate = useNavigate();
 
 	const [assigneesOnClick, setAssigneesOnClick] = useState(false);
-	const [assigneeSelected, setAssigneeSelected] = useState([]);
+	const [assigneeSelected, setAssigneeSelected] = useState(
+		param?.initialAssignees ? param?.initialAssignees : []
+	);
 	const [labelsOnClick, setLabelsOnClick] = useState(false);
-	const [labelsSelected, setLabelsSelected] = useState([]);
+	const [labelsSelected, setLabelsSelected] = useState(
+		param?.initialLabels ? param?.initialLabels : []
+	);
 
 	useEffect(() => {
 		setBarData({ assignees: assigneeSelected, labels: labelsSelected });
@@ -51,6 +55,7 @@ export default function SettingsBar({
 							subtitle: "Suggestions",
 							openItemClose: false,
 							allClearTitle: "Clear assignees",
+							initialSelectedData: assigneeSelected,
 						}}
 						inputTitle={"Type or choose a user"}
 						title={"Assign up to 10 people to this issue"}
@@ -102,6 +107,7 @@ export default function SettingsBar({
 							openItemClose: true,
 							linkTitle: "Edit labels",
 							linkFunction: () => navigate(`/${username}/${reponame}/labels`),
+							initialSelectedData: labelsSelected,
 						}}
 						inputTitle={"Filter labels"}
 						title={"Apply labels to this issue"}
@@ -112,8 +118,8 @@ export default function SettingsBar({
 
 					{labelsSelected?.length != 0 ? (
 						<div className="flex flex-wrap">
-							{labelList.map((element) => {
-								if (labelsSelected.includes(element.name)) {
+							{labelList?.map((element) => {
+								if (labelsSelected?.includes(element.name)) {
 									return (
 										<div className="mr-1 mb-1">
 											<Label
@@ -225,16 +231,20 @@ export default function SettingsBar({
 					<div className="pt-4 mt-4 border-t-[1px] border-solid border-[hsla(210,18%,87%,1)]">
 						<div className="flex items-center justify-between py-1 mt-[-4px] mb-1">
 							<span className=" text-[12px] text-[#57606a] font-semibold">
-								1 participant
+								{`${param?.Participant?.participantList?.length} participant`}
 							</span>
 						</div>
-						<div className="flex items-center text-[12px]">
-							<a className="cursor-pointer">
-								<img
-									src="https://avatars.githubusercontent.com/u/105163825?s=52&v=4"
-									className="shadow-[0_0_0_1px_rgba(27,31,36,0.15)] mt-[4px] ml-[4px] w-[26px] h-[26px] rounded-[50%]"
-								/>
-							</a>
+						<div className="flex items-center flex-wrap text-[12px]">
+							{param?.Participant?.participantList?.map((element) => {
+								return (
+									<a className="cursor-pointer">
+										<img
+											src={element.avatar_url}
+											className="shadow-[0_0_0_1px_rgba(27,31,36,0.15)] mt-[4px] ml-[4px] w-[26px] h-[26px] rounded-[50%]"
+										/>
+									</a>
+								);
+							})}
 						</div>
 					</div>
 				) : (

@@ -1,7 +1,60 @@
 import { KebabHorizontalIcon, SmileyIcon } from "@primer/octicons-react";
 import { marked } from "marked";
+import "../../prose.css";
+import { useRef } from "react";
 
-export default function CommentBox({ avatar, showMessage, param }) {
+export default function CommentBox({
+	avatar,
+	showMessage,
+	param,
+	authorName,
+	createTime,
+}) {
+	const commentBoxActionsRef = useRef(null);
+	const topSmileListRef = useRef(null);
+	const bottomSmileListRef = useRef(null);
+
+	function countRestTime(timeString) {
+		const time = new Date(timeString);
+		const timeNow = Date.now();
+		const diffTime = timeNow - time.getTime();
+
+		const diffDays = Math.floor(diffTime / (24 * 3600 * 1000));
+		let hours, minutes, seconds;
+		if (diffDays <= 0) {
+			const leave1 = diffTime % (24 * 3600 * 1000);
+			hours = Math.floor(leave1 / (3600 * 1000));
+			if (hours <= 0) {
+				const leave2 = leave1 % (3600 * 1000);
+				minutes = Math.floor(leave2 / (60 * 1000));
+				if (minutes <= 0) {
+					const leave3 = leave2 % (60 * 1000);
+					seconds = Math.round(leave3 / 1000);
+					return `${seconds} seconds ago`;
+				} else {
+					return `${minutes} minutes ago`;
+				}
+			} else {
+				return `${hours} hours ago`;
+			}
+		} else if (diffDays <= 30) {
+			return `${diffDays} days ago`;
+		} else {
+			time.toLocaleString("default", { month: "short" });
+
+			time.toLocaleString("en-GB", {
+				day: "numeric",
+				month: "long",
+				year: "numeric",
+			});
+			return `on ${time.toLocaleString("en-GB", {
+				day: "numeric",
+				month: "long",
+				year: "numeric",
+			})}`;
+		}
+	}
+
 	const renderer = {
 		listitem(text: string, booleantask: boolean, checked: boolean) {
 			if (checked !== undefined) {
@@ -71,34 +124,58 @@ export default function CommentBox({ avatar, showMessage, param }) {
 							<h3 className="flex flex-auto font-normal text-[14px] text-[#57606a] whitespace-pre flex-wrap">
 								<strong>
 									<a className="truncate max-w-[125px] font-semibold hover:underline hover:text-[#0969da] text-[#000000] whitespace-pre">
-										kayliao{" "}
+										{`${authorName} `}
 									</a>
 								</strong>
 								commented{" "}
 								<a className="truncate hover:underline hover:text-[#0969da]">
-									29 minutes ago
+									{countRestTime(createTime)}
 								</a>
 							</h3>
 							<div className="sm:flex items-center">
-								<span
-									className={`hidden sm:block border border-solid ${
-										param?.boxBlue
-											? "border-[rgba(84,174,255,0.4)]"
-											: "border-[#d0d7de]"
-									} py-0 px-[7px] rounded-[2em] ml-1 font-medium text-[#57606a] text-[12px]`}
+								{param?.relation?.isOwner ? (
+									<span
+										className={`hidden sm:block border border-solid ${
+											param?.boxBlue
+												? "border-[rgba(84,174,255,0.4)]"
+												: "border-[#d0d7de]"
+										} py-0 px-[7px] rounded-[2em] ml-1 font-medium text-[#57606a] text-[12px]`}
+									>
+										Owner
+									</span>
+								) : (
+									<></>
+								)}
+								{param?.relation?.isCollaborator ? (
+									<span
+										className={`hidden sm:block border border-solid ${
+											param?.boxBlue
+												? "border-[rgba(84,174,255,0.4)]"
+												: "border-[#d0d7de]"
+										} py-0 px-[7px] rounded-[2em] ml-1 font-medium text-[#57606a] text-[12px]`}
+									>
+										Collaborator
+									</span>
+								) : (
+									<></>
+								)}
+								{param?.relation?.isAuthor ? (
+									<span
+										className={`hidden sm:block border border-solid ${
+											param?.boxBlue
+												? "border-[rgba(84,174,255,0.4)]"
+												: "border-[#d0d7de]"
+										} py-0 px-[7px] rounded-[2em] ml-1 font-medium text-[#57606a] text-[12px]`}
+									>
+										Author
+									</span>
+								) : (
+									<></>
+								)}
+								<details
+									ref={topSmileListRef}
+									className="relative hidden md:inline-block cursor-pointer py-2 px-1"
 								>
-									Owner
-								</span>
-								<span
-									className={`hidden sm:block border border-solid ${
-										param?.boxBlue
-											? "border-[rgba(84,174,255,0.4)]"
-											: "border-[#d0d7de]"
-									} py-0 px-[7px] rounded-[2em] ml-1 font-medium text-[#57606a] text-[12px]`}
-								>
-									Author
-								</span>
-								<details className="relative hidden md:inline-block cursor-pointer py-2 px-1">
 									<summary className="inline-block">
 										<SmileyIcon className="fill-[#57606a] ml-1" />
 									</summary>
@@ -107,6 +184,21 @@ export default function CommentBox({ avatar, showMessage, param }) {
 											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
 												param?.reactions?.good?.isClicked ? "bg-[#ddf4ff]" : ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.good?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.good?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "+1" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											👍
 										</button>
@@ -114,6 +206,21 @@ export default function CommentBox({ avatar, showMessage, param }) {
 											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
 												param?.reactions?.bad?.isClicked ? "bg-[#ddf4ff]" : ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.bad?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.bad?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "-1" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											👎
 										</button>
@@ -121,6 +228,21 @@ export default function CommentBox({ avatar, showMessage, param }) {
 											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
 												param?.reactions?.laugh?.isClicked ? "bg-[#ddf4ff]" : ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.laugh?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.laugh?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "laugh" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											😄
 										</button>
@@ -130,6 +252,21 @@ export default function CommentBox({ avatar, showMessage, param }) {
 													? "bg-[#ddf4ff]"
 													: ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.hooray?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.hooray?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "hooray" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											🎉
 										</button>
@@ -139,6 +276,21 @@ export default function CommentBox({ avatar, showMessage, param }) {
 													? "bg-[#ddf4ff]"
 													: ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.confused?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.confused?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "confused" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											😕
 										</button>
@@ -146,6 +298,21 @@ export default function CommentBox({ avatar, showMessage, param }) {
 											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
 												param?.reactions?.heart?.isClicked ? "bg-[#ddf4ff]" : ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.heart?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.heart?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "heart" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											❤️
 										</button>
@@ -155,6 +322,21 @@ export default function CommentBox({ avatar, showMessage, param }) {
 													? "bg-[#ddf4ff]"
 													: ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.rocket?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.rocket?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "rocket" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											🚀
 										</button>
@@ -162,12 +344,30 @@ export default function CommentBox({ avatar, showMessage, param }) {
 											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
 												param?.reactions?.eyes?.isClicked ? "bg-[#ddf4ff]" : ""
 											}`}
+											onClick={() => {
+												if (param?.reactions?.eyes?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.eyes?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "eyes" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
 										>
 											👀
 										</button>
 									</div>
 								</details>
-								<details className="inline-block cursor-pointer relative">
+								<details
+									ref={commentBoxActionsRef}
+									className="inline-block cursor-pointer relative"
+								>
 									<summary className="inline-flex py-2 px-1">
 										<KebabHorizontalIcon className="fill-[#57606a] ml-1" />
 									</summary>
@@ -204,7 +404,13 @@ export default function CommentBox({ avatar, showMessage, param }) {
 										{param?.isFirst ? (
 											<></>
 										) : (
-											<button className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#cf222e] text-left hover:bg-[#cf222e] hover:text-[#ffffff]">
+											<button
+												className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#cf222e] text-left hover:bg-[#cf222e] hover:text-[#ffffff]"
+												onClick={() => {
+													param?.deleteItemAction?.();
+													commentBoxActionsRef.current.open = false;
+												}}
+											>
 												Delete
 											</button>
 										)}
@@ -219,7 +425,7 @@ export default function CommentBox({ avatar, showMessage, param }) {
 						<div>
 							<div className="p-4 bg-[#ffffff] rounded-b-md">
 								<div
-									className=""
+									className="prose"
 									dangerouslySetInnerHTML={{
 										__html: marked(showMessage),
 									}}
@@ -229,6 +435,7 @@ export default function CommentBox({ avatar, showMessage, param }) {
 						<div>
 							<div className="mb-4 ml-4 bg-[#ffffff] flex">
 								<details
+									ref={bottomSmileListRef}
 									className={`${
 										param?.reactions?.total_count ? "block" : "hidden"
 									}`}
@@ -236,7 +443,190 @@ export default function CommentBox({ avatar, showMessage, param }) {
 									<summary className="inline-flex bg-[#f6f8fa] w-[26px] h-[26px] border border-solid border-[hsla(210,18%,87%,1)] rounded-[50%] flex items-center cursor-pointer">
 										<SmileyIcon className="fill-[#57606a] ml-1" />
 									</summary>
-									<div>aaaa</div>
+									<div className="absolute flex z-[15] left-[16px] top-[auto] bottom-[45px] my-2 right-[auto] w-[auto] py-0 px-[2px] rounded-[6px] border border-solid border-[#d0d7de] shadow-[0_8px_24px_rgba(140,149,159,0.2)] bg-[#ffffff]">
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.good?.isClicked ? "bg-[#ddf4ff]" : ""
+											}`}
+											onClick={() => {
+												if (param?.reactions?.good?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.good?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "+1" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
+										>
+											👍
+										</button>
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.bad?.isClicked ? "bg-[#ddf4ff]" : ""
+											}`}
+											onClick={() => {
+												if (param?.reactions?.bad?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.bad?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "-1" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
+										>
+											👎
+										</button>
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.laugh?.isClicked ? "bg-[#ddf4ff]" : ""
+											}`}
+											onClick={() => {
+												if (param?.reactions?.laugh?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.laugh?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "laugh" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
+										>
+											😄
+										</button>
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.hooray?.isClicked
+													? "bg-[#ddf4ff]"
+													: ""
+											}`}
+											onClick={() => {
+												if (param?.reactions?.hooray?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.hooray?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "hooray" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
+										>
+											🎉
+										</button>
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.confused?.isClicked
+													? "bg-[#ddf4ff]"
+													: ""
+											}`}
+											onClick={() => {
+												if (param?.reactions?.confused?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.confused?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "confused" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
+										>
+											😕
+										</button>
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.heart?.isClicked ? "bg-[#ddf4ff]" : ""
+											}`}
+											onClick={() => {
+												if (param?.reactions?.heart?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.heart?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "heart" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
+										>
+											❤️
+										</button>
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.rocket?.isClicked
+													? "bg-[#ddf4ff]"
+													: ""
+											}`}
+											onClick={() => {
+												if (param?.reactions?.rocket?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.rocket?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "rocket" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
+										>
+											🚀
+										</button>
+										<button
+											className={`w-[32px] h-[32px] p-1 my-1 mx-[2px] truncate flex items-center justify-center rounded-[6px] hover:bg-[#f3f4f6] ${
+												param?.reactions?.eyes?.isClicked ? "bg-[#ddf4ff]" : ""
+											}`}
+											onClick={() => {
+												if (param?.reactions?.eyes?.isClicked) {
+													param?.deleteReaction?.hook?.({
+														...param?.deleteReaction?.apiParam,
+														reactionid: param?.reactions?.eyes?.id,
+													});
+												} else {
+													param?.createReaction?.hook?.({
+														...param?.createReaction?.apiParam,
+														editData: { content: "eyes" },
+													});
+												}
+												topSmileListRef.current.open = false;
+												bottomSmileListRef.current.open = false;
+											}}
+										>
+											👀
+										</button>
+									</div>
 								</details>
 								<div className="flex flex-wrap mt-[-2px]">
 									<button
@@ -247,6 +637,21 @@ export default function CommentBox({ avatar, showMessage, param }) {
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
 										} ml-2 mt-[2px]`}
+										onClick={() => {
+											if (param?.reactions?.good?.isClicked) {
+												param?.deleteReaction?.hook?.({
+													...param?.deleteReaction?.apiParam,
+													reactionid: param?.reactions?.good?.id,
+												});
+											} else {
+												param?.createReaction?.hook?.({
+													...param?.createReaction?.apiParam,
+													editData: { content: "+1" },
+												});
+											}
+											topSmileListRef.current.open = false;
+											bottomSmileListRef.current.open = false;
+										}}
 									>
 										<div className="w-4 h-4 text-[1em] ">👍</div>
 										<span
@@ -267,6 +672,21 @@ export default function CommentBox({ avatar, showMessage, param }) {
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
 										} ml-2 mt-[2px]`}
+										onClick={() => {
+											if (param?.reactions?.bad?.isClicked) {
+												param?.deleteReaction?.hook?.({
+													...param?.deleteReaction?.apiParam,
+													reactionid: param?.reactions?.bad?.id,
+												});
+											} else {
+												param?.createReaction?.hook?.({
+													...param?.createReaction?.apiParam,
+													editData: { content: "-1" },
+												});
+											}
+											topSmileListRef.current.open = false;
+											bottomSmileListRef.current.open = false;
+										}}
 									>
 										<div className="w-4 h-4 text-[1em] ">👎</div>
 										<span
@@ -287,6 +707,21 @@ export default function CommentBox({ avatar, showMessage, param }) {
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
 										} ml-2 mt-[2px]`}
+										onClick={() => {
+											if (param?.reactions?.laugh?.isClicked) {
+												param?.deleteReaction?.hook?.({
+													...param?.deleteReaction?.apiParam,
+													reactionid: param?.reactions?.laugh?.id,
+												});
+											} else {
+												param?.createReaction?.hook?.({
+													...param?.createReaction?.apiParam,
+													editData: { content: "laugh" },
+												});
+											}
+											topSmileListRef.current.open = false;
+											bottomSmileListRef.current.open = false;
+										}}
 									>
 										<div className="w-4 h-4 text-[1em] ">😄</div>
 										<span
@@ -307,6 +742,21 @@ export default function CommentBox({ avatar, showMessage, param }) {
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
 										} ml-2 mt-[2px]`}
+										onClick={() => {
+											if (param?.reactions?.hooray?.isClicked) {
+												param?.deleteReaction?.hook?.({
+													...param?.deleteReaction?.apiParam,
+													reactionid: param?.reactions?.hooray?.id,
+												});
+											} else {
+												param?.createReaction?.hook?.({
+													...param?.createReaction?.apiParam,
+													editData: { content: "hooray" },
+												});
+											}
+											topSmileListRef.current.open = false;
+											bottomSmileListRef.current.open = false;
+										}}
 									>
 										<div className="w-4 h-4 text-[1em] ">🎉</div>
 										<span
@@ -327,6 +777,21 @@ export default function CommentBox({ avatar, showMessage, param }) {
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
 										} ml-2 mt-[2px]`}
+										onClick={() => {
+											if (param?.reactions?.confused?.isClicked) {
+												param?.deleteReaction?.hook?.({
+													...param?.deleteReaction?.apiParam,
+													reactionid: param?.reactions?.confused?.id,
+												});
+											} else {
+												param?.createReaction?.hook?.({
+													...param?.createReaction?.apiParam,
+													editData: { content: "confused" },
+												});
+											}
+											topSmileListRef.current.open = false;
+											bottomSmileListRef.current.open = false;
+										}}
 									>
 										<div className="w-4 h-4 text-[1em] ">😕</div>
 										<span
@@ -347,6 +812,21 @@ export default function CommentBox({ avatar, showMessage, param }) {
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
 										} ml-2 mt-[2px]`}
+										onClick={() => {
+											if (param?.reactions?.heart?.isClicked) {
+												param?.deleteReaction?.hook?.({
+													...param?.deleteReaction?.apiParam,
+													reactionid: param?.reactions?.heart?.id,
+												});
+											} else {
+												param?.createReaction?.hook?.({
+													...param?.createReaction?.apiParam,
+													editData: { content: "heart" },
+												});
+											}
+											topSmileListRef.current.open = false;
+											bottomSmileListRef.current.open = false;
+										}}
 									>
 										<div className="w-4 h-4 text-[1em] ">❤️</div>
 										<span
@@ -367,6 +847,21 @@ export default function CommentBox({ avatar, showMessage, param }) {
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
 										} ml-2 mt-[2px]`}
+										onClick={() => {
+											if (param?.reactions?.rocket?.isClicked) {
+												param?.deleteReaction?.hook?.({
+													...param?.deleteReaction?.apiParam,
+													reactionid: param?.reactions?.rocket?.id,
+												});
+											} else {
+												param?.createReaction?.hook?.({
+													...param?.createReaction?.apiParam,
+													editData: { content: "rocket" },
+												});
+											}
+											topSmileListRef.current.open = false;
+											bottomSmileListRef.current.open = false;
+										}}
 									>
 										<div className="w-4 h-4 text-[1em] ">🚀</div>
 										<span
@@ -387,6 +882,21 @@ export default function CommentBox({ avatar, showMessage, param }) {
 												? "bg-[#ddf4ff] border border-solid border-[#0969da] rounded-[100px]"
 												: "bg-[#ffffff] border border-solid border-[#d0d7de] rounded-[100px]"
 										} ml-2 mt-[2px]`}
+										onClick={() => {
+											if (param?.reactions?.eyes?.isClicked) {
+												param?.deleteReaction?.hook?.({
+													...param?.deleteReaction?.apiParam,
+													reactionid: param?.reactions?.eyes?.id,
+												});
+											} else {
+												param?.createReaction?.hook?.({
+													...param?.createReaction?.apiParam,
+													editData: { content: "eyes" },
+												});
+											}
+											topSmileListRef.current.open = false;
+											bottomSmileListRef.current.open = false;
+										}}
 									>
 										<div className="w-4 h-4 text-[1em] ">👀</div>
 										<span
