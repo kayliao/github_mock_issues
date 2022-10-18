@@ -240,6 +240,7 @@ const LabelIssueDescription = styled.a`
 	cursor: pointer;
 	display: none;
 	word-wrap: break-word;
+	visibility: hidden;
 
 	&:hover {
 		color: #0969da;
