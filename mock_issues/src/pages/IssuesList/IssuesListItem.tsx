@@ -170,7 +170,11 @@ export default function IssuesListItem({
 							})}
 						</span>
 
-						<span className="ml-[15px] flex-nowrap flex-1 flex justify-end">
+						<span
+							className={`ml-[15px] flex-nowrap flex-1 flex justify-end ${
+								issuesItemData.comments === 0 ? "invisible" : "visible"
+							}`}
+						>
 							<CommentIcon size={16} fill={"#57606a"} />
 							<span className="ml-[3px] text-[#57606a] text-[8px]">
 								{issuesItemData.comments}
