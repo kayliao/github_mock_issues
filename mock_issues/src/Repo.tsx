@@ -53,7 +53,7 @@ function Repo() {
 				<>
 					<RepoListBox>
 						{repolist?.map((element) => (
-							<RepoBox>
+							<RepoBox key={element.id}>
 								<RepoA
 									onClick={() => {
 										window.scrollTo({
@@ -64,6 +64,10 @@ function Repo() {
 											currentRepoInfoActions.setCurrentRepoInfo({
 												repoInfo: element,
 											})
+										);
+										window.localStorage.setItem(
+											"currentRepoInfo",
+											JSON.stringify(element)
 										);
 									}}
 									to={`/${element.full_name}/issues`}

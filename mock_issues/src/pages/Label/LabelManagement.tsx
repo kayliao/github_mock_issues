@@ -94,7 +94,7 @@ export default function LabelManagement() {
 				/>
 				<LabelListBox>
 					<LabelListBoxHeader>
-						<LabelListBoxHeaderSpan>{`${labelListData.length} labels`}</LabelListBoxHeaderSpan>
+						<LabelListBoxHeaderSpan>{`${labelListData?.length} labels`}</LabelListBoxHeaderSpan>
 						<SortDropList
 							isDrop={sortClick}
 							onClickFunc={() => setSortClick((prev) => !prev)}

@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 import github from "../../utils/github";
 import { useDispatch, useSelector } from "react-redux";
-import { userType } from "../../reducer/userReducer";
 import { supaBaseInfoActions } from "../../reducer/supaBaseReducer";
 
 import { MarkGithubIcon } from "@primer/octicons-react";
@@ -23,7 +22,12 @@ function Header() {
 			console.log(result);
 
 			dispatch(supaBaseInfoActions.setuser({ userInfo: result.user }));
+			window.localStorage.setItem("supabaseUser", JSON.stringify(result.user));
 			dispatch(supaBaseInfoActions.setsession({ sessionInfo: result.session }));
+			window.localStorage.setItem(
+				"supabaseSession",
+				JSON.stringify(result.session)
+			);
 
 			if ("provider_token" in result.session) {
 				localStorage.setItem("provider_token", result.session.provider_token);
@@ -101,6 +105,20 @@ function Header() {
 
 export default Header;
 
+type identityDataType = {
+	avatar_url: string;
+};
+
+type identityObject = {
+	identity_data: identityDataType;
+};
+
+type identityType = [identityObject];
+
+type userType = {
+	identities: identityType;
+};
+
 const HeaderBox = styled.div`
 	position: fixed;
 	top: 0;
@@ -138,20 +156,13 @@ const SearchBox = styled.input`
 	}
 `;
 
-const SignInA = styled.a`
-	position: absolute;
-	right: 20px;
-	cursor: pointer;
-	color: #fff;
-	text-decoration: none;
-`;
-
 const SignIn = styled.div`
 	position: absolute;
 	right: 20px;
 	cursor: pointer;
 	color: #fff;
 	text-decoration: none;
+	font-weight: 600;
 `;
 
 const SignOut = styled.div`
@@ -160,6 +171,7 @@ const SignOut = styled.div`
 	cursor: pointer;
 	color: #fff;
 	text-decoration: none;
+	font-weight: 600;
 `;
 
 const AvartarImg = styled.img`

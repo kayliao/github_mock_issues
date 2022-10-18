@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-	repoInfo: null,
+	repoInfo: JSON.parse(window.localStorage.getItem("currentRepoInfo")) ?? null,
 };
 
 const currentRepoInfoSlice = createSlice({

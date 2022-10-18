@@ -63,6 +63,10 @@ function RepoSearched() {
 													repoInfo: element,
 												})
 											);
+											window.localStorage.setItem(
+												"currentRepoInfo",
+												JSON.stringify(element)
+											);
 										}}
 										to={`/${element.full_name}/issues`}
 									>

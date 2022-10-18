@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-	user: null,
-	session: null,
-	token: null,
+	user: JSON.parse(window.localStorage.getItem("supabaseUser")) ?? null,
+	session: JSON.parse(window.localStorage.getItem("supabaseSession")) ?? null,
+	token: window.localStorage.getItem("provider_token") ?? null,
 };
 
 const supaBaseInfoSlice = createSlice({
