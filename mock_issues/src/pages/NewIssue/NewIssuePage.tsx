@@ -10,9 +10,12 @@ import { useNewIssueMutation } from "api/issueApiSlice";
 import { useGetAssigneeListsQuery } from "api/assigneeApiSlice";
 import { useGetLabelListsQuery } from "api/labelApiSlice";
 import { useEffect, useState } from "react";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
 
 export default function NewIssuePage() {
 	const { username, reponame } = useParams();
+	const navigate = useNavigate();
+
 	const visibility = useSelector(
 		(state: RootState) => state?.currentRepoInfo?.repoInfo?.visibility
 	);
@@ -22,24 +25,35 @@ export default function NewIssuePage() {
 	);
 	const [textData, setTextData] = useState({ title: "", body: "" });
 	const [barData, setBarData] = useState({ assignees: [], labels: [] });
-	const {
-		data: assigneeListData,
-		isLoading,
-		isSuccess,
-		isError,
-		error,
-	} = useGetAssigneeListsQuery({
-		username: username,
-		reponame: reponame,
-	});
+	const { data: assigneeListData, error: getAssigneeListError } =
+		useGetAssigneeListsQuery({
+			username: username,
+			reponame: reponame,
+		});
 
-	const { data: labelListData } = useGetLabelListsQuery({
-		username: username,
-		reponame: reponame,
-	});
+	if (getAssigneeListError) {
+		navigate(
+			`/error/${(getAssigneeListError as FetchBaseQueryError).status}/${
+				(getAssigneeListError as FetchBaseQueryError).data?.["message"]
+			}`
+		);
+	}
+
+	const { data: labelListData, error: getLabelListError } =
+		useGetLabelListsQuery({
+			username: username,
+			reponame: reponame,
+		});
+
+	if (getLabelListError) {
+		navigate(
+			`/error/${(getLabelListError as FetchBaseQueryError).status}/${
+				(getLabelListError as FetchBaseQueryError).data?.["message"]
+			}`
+		);
+	}
 
 	const [newIssue, { isSuccess: isNewIssueSuccess }] = useNewIssueMutation();
-	const navigate = useNavigate();
 
 	useEffect(() => {
 		function sleep(ms) {

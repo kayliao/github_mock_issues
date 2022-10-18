@@ -47,8 +47,8 @@ root.render(
 					path="/:username/:reponame/issues/:issuenumber"
 					element={<IssueInfo />}
 				/>
-				<Route path="/error" element={<Error />} />
-				<Route path="*" element={<Repo />} />
+				<Route path="/error/:status/:message" element={<Error />} />
+				<Route path="*" element={<Error />} />
 			</Route>
 		</Routes>
 	</BrowserRouter>

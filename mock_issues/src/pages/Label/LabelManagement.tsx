@@ -7,7 +7,7 @@ import SortDropList from "stories/Iconsstories/SortDropList";
 import ButtonShare from "../../stories/Iconsstories/ButtonShare";
 import { TagIcon, MilestoneIcon } from "@primer/octicons-react";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { RootState } from "../../store/store";
 import { useSelector } from "react-redux";
 
@@ -17,8 +17,10 @@ import {
 	useUpdateLabelMutation,
 	useCreateLabelMutation,
 } from "../../api/labelApiSlice";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
 
 export default function LabelManagement() {
+	const navigate = useNavigate();
 	const [newLabelClick, setNewLabelClick] = useState(false);
 	const [sortClick, setSortClick] = useState(false);
 	const { username, reponame } = useParams();
@@ -29,9 +31,7 @@ export default function LabelManagement() {
 	const {
 		data: labelListData,
 		isLoading,
-		isSuccess,
-		isError,
-		error,
+		error: getLabelListError,
 	} = useGetLabelListsQuery({
 		username: username,
 		reponame: reponame,
@@ -46,6 +46,15 @@ export default function LabelManagement() {
 			<LoadingWrapper>
 				<p>...loading</p>
 			</LoadingWrapper>
+		);
+	}
+
+	if (getLabelListError) {
+		console.log(getLabelListError);
+		navigate(
+			`/error/${(getLabelListError as FetchBaseQueryError).status}/${
+				(getLabelListError as FetchBaseQueryError).data?.["message"]
+			}`
 		);
 	}
 

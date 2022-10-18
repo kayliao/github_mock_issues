@@ -36,6 +36,7 @@ import {
 } from "api/issueReactionApiSlice";
 
 import MidHead from "../../components/MidHead/MidHead";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
 
 type MyProps = {};
 type MyState = { editOnClick: boolean };
@@ -64,11 +65,20 @@ export default function IssueInfo() {
 	const [createIssueReaction] = useCreateIssueReactionMutation();
 	const [deleteIssueReaction] = useDeleteIssueReactionMutation();
 
-	const { data: issueInformation } = useGetIssueInfoQuery({
-		username,
-		reponame,
-		issuenumber,
-	});
+	const { data: issueInformation, error: getIssueInfoError } =
+		useGetIssueInfoQuery({
+			username,
+			reponame,
+			issuenumber,
+		});
+
+	if (getIssueInfoError) {
+		navigate(
+			`/error/${(getIssueInfoError as FetchBaseQueryError).status}/${
+				(getIssueInfoError as FetchBaseQueryError).data?.["message"]
+			}`
+		);
+	}
 
 	const { data: issueCommentInformation } = useGetCommentInfoQuery({
 		username,
