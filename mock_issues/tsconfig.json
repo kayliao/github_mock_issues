@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"jsx": "react-jsx",
+		"allowSyntheticDefaultImports": true,
+		"noImplicitAny": false,
+		"lib": ["dom", "dom.iterable", "esnext"],
+		"module": "ESNext",
+		"moduleResolution": "node",
+		"outDir": "build",
+		"target": "ESNext",
+		"sourceMap": true,
+		"allowJs": false,
+		"baseUrl": "./src",
+		"noEmit": true // Do not compile the JS (or TS) files in this project on build
+	},
+	"include": ["src"]
+}
