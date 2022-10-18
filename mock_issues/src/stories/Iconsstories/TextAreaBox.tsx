@@ -1291,10 +1291,6 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 											<button
 												className="group p-2 ml-[5px]"
 												onClick={() => {
-													// e.preventDefault();
-													// textAreaMarkRef.current?.trigger("bold");
-													// checkBlockorCaret();
-													// textAreaMarkRef.current?.focus();
 													handleBold();
 												}}
 											>
@@ -1353,10 +1349,6 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 										<button
 											className="group p-1 ml-[5px]"
 											onClick={(e) => {
-												// e.preventDefault();
-												// textAreaMarkRef.current?.trigger("bold");
-												// checkBlockorCaret();
-												// textAreaMarkRef.current?.focus();
 												handleBold();
 											}}
 										>

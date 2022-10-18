@@ -50,7 +50,6 @@ export default function LabelManagement() {
 	}
 
 	if (getLabelListError) {
-		console.log(getLabelListError);
 		navigate(
 			`/error/${(getLabelListError as FetchBaseQueryError).status}/${
 				(getLabelListError as FetchBaseQueryError).data?.["message"]

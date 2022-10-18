@@ -4,7 +4,6 @@ import MidHead from "components/MidHead/MidHead";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "store/store";
-import ButtonShare from "stories/Iconsstories/ButtonShare";
 
 import { useNewIssueMutation } from "api/issueApiSlice";
 import { useGetAssigneeListsQuery } from "api/assigneeApiSlice";

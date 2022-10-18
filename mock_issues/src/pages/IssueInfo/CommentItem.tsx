@@ -301,8 +301,6 @@ export default function CommentItem({
 							isFirst: param?.isFirst ? param?.isFirst : false,
 						},
 						inputData: showMessage,
-						// topTimeline: true,
-						// ahook: useGetAssigneeListsQuery,
 					}}
 				/>
 			)}

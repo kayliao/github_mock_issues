@@ -9,13 +9,9 @@ import {
 	MilestoneIcon,
 	SearchIcon,
 	TagIcon,
-	CommentIcon,
 	XIcon,
 	ChevronLeftIcon,
 	ChevronRightIcon,
-	IssueClosedIcon,
-	GitPullRequestIcon,
-	GitPullRequestClosedIcon,
 } from "@primer/octicons-react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -105,8 +101,6 @@ export default function IssuesListManagement() {
 		middle: [],
 		nextPages: [],
 	});
-
-	console.log(IssueListData);
 
 	const { username, reponame } = useParams();
 	const visibility = useSelector(
@@ -447,18 +441,12 @@ export default function IssuesListManagement() {
 								>
 									<TagIcon size={16} className="left-2 top-[9px]" />
 									<span className="mx-[3px]">Labels</span>
-									{/* <span className="px-1.5 pt-[2px] bg-[rgba(175,184,193,0.2)] border border-solid border-[rgba(0,0,0,0)] rounded-[2em] text-xs font-medium	leading-[18px] text-[#24292f] text-center hidden md:block">
-										{LabelListData?.length}
-									</span> */}
 								</button>
 							</div>
 							<div>
 								<button className="py-[4px] px-4 border border-solid borderrounded-l-md border-[#d0d7de] rounded-r-md flex items-center flex-nowrap hover:bg-[#f3f4f6]">
 									<MilestoneIcon size={16} className="left-2 top-[9px]" />
 									<span className="mx-[3px]">MileStones</span>
-									{/* <span className="px-1.5 pt-[2px] bg-[rgba(175,184,193,0.2)] border border-solid border-[rgba(0,0,0,0)] rounded-[2em] text-xs font-medium	leading-[18px] text-[#24292f] text-center hidden md:block">
-										0
-									</span> */}
 								</button>
 							</div>
 						</div>

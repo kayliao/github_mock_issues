@@ -1,5 +1,3 @@
-import React from "react";
-
 import ButtonShare from "./ButtonShare";
 
 export default {

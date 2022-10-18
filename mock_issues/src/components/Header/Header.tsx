@@ -19,8 +19,6 @@ function Header() {
 		async function checkUser() {
 			const result = await github.checkUser();
 
-			console.log(result);
-
 			dispatch(supaBaseInfoActions.setuser({ userInfo: result.user }));
 			window.localStorage.setItem("supabaseUser", JSON.stringify(result.user));
 			dispatch(supaBaseInfoActions.setsession({ sessionInfo: result.session }));
@@ -41,8 +39,6 @@ function Header() {
 				const token = localStorage.getItem("provider_token") ?? null;
 
 				dispatch(supaBaseInfoActions.settoken({ sessionToken: token }));
-
-				console.log(token);
 			}
 		}
 
@@ -57,15 +53,13 @@ function Header() {
 	}
 
 	async function handleSignOutClick() {
-		const result = await github.signOut();
+		// const result = await github.signOut();
 
-		console.log("signout", result);
 		dispatch(supaBaseInfoActions.setuser({ userInfo: null }));
 		dispatch(supaBaseInfoActions.setsession({ sessionInfo: null }));
 		navigate("/");
 	}
 
-	console.log(user);
 	return (
 		<HeaderBox>
 			<div onClick={() => navigate("/")}>

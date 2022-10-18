@@ -3,16 +3,13 @@ import {
 	IssueOpenedIcon,
 	IssueClosedIcon,
 	SkipIcon,
-	CodeSquareIcon,
 } from "@primer/octicons-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import CommentItem from "./CommentItem";
 import SettingsBar from "stories/Iconsstories/SettingsBar";
 import { useGetAssigneeListsQuery } from "api/assigneeApiSlice";
-import CommentBox from "./CommentBox";
 import TextAreaBox from "stories/Iconsstories/TextAreaBox";
 import Label from "stories/Iconsstories/Label";
-import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
 	useGetIssueInfoQuery,
@@ -741,7 +738,6 @@ export default function IssueInfo() {
 										isFirst: false,
 									},
 									topTimeline: true,
-									// ahook: useGetAssigneeListsQuery,
 								}}
 							/>
 						</a>
