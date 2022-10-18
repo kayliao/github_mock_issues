@@ -154,6 +154,9 @@ const SearchBox = styled.input`
 		box-shadow: inset 0 0 0 2px #0969da;
 		border-color: #0969da;
 	}
+	@media screen and (max-width: 486px) {
+		width: calc(70% - 80px);
+	}
 `;
 
 const SignIn = styled.div`
@@ -180,4 +183,8 @@ const AvartarImg = styled.img`
 	border-radius: 50%;
 	width: 42px;
 	height: auto;
+
+	@media screen and (max-width: 486px) {
+		display: none;
+	}
 `;
