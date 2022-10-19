@@ -53,7 +53,7 @@ function Header() {
 	}
 
 	async function handleSignOutClick() {
-		// const result = await github.signOut();
+		const result = await github.signOut();
 
 		dispatch(supaBaseInfoActions.setuser({ userInfo: null }));
 		dispatch(supaBaseInfoActions.setsession({ sessionInfo: null }));

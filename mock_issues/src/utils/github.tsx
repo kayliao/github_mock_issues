@@ -21,6 +21,9 @@ const github = {
 	async signOut() {
 		/* sign the user out */
 		await supabase.auth.signOut();
+		localStorage.removeItem("supabaseSession");
+		localStorage.removeItem("currentRepoInfo");
+		localStorage.removeItem("supabaseUser");
 		return null;
 	},
 };
