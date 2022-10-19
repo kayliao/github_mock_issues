@@ -192,11 +192,15 @@ export default function IssuesListManagement() {
 				navigate(`/error/${res.status}/${data.message}`);
 				return;
 			}
-			data?.unshift({
+
+			const newData = data?.filter((element) => {
+				return element?.login != loginName;
+			});
+			newData?.unshift({
 				login: loginName,
 				avatar_url: loginAvatar,
 			});
-			setAssigneeListData(data);
+			setAssigneeListData(newData);
 		}
 		getAssigneeLists(username, reponame);
 	}, []);
