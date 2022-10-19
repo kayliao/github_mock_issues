@@ -232,23 +232,29 @@ export default function IssueInfo() {
 						<div className={`${editOnClick ? "hidden" : "block"}`}>
 							<div className="flex flex-col md:flex-row md:justify-between">
 								<div className="flex mb-4 ml-[0px] mt-[0px] mb-4 items-start shrink-0 float-right md:mt-2 md:order-1 md:mb-0">
-									<ButtonShare
-										textColor="#24292f"
-										backgroundColor="#f6f8fa"
-										textSize="12px"
-										displayText="Edit"
-										borderColor="rgba(27,31,36,0.15)"
-										hoverColor="#f3f4f6"
-										hoverBorderColor="rgba(27,31,36,0.15)"
-										isAble={true}
-										onClickFunc={() => {
-											inputTitleRef.current.focus();
-											inputTitleRef.current.value = issueInformation?.title;
-											setEditOnClick(true);
-										}}
-										param={{ padding: "3px 12px" }}
-									/>
-									<div className="ml-2 float-left">
+									<div
+										className={`${
+											loginName === username ? "block" : "hidden"
+										} mr-2 `}
+									>
+										<ButtonShare
+											textColor="#24292f"
+											backgroundColor="#f6f8fa"
+											textSize="12px"
+											displayText="Edit"
+											borderColor="rgba(27,31,36,0.15)"
+											hoverColor="#f3f4f6"
+											hoverBorderColor="rgba(27,31,36,0.15)"
+											isAble={true}
+											onClickFunc={() => {
+												inputTitleRef.current.focus();
+												inputTitleRef.current.value = issueInformation?.title;
+												setEditOnClick(true);
+											}}
+											param={{ padding: "3px 12px" }}
+										/>
+									</div>
+									<div className="float-left">
 										<ButtonShare
 											textColor="#ffffff"
 											backgroundColor="#2da44e"
@@ -264,7 +270,7 @@ export default function IssueInfo() {
 											param={{ padding: "3px 12px" }}
 										/>
 									</div>
-									<div className="flex-auto text-right md:hidden">
+									<div className="flex-auto text-[14px] text-right md:hidden">
 										<a
 											href="#jumpToNewComment"
 											className="py-1 text-[#0969da] cursor-pointer"
@@ -401,40 +407,55 @@ export default function IssueInfo() {
 						</header>
 					</div>
 				</div>
-				<div className="block md:hidden text-[12px] mb-6 border-b border-solid border-[#d0d7de]">
-					<div className="flex items-center mb-4">
-						<span className="font-semibold text-[#57606a] w-[24.99%] sm:w-[16.99%]">
-							Assignees
-						</span>
-						<div className="flex flex-wrap">
-							<a className="mr-1">
-								<img
-									src="https://avatars.githubusercontent.com/u/34449805?s=40&v=4"
-									className="w-[20px] h-[20px] rounded-[50%] shadow-[0_0_0_1px_rgba(27,31,36,0.15)]"
-								/>
-							</a>
-							<a className="mr-1">
-								<img
-									src="https://avatars.githubusercontent.com/u/34449805?s=40&v=4"
-									className="w-[20px] h-[20px] rounded-[50%] shadow-[0_0_0_1px_rgba(27,31,36,0.15)]"
-								/>
-							</a>
-						</div>
-					</div>
-					<div className="flex items-center mb-4">
-						<span className="font-semibold text-[#57606a] w-[24.99%] sm:w-[16.99%]">
-							Labels
-						</span>
-						<div className="flex flex-wrap">
-							<div className="mr-1 mb-1">
-								<Label backgroundColor={"#ffffff"} labelName={"abcded"} />
-							</div>
-							<div className="mr-1 mb-1">
-								<Label backgroundColor={"#ffffff"} labelName={"abcded"} />
+				{issueInformation?.assignees?.length != 0 ||
+				issueInformation?.labels?.length != 0 ? (
+					<div className="block md:hidden text-[12px] mb-6 border-b border-solid border-[#d0d7de]">
+						<div className="flex items-center mb-4">
+							<span className="font-semibold text-[#57606a] w-[24.99%] sm:w-[16.99%]">
+								Assignees
+							</span>
+							<div className="flex flex-wrap">
+								{issueInformation?.assignees ? (
+									issueInformation?.assignees?.map((element) => {
+										return (
+											<a className="mr-1">
+												<img
+													src={element.avatar_url}
+													className="w-[20px] h-[20px] rounded-[50%] shadow-[0_0_0_1px_rgba(27,31,36,0.15)]"
+												/>
+											</a>
+										);
+									})
+								) : (
+									<></>
+								)}
 							</div>
 						</div>
+						<div className="flex items-center mb-4">
+							<span className="font-semibold text-[#57606a] w-[24.99%] sm:w-[16.99%]">
+								Labels
+							</span>
+							<div className="flex flex-wrap">
+								{issueInformation?.labels ? (
+									issueInformation?.labels?.map((element) => {
+										return (
+											<div className="mr-1 mb-1">
+												<Label
+													backgroundColor={`#${element.color}`}
+													labelName={element.name}
+												/>
+											</div>
+										);
+									})
+								) : (
+									<></>
+								)}
+							</div>
+						</div>
 					</div>
-				</div>
+				) : (
+					<></>
+				)}
 				<div className=" mt-6 md:flex md:w-[100%] md:justify-between ">
 					<div className="w-[inherit]">
 						<CommentItem
@@ -443,6 +464,11 @@ export default function IssueInfo() {
 							createTime={issueInformation?.created_at}
 							param={{
 								isFirst: true,
+								isAuthorized:
+									loginName === issueInformation?.user.login ||
+									loginName === username
+										? true
+										: false,
 								isOwner:
 									issueInformation?.author_association === "OWNER"
 										? true
@@ -666,6 +692,11 @@ export default function IssueInfo() {
 									createTime={element?.created_at}
 									param={{
 										isFirst: false,
+										isAuthorized:
+											loginName === element?.user.login ||
+											loginName === username
+												? true
+												: false,
 										isOwner:
 											element?.author_association === "OWNER" ? true : false,
 										isCollaborator:
@@ -723,6 +754,7 @@ export default function IssueInfo() {
 											reponame,
 											issuenumber,
 										},
+										isAuthorized: loginName === username ? true : false,
 									},
 									editComment: {
 										open: false,
@@ -749,12 +781,13 @@ export default function IssueInfo() {
 							<SettingsBar
 								setBarData={setBarData}
 								param={{
+									isAuthorized: loginName === username ? true : false,
 									openDevelop: true,
 									Notifications: { open: true, subscribe: false },
 									Participant: {
 										open: true,
 										participantList: Array.from(
-											assigneeListData
+											issueInformation?.assignees
 												?.map((element) => {
 													return {
 														avatar_url: element.avatar_url,
@@ -771,6 +804,22 @@ export default function IssueInfo() {
 														return;
 													})
 												)
+												.concat(
+													assigneeListData?.map((element) => {
+														return {
+															avatar_url: element.avatar_url,
+															name: element.login,
+														};
+													})
+												)
+												.concat(
+													issueCommentInformation?.map((element) => {
+														return {
+															avatar_url: element.user.avatar_url,
+															name: element.user.login,
+														};
+													})
+												)
 												.filter((element) => {
 													return element != undefined;
 												})
@@ -778,12 +827,12 @@ export default function IssueInfo() {
 												.values()
 										),
 									},
-									IssueActions: { open: true },
+									IssueActions: { open: true && loginName === username },
 									initialLabels: issueInformation?.labels?.map((element) => {
 										return element.name;
 									}),
 									initialAssignees: issueInformation?.assignees?.map(
-										(element) => {
+										(element, index) => {
 											return element.login;
 										}
 									),
@@ -791,7 +840,7 @@ export default function IssueInfo() {
 								username={username}
 								reponame={reponame}
 								assigneeList={Array.from(
-									assigneeListData
+									issueInformation?.assignees
 										?.map((element) => {
 											return {
 												avatar_url: element.avatar_url,
@@ -806,6 +855,22 @@ export default function IssueInfo() {
 														name: element.actor.login,
 													};
 												return;
+											})
+										)
+										.concat(
+											assigneeListData?.map((element) => {
+												return {
+													avatar_url: element.avatar_url,
+													name: element.login,
+												};
+											})
+										)
+										.concat(
+											issueCommentInformation?.map((element) => {
+												return {
+													avatar_url: element.user.avatar_url,
+													name: element.user.login,
+												};
 											})
 										)
 										.filter((element) => {

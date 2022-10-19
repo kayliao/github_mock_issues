@@ -40,15 +40,23 @@ export default function SettingsBar({
 		<div>
 			<div className="w-[100%] md:w-[240px] lg:w-[256px]">
 				<div className="pt-4 relative">
-					<div
-						onClick={() => setAssigneesOnClick((prev) => !prev)}
-						className="group cursor-pointer flex items-center justify-between py-1 mt-[-4px] mb-1"
-					>
-						<span className="group-hover:text-[#0969da] text-[12px] text-[#57606a] font-semibold">
-							Assignees
-						</span>
-						<GearIcon className="group-hover:fill-[#0969da] fill-[#57606a]" />
-					</div>
+					{param?.isAuthorized ? (
+						<div
+							onClick={() => setAssigneesOnClick((prev) => !prev)}
+							className="group cursor-pointer flex items-center justify-between py-1 mt-[-4px] mb-1"
+						>
+							<span className="group-hover:text-[#0969da] text-[12px] text-[#57606a] font-semibold">
+								Assignees
+							</span>
+							<GearIcon className="group-hover:fill-[#0969da] fill-[#57606a]" />
+						</div>
+					) : (
+						<div className="flex items-center justify-between py-1 mt-[-4px] mb-1">
+							<span className=" text-[12px] text-[#57606a] font-semibold">
+								Assignees
+							</span>
+						</div>
+					)}
 
 					<SideBarDropList
 						param={{
@@ -81,26 +89,38 @@ export default function SettingsBar({
 							}
 							return <></>;
 						})
-					) : (
+					) : param?.isAuthorized ? (
 						<div className="flex items-center text-[12px]">
 							<span className="text-[#24292f]">No one—</span>
 							<button className="text-[#57606a] hover:text-[#0969da]">
 								assign yourself
 							</button>
 						</div>
+					) : (
+						<div className="flex items-center text-[12px]">
+							<span className="text-[#24292f]">No one assigned</span>
+						</div>
 					)}
 				</div>
 
 				<div className="relative pt-4 mt-4 border-t-[1px] border-solid border-[hsla(210,18%,87%,1)]">
-					<div
-						className="group cursor-pointer flex items-center justify-between py-1 mt-[-4px] mb-1"
-						onClick={() => setLabelsOnClick((prev) => !prev)}
-					>
-						<span className="group-hover:text-[#0969da] text-[12px] text-[#57606a] font-semibold">
-							Labels
-						</span>
-						<GearIcon className="group-hover:fill-[#0969da] fill-[#57606a]" />
-					</div>
+					{param?.isAuthorized ? (
+						<div
+							className="group cursor-pointer flex items-center justify-between py-1 mt-[-4px] mb-1"
+							onClick={() => setLabelsOnClick((prev) => !prev)}
+						>
+							<span className="group-hover:text-[#0969da] text-[12px] text-[#57606a] font-semibold">
+								Labels
+							</span>
+							<GearIcon className="group-hover:fill-[#0969da] fill-[#57606a]" />
+						</div>
+					) : (
+						<div className="flex items-center justify-between py-1 mt-[-4px] mb-1">
+							<span className=" text-[12px] text-[#57606a] font-semibold">
+								Labels
+							</span>
+						</div>
+					)}
 
 					<SideBarDropList
 						param={{
@@ -140,24 +160,40 @@ export default function SettingsBar({
 				</div>
 
 				<div className="pt-4 mt-4 border-t-[1px] border-solid border-[hsla(210,18%,87%,1)]">
-					<div className="group cursor-pointer flex items-center justify-between py-1 mt-[-4px] mb-1">
-						<span className="group-hover:text-[#0969da] text-[12px] text-[#57606a] font-semibold">
-							Projects
-						</span>
-						<GearIcon className="group-hover:fill-[#0969da] fill-[#57606a]" />
-					</div>
+					{param?.isAuthorized ? (
+						<div className="group cursor-pointer flex items-center justify-between py-1 mt-[-4px] mb-1">
+							<span className="group-hover:text-[#0969da] text-[12px] text-[#57606a] font-semibold">
+								Projects
+							</span>
+							<GearIcon className="group-hover:fill-[#0969da] fill-[#57606a]" />
+						</div>
+					) : (
+						<div className="flex items-center justify-between py-1 mt-[-4px] mb-1">
+							<span className=" text-[12px] text-[#57606a] font-semibold">
+								Projects
+							</span>
+						</div>
+					)}
 					<div className="flex items-center text-[12px]">
 						<span className="text-[#24292f]">None yet</span>
 					</div>
 				</div>
 
 				<div className="pt-4 mt-4 border-t-[1px] border-solid border-[hsla(210,18%,87%,1)]">
-					<div className="group cursor-pointer flex items-center justify-between py-1 mt-[-4px] mb-1">
-						<span className="group-hover:text-[#0969da] text-[12px] text-[#57606a] font-semibold">
-							Milestone
-						</span>
-						<GearIcon className="group-hover:fill-[#0969da] fill-[#57606a]" />
-					</div>
+					{param?.isAuthorized ? (
+						<div className="group cursor-pointer flex items-center justify-between py-1 mt-[-4px] mb-1">
+							<span className="group-hover:text-[#0969da] text-[12px] text-[#57606a] font-semibold">
+								Milestone
+							</span>
+							<GearIcon className="group-hover:fill-[#0969da] fill-[#57606a]" />
+						</div>
+					) : (
+						<div className="flex items-center justify-between py-1 mt-[-4px] mb-1">
+							<span className=" text-[12px] text-[#57606a] font-semibold">
+								Milestone
+							</span>
+						</div>
+					)}
 					<div className="flex items-center text-[12px]">
 						<span className="text-[#24292f]">No milestone</span>
 					</div>
@@ -165,20 +201,34 @@ export default function SettingsBar({
 
 				{param?.openDevelop ? (
 					<div className="pt-4 mt-4 border-t-[1px] border-solid border-[hsla(210,18%,87%,1)]">
-						<div className="group cursor-pointer flex items-center justify-between py-1 mt-[-4px] mb-1">
-							<span className="group-hover:text-[#0969da] text-[12px] text-[#57606a] font-semibold">
-								Development
+						{param?.isAuthorized ? (
+							<div className="group cursor-pointer flex items-center justify-between py-1 mt-[-4px] mb-1">
+								<span className="group-hover:text-[#0969da] text-[12px] text-[#57606a] font-semibold">
+									Development
+								</span>
+								<GearIcon className="group-hover:fill-[#0969da] fill-[#57606a]" />
+							</div>
+						) : (
+							<div className="flex items-center justify-between py-1 mt-[-4px] mb-1">
+								<span className=" text-[12px] text-[#57606a] font-semibold">
+									Development
+								</span>
+							</div>
+						)}
+						{param?.isAuthorized ? (
+							<div className="flex items-center text-[12px] flex-wrap">
+								<button className="text-[#0969da] hover:underline hover:decoration-[#0969da]">
+									Create a branch&nbsp;
+								</button>
+								<span className="text-[#24292f] break-words">
+									for this issue or link a pull request.
+								</span>
+							</div>
+						) : (
+							<span className="text-[12px] text-[#24292f] break-words">
+								Shows branches and pull requests linked to this issue.
 							</span>
-							<GearIcon className="group-hover:fill-[#0969da] fill-[#57606a]" />
-						</div>
-						<div className="flex items-center text-[12px] flex-wrap">
-							<button className="text-[#0969da] hover:underline hover:decoration-[#0969da]">
-								Create a branch&nbsp;
-							</button>
-							<span className="text-[#24292f] break-words">
-								for this issue or link a pull request.
-							</span>
-						</div>
+						)}
 					</div>
 				) : (
 					<div className="pt-4 mt-4 border-t-[1px] border-solid border-[hsla(210,18%,87%,1)]">

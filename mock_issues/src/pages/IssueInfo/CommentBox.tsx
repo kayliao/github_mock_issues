@@ -378,46 +378,56 @@ export default function CommentBox({
 										<button className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#24292f] text-left hover:bg-[#0969da] hover:text-[#ffffff]">
 											Quote reply
 										</button>
-										{param?.isFirst ? (
-											<></>
-										) : (
-											<button className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#24292f] text-left hover:bg-[#0969da] hover:text-[#ffffff]">
-												Reference in new issue
-											</button>
-										)}
-										<div className="h-[0px] my-2 mx-0 border-t border-solid border-[#d0d7de]"></div>
-										<button
-											className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#24292f] text-left hover:bg-[#0969da] hover:text-[#ffffff]"
-											onClick={() => {
-												param?.editClickFunction();
-											}}
+										<div
+											className={`${param?.isAuthorized ? "block" : "hidden"}`}
 										>
-											Edit
-										</button>
-										{param?.isFirst ? (
-											<></>
+											{param?.isFirst ? (
+												<></>
+											) : (
+												<button className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#24292f] text-left hover:bg-[#0969da] hover:text-[#ffffff]">
+													Reference in new issue
+												</button>
+											)}
+										</div>
+										{param?.isAuthorized ? (
+											<>
+												<div className="h-[0px] my-2 mx-0 border-t border-solid border-[#d0d7de]"></div>
+												<button
+													className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#24292f] text-left hover:bg-[#0969da] hover:text-[#ffffff]"
+													onClick={() => {
+														param?.editClickFunction();
+													}}
+												>
+													Edit
+												</button>
+												{param?.isFirst ? (
+													<></>
+												) : (
+													<button className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#24292f] text-left hover:bg-[#0969da] hover:text-[#ffffff]">
+														Hide
+													</button>
+												)}
+												{param?.isFirst ? (
+													<></>
+												) : (
+													<button
+														className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#cf222e] text-left hover:bg-[#cf222e] hover:text-[#ffffff]"
+														onClick={() => {
+															param?.deleteItemAction?.();
+															commentBoxActionsRef.current.open = false;
+														}}
+													>
+														Delete
+													</button>
+												)}
+												<div className="h-[0px] my-2 mx-0 border-t border-solid border-[#d0d7de]"></div>
+												<button className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#24292f] text-left hover:bg-[#0969da] hover:text-[#ffffff]">
+													Report content
+												</button>
+											</>
 										) : (
-											<button className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#24292f] text-left hover:bg-[#0969da] hover:text-[#ffffff]">
-												Hide
-											</button>
-										)}
-										{param?.isFirst ? (
 											<></>
-										) : (
-											<button
-												className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#cf222e] text-left hover:bg-[#cf222e] hover:text-[#ffffff]"
-												onClick={() => {
-													param?.deleteItemAction?.();
-													commentBoxActionsRef.current.open = false;
-												}}
-											>
-												Delete
-											</button>
 										)}
-										<div className="h-[0px] my-2 mx-0 border-t border-solid border-[#d0d7de]"></div>
-										<button className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#24292f] text-left hover:bg-[#0969da] hover:text-[#ffffff]">
-											Report content
-										</button>
 									</div>
 								</details>
 							</div>

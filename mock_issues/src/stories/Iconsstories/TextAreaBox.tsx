@@ -1544,358 +1544,376 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 								{param?.closeIssue?.open ? (
 									<div>
 										<div className="flex justify-end break-words">
-											{param?.closeIssue?.state === 0 ||
-											!param?.closeIssue?.state ? (
-												<div className="flex justify-center mr-1">
-													<button
-														className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
-														onClick={() => {
-															if (
-																inputData.body != "" &&
-																inputData.body != null
-															) {
-																param?.closeIssue?.commentActionHook?.({
-																	...param?.closeIssue?.editApiData,
-																	editData: { body: inputData.body },
-																});
-																setInputData({
-																	...inputData,
-																	body: "",
-																});
-															}
-															param?.closeIssue?.setStateInfoFunction?.(
-																getIssueStateReason()
-															);
-														}}
-													>
-														{issueState}
-													</button>
-													<button
-														className=" relative text-center bg-[#f6f8fa] py-[5px] px-[16px] rounded-r-md  border border-solid border-[rgba(27,31,36,0.15)] border-l-[0px]"
-														onClick={() => setOpenStateOptions((prev) => !prev)}
-													>
-														<span className=" text-[14px] inline-block w-0 h-0 mb-[2px] border-transparent border-t-[#24292f] border-solid border-4 border-b-0 content-['']"></span>
-														<div
-															className={`${
-																openStateOptions ? "absolute" : "hidden"
-															} bg-[#ffffff] z-[15] right-0 border border-solid border-[#d0d7de] w-[300px] mt-3 mb-5 rounded-[6px]`}
+											<div
+												className={`${
+													param?.closeIssue?.isAuthorized ? "block" : "hidden"
+												}`}
+											>
+												{param?.closeIssue?.state === 0 ||
+												!param?.closeIssue?.state ? (
+													<div className="flex justify-center mr-1">
+														<button
+															className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
+															onClick={() => {
+																if (
+																	inputData.body != "" &&
+																	inputData.body != null
+																) {
+																	param?.closeIssue?.commentActionHook?.({
+																		...param?.closeIssue?.editApiData,
+																		editData: { body: inputData.body },
+																	});
+																	setInputData({
+																		...inputData,
+																		body: "",
+																	});
+																}
+																param?.closeIssue?.setStateInfoFunction?.(
+																	getIssueStateReason()
+																);
+															}}
 														>
-															<button
-																className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b border-solid hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] pl-[8px] py-2 pr-2`}
-																onClick={(e) => {
-																	inputData.body != "" && inputData.body != null
-																		? setIssueState(closureStates.closeComment)
-																		: setIssueState(closureStates.closeIssue);
-																	setOpenStateOptions(false);
-																	e.stopPropagation();
-																}}
+															{issueState}
+														</button>
+														<button
+															className=" relative text-center bg-[#f6f8fa] py-[5px] px-[16px] rounded-r-md  border border-solid border-[rgba(27,31,36,0.15)] border-l-[0px]"
+															onClick={() =>
+																setOpenStateOptions((prev) => !prev)
+															}
+														>
+															<span className=" text-[14px] inline-block w-0 h-0 mb-[2px] border-transparent border-t-[#24292f] border-solid border-4 border-b-0 content-['']"></span>
+															<div
+																className={`${
+																	openStateOptions ? "absolute" : "hidden"
+																} bg-[#ffffff] z-[15] right-0 border border-solid border-[#d0d7de] w-[300px] mt-3 mb-5 rounded-[6px]`}
 															>
-																<div className="flex items-start mr-1">
-																	<CheckIcon
-																		className={`${
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
-																					closureStates.closeIssue
-																				) ||
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
+																<button
+																	className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b border-solid hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] pl-[8px] py-2 pr-2`}
+																	onClick={(e) => {
+																		inputData.body != "" &&
+																		inputData.body != null
+																			? setIssueState(
 																					closureStates.closeComment
-																				) ||
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
-																					closureStates.closeComplete
-																				)
-																				? "fill-[#000000]"
-																				: "fill-[#ffffff]"
-																		}`}
-																	/>
-																</div>
+																			  )
+																			: setIssueState(closureStates.closeIssue);
+																		setOpenStateOptions(false);
+																		e.stopPropagation();
+																	}}
+																>
+																	<div className="flex items-start mr-1">
+																		<CheckIcon
+																			className={`${
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeIssue
+																					) ||
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeComment
+																					) ||
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeComplete
+																					)
+																					? "fill-[#000000]"
+																					: "fill-[#ffffff]"
+																			}`}
+																		/>
+																	</div>
 
-																<div className="leading-tight min-w-0">
-																	<div className="flex items-center">
-																		<IssueClosedIcon className="fill-[#8250df] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
+																	<div className="leading-tight min-w-0">
+																		<div className="flex items-center">
+																			<IssueClosedIcon className="fill-[#8250df] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
 
-																		<div className="text-[14px] font-semibold text-[#24292f]truncate sm:pt-[2px]">
-																			Close as completed
+																			<div className="text-[14px] font-semibold text-[#24292f]truncate sm:pt-[2px]">
+																				Close as completed
+																			</div>
+																		</div>
+
+																		<div className="text-[12px] font-medium text-[#57606a] mt-1 truncate">
+																			Done, closed, fixed, resolved
 																		</div>
 																	</div>
-
-																	<div className="text-[12px] font-medium text-[#57606a] mt-1 truncate">
-																		Done, closed, fixed, resolved
-																	</div>
-																</div>
-															</button>
-															<button
-																className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b border-none hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] pl-[8px] py-2 pr-2`}
-																onClick={(e) => {
-																	inputData.body != "" && inputData.body != null
-																		? setIssueState(
-																				closureStates.closeSkipComment
-																		  )
-																		: setIssueState(closureStates.closeSkip);
-																	setOpenStateOptions(false);
-																	e.stopPropagation();
-																}}
-															>
-																<div className="flex items-start mr-1">
-																	<CheckIcon
-																		className={`${
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
-																					closureStates.closeSkip
-																				) ||
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
+																</button>
+																<button
+																	className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b border-none hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] pl-[8px] py-2 pr-2`}
+																	onClick={(e) => {
+																		inputData.body != "" &&
+																		inputData.body != null
+																			? setIssueState(
 																					closureStates.closeSkipComment
-																				) ||
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
-																					closureStates.closeNotPlanned
-																				)
-																				? "fill-[#000000]"
-																				: "fill-[#ffffff]"
-																		}`}
-																	/>
-																</div>
+																			  )
+																			: setIssueState(closureStates.closeSkip);
+																		setOpenStateOptions(false);
+																		e.stopPropagation();
+																	}}
+																>
+																	<div className="flex items-start mr-1">
+																		<CheckIcon
+																			className={`${
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeSkip
+																					) ||
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeSkipComment
+																					) ||
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeNotPlanned
+																					)
+																					? "fill-[#000000]"
+																					: "fill-[#ffffff]"
+																			}`}
+																		/>
+																	</div>
 
-																<div className="leading-tight min-w-0">
-																	<div className="flex items-center">
-																		<SkipIcon className="fill-[#57606a] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
+																	<div className="leading-tight min-w-0">
+																		<div className="flex items-center">
+																			<SkipIcon className="fill-[#57606a] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
 
-																		<div className="text-[14px] font-semibold text-[#24292f]truncate sm:pt-[2px]">
-																			Close as not planned
+																			<div className="text-[14px] font-semibold text-[#24292f]truncate sm:pt-[2px]">
+																				Close as not planned
+																			</div>
+																		</div>
+
+																		<div className="text-[12px] font-medium text-[#57606a] mt-1 truncate">
+																			Won't fix, can't repro, duplicate, state
 																		</div>
 																	</div>
-
-																	<div className="text-[12px] font-medium text-[#57606a] mt-1 truncate">
-																		Won't fix, can't repro, duplicate, state
-																	</div>
-																</div>
-															</button>
-														</div>
-													</button>
-												</div>
-											) : param?.closeIssue?.state === 1 ? (
-												<div className="flex justify-center mr-1">
-													<button
-														className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
-														onClick={() => {
-															if (
-																inputData.body != "" &&
-																inputData.body != null
-															) {
-																param?.closeIssue?.commentActionHook?.({
-																	...param?.closeIssue?.editApiData,
-																	editData: { body: inputData.body },
-																});
-																setInputData({
-																	...inputData,
-																	body: "",
-																});
-															}
-															param?.closeIssue?.setStateInfoFunction?.(
-																getIssueStateReason()
-															);
-														}}
-													>
-														{issueState}
-													</button>
-													<button
-														className=" relative text-center bg-[#f6f8fa] py-[5px] px-[16px] rounded-r-md  border border-solid border-[rgba(27,31,36,0.15)] border-l-[0px]"
-														onClick={() => setOpenStateOptions((prev) => !prev)}
-													>
-														<span className=" text-[14px] inline-block w-0 h-0 mb-[2px] border-transparent border-t-[#24292f] border-solid border-4 border-b-0 content-['']"></span>
-														<div
-															className={`${
-																openStateOptions ? "absolute" : "hidden"
-															} bg-[#ffffff] z-[15] right-0 border border-solid border-[#d0d7de] w-[300px] mt-3 mb-5 rounded-[6px]`}
+																</button>
+															</div>
+														</button>
+													</div>
+												) : param?.closeIssue?.state === 1 ? (
+													<div className="flex justify-center mr-1">
+														<button
+															className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
+															onClick={() => {
+																if (
+																	inputData.body != "" &&
+																	inputData.body != null
+																) {
+																	param?.closeIssue?.commentActionHook?.({
+																		...param?.closeIssue?.editApiData,
+																		editData: { body: inputData.body },
+																	});
+																	setInputData({
+																		...inputData,
+																		body: "",
+																	});
+																}
+																param?.closeIssue?.setStateInfoFunction?.(
+																	getIssueStateReason()
+																);
+															}}
 														>
-															<button
-																className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b 
+															{issueState}
+														</button>
+														<button
+															className=" relative text-center bg-[#f6f8fa] py-[5px] px-[16px] rounded-r-md  border border-solid border-[rgba(27,31,36,0.15)] border-l-[0px]"
+															onClick={() =>
+																setOpenStateOptions((prev) => !prev)
+															}
+														>
+															<span className=" text-[14px] inline-block w-0 h-0 mb-[2px] border-transparent border-t-[#24292f] border-solid border-4 border-b-0 content-['']"></span>
+															<div
+																className={`${
+																	openStateOptions ? "absolute" : "hidden"
+																} bg-[#ffffff] z-[15] right-0 border border-solid border-[#d0d7de] w-[300px] mt-3 mb-5 rounded-[6px]`}
+															>
+																<button
+																	className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b 
 											
 												"border-solid"
 												
 										hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] pl-[8px] py-2 pr-2`}
-																onClick={(e) => {
-																	setIssueState(closureStates.reopen);
-																	setOpenStateOptions(false);
-																	e.stopPropagation();
-																}}
-															>
-																<div className="flex items-start mr-1">
-																	<CheckIcon
-																		className={`${
-																			JSON.stringify(issueState) ==
-																			JSON.stringify(closureStates.reopen)
-																				? "fill-[#000000]"
-																				: "fill-[#ffffff]"
-																		}`}
-																	/>
-																</div>
+																	onClick={(e) => {
+																		setIssueState(closureStates.reopen);
+																		setOpenStateOptions(false);
+																		e.stopPropagation();
+																	}}
+																>
+																	<div className="flex items-start mr-1">
+																		<CheckIcon
+																			className={`${
+																				JSON.stringify(issueState) ==
+																				JSON.stringify(closureStates.reopen)
+																					? "fill-[#000000]"
+																					: "fill-[#ffffff]"
+																			}`}
+																		/>
+																	</div>
 
-																<div className="leading-tight min-w-0">
-																	<div className="flex items-center">
-																		<IssueReopenedIcon className="fill-[#1a7f3c] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
+																	<div className="leading-tight min-w-0">
+																		<div className="flex items-center">
+																			<IssueReopenedIcon className="fill-[#1a7f3c] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
 
-																		<div className="text-[14px] font-semibold text-[#24292f] truncate sm:pt-[2px]">
-																			Reopen issue
+																			<div className="text-[14px] font-semibold text-[#24292f] truncate sm:pt-[2px]">
+																				Reopen issue
+																			</div>
 																		</div>
 																	</div>
-																</div>
-															</button>
-															<button
-																className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b border-none hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] pl-[8px] py-2 pr-2`}
-																onClick={(e) => {
-																	setIssueState(closureStates.closeComplete);
-																	setOpenStateOptions(false);
-																	e.stopPropagation();
-																}}
-															>
-																<div className="flex items-start mr-1">
-																	<CheckIcon
-																		className={`${
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
-																					closureStates.closeIssue
-																				) ||
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
-																					closureStates.closeComment
-																				) ||
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
-																					closureStates.closeComplete
-																				)
-																				? "fill-[#000000]"
-																				: "fill-[#ffffff]"
-																		}`}
-																	/>
-																</div>
+																</button>
+																<button
+																	className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b border-none hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] pl-[8px] py-2 pr-2`}
+																	onClick={(e) => {
+																		setIssueState(closureStates.closeComplete);
+																		setOpenStateOptions(false);
+																		e.stopPropagation();
+																	}}
+																>
+																	<div className="flex items-start mr-1">
+																		<CheckIcon
+																			className={`${
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeIssue
+																					) ||
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeComment
+																					) ||
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeComplete
+																					)
+																					? "fill-[#000000]"
+																					: "fill-[#ffffff]"
+																			}`}
+																		/>
+																	</div>
 
-																<div className="leading-tight min-w-0">
-																	<div className="flex items-center">
-																		<IssueClosedIcon className="fill-[#8250df] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
+																	<div className="leading-tight min-w-0">
+																		<div className="flex items-center">
+																			<IssueClosedIcon className="fill-[#8250df] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
 
-																		<div className="text-[14px] font-semibold text-[#24292f]truncate sm:pt-[2px]">
-																			Close as completed
+																			<div className="text-[14px] font-semibold text-[#24292f]truncate sm:pt-[2px]">
+																				Close as completed
+																			</div>
 																		</div>
 																	</div>
-																</div>
-															</button>
-														</div>
-													</button>
-												</div>
-											) : (
-												<div className="flex justify-center mr-1">
-													<button
-														className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
-														onClick={() => {
-															if (
-																inputData.body != "" &&
-																inputData.body != null
-															) {
-																param?.closeIssue?.commentActionHook?.({
-																	...param?.closeIssue?.editApiData,
-																	editData: { body: inputData.body },
-																});
-																setInputData({
-																	...inputData,
-																	body: "",
-																});
-															}
-															param?.closeIssue?.setStateInfoFunction?.(
-																getIssueStateReason()
-															);
-														}}
-													>
-														{issueState}
-													</button>
-													<button
-														className=" relative text-center bg-[#f6f8fa] py-[5px] px-[16px] rounded-r-md  border border-solid border-[rgba(27,31,36,0.15)] border-l-[0px]"
-														onClick={() => setOpenStateOptions((prev) => !prev)}
-													>
-														<span className=" text-[14px] inline-block w-0 h-0 mb-[2px] border-transparent border-t-[#24292f] border-solid border-4 border-b-0 content-['']"></span>
-														<div
-															className={`${
-																openStateOptions ? "absolute" : "hidden"
-															} bg-[#ffffff] z-[15] right-0 border border-solid border-[#d0d7de] w-[300px] mt-3 mb-5 rounded-[6px]`}
+																</button>
+															</div>
+														</button>
+													</div>
+												) : (
+													<div className="flex justify-center mr-1">
+														<button
+															className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
+															onClick={() => {
+																if (
+																	inputData.body != "" &&
+																	inputData.body != null
+																) {
+																	param?.closeIssue?.commentActionHook?.({
+																		...param?.closeIssue?.editApiData,
+																		editData: { body: inputData.body },
+																	});
+																	setInputData({
+																		...inputData,
+																		body: "",
+																	});
+																}
+																param?.closeIssue?.setStateInfoFunction?.(
+																	getIssueStateReason()
+																);
+															}}
 														>
-															<button
-																className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b 
+															{issueState}
+														</button>
+														<button
+															className=" relative text-center bg-[#f6f8fa] py-[5px] px-[16px] rounded-r-md  border border-solid border-[rgba(27,31,36,0.15)] border-l-[0px]"
+															onClick={() =>
+																setOpenStateOptions((prev) => !prev)
+															}
+														>
+															<span className=" text-[14px] inline-block w-0 h-0 mb-[2px] border-transparent border-t-[#24292f] border-solid border-4 border-b-0 content-['']"></span>
+															<div
+																className={`${
+																	openStateOptions ? "absolute" : "hidden"
+																} bg-[#ffffff] z-[15] right-0 border border-solid border-[#d0d7de] w-[300px] mt-3 mb-5 rounded-[6px]`}
+															>
+																<button
+																	className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b 
 											
 												"border-solid"
 												
 										hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] pl-[8px] py-2 pr-2`}
-																onClick={(e) => {
-																	setIssueState(closureStates.reopen);
-																	setOpenStateOptions(false);
-																	e.stopPropagation();
-																}}
-															>
-																<div className="flex items-start mr-1">
-																	<CheckIcon
-																		className={`${
-																			JSON.stringify(issueState) ==
-																			JSON.stringify(closureStates.reopen)
-																				? "fill-[#000000]"
-																				: "fill-[#ffffff]"
-																		}`}
-																	/>
-																</div>
+																	onClick={(e) => {
+																		setIssueState(closureStates.reopen);
+																		setOpenStateOptions(false);
+																		e.stopPropagation();
+																	}}
+																>
+																	<div className="flex items-start mr-1">
+																		<CheckIcon
+																			className={`${
+																				JSON.stringify(issueState) ==
+																				JSON.stringify(closureStates.reopen)
+																					? "fill-[#000000]"
+																					: "fill-[#ffffff]"
+																			}`}
+																		/>
+																	</div>
 
-																<div className="leading-tight min-w-0">
-																	<div className="flex items-center">
-																		<IssueReopenedIcon className="fill-[#1a7f37] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
+																	<div className="leading-tight min-w-0">
+																		<div className="flex items-center">
+																			<IssueReopenedIcon className="fill-[#1a7f37] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
 
-																		<div className="text-[14px] font-semibold text-[#24292f]truncate sm:pt-[2px]">
-																			Reopen issue
+																			<div className="text-[14px] font-semibold text-[#24292f]truncate sm:pt-[2px]">
+																				Reopen issue
+																			</div>
 																		</div>
 																	</div>
-																</div>
-															</button>
-															<button
-																className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b border-none hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] pl-[8px] py-2 pr-2`}
-																onClick={(e) => {
-																	setIssueState(closureStates.closeNotPlanned);
-																	setOpenStateOptions(false);
-																	e.stopPropagation();
-																}}
-															>
-																<div className="flex items-start mr-1">
-																	<CheckIcon
-																		className={`${
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
-																					closureStates.closeSkip
-																				) ||
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
-																					closureStates.closeSkipComment
-																				) ||
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
-																					closureStates.closeNotPlanned
-																				)
-																				? "fill-[#000000]"
-																				: "fill-[#ffffff]"
-																		}`}
-																	/>
-																</div>
+																</button>
+																<button
+																	className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b border-none hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] pl-[8px] py-2 pr-2`}
+																	onClick={(e) => {
+																		setIssueState(
+																			closureStates.closeNotPlanned
+																		);
+																		setOpenStateOptions(false);
+																		e.stopPropagation();
+																	}}
+																>
+																	<div className="flex items-start mr-1">
+																		<CheckIcon
+																			className={`${
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeSkip
+																					) ||
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeSkipComment
+																					) ||
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeNotPlanned
+																					)
+																					? "fill-[#000000]"
+																					: "fill-[#ffffff]"
+																			}`}
+																		/>
+																	</div>
 
-																<div className="leading-tight min-w-0">
-																	<div className="flex items-center">
-																		<SkipIcon className="fill-[#57606a] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
+																	<div className="leading-tight min-w-0">
+																		<div className="flex items-center">
+																			<SkipIcon className="fill-[#57606a] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
 
-																		<div className="text-[14px] font-semibold text-[#24292f]truncate sm:pt-[2px]">
-																			Close as not planned
+																			<div className="text-[14px] font-semibold text-[#24292f]truncate sm:pt-[2px]">
+																				Close as not planned
+																			</div>
 																		</div>
 																	</div>
-																</div>
-															</button>
-														</div>
-													</button>
-												</div>
-											)}
+																</button>
+															</div>
+														</button>
+													</div>
+												)}
+											</div>
 											<ButtonShare
 												param={{}}
 												textColor={"#ffffff"}
@@ -1995,358 +2013,376 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 								{param?.closeIssue?.open ? (
 									<div>
 										<div className="flex justify-end break-words">
-											{param?.closeIssue?.state === 0 ||
-											!param?.closeIssue?.state ? (
-												<div className="flex justify-center mr-1">
-													<button
-														className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
-														onClick={() => {
-															if (
-																inputData.body != "" &&
-																inputData.body != null
-															) {
-																param?.closeIssue?.commentActionHook?.({
-																	...param?.closeIssue?.editApiData,
-																	editData: { body: inputData.body },
-																});
-																setInputData({
-																	...inputData,
-																	body: "",
-																});
-															}
-															param?.closeIssue?.setStateInfoFunction?.(
-																getIssueStateReason()
-															);
-														}}
-													>
-														{issueState}
-													</button>
-													<button
-														className=" relative text-center bg-[#f6f8fa] py-[5px] px-[16px] rounded-r-md  border border-solid border-[rgba(27,31,36,0.15)] border-l-[0px]"
-														onClick={() => setOpenStateOptions((prev) => !prev)}
-													>
-														<span className=" text-[14px] inline-block w-0 h-0 mb-[2px] border-transparent border-t-[#24292f] border-solid border-4 border-b-0 content-['']"></span>
-														<div
-															className={`${
-																openStateOptions ? "absolute" : "hidden"
-															} bg-[#ffffff] z-[15] right-0 border border-solid border-[#d0d7de] w-[300px] mt-3 mb-5 rounded-[6px]`}
+											<div
+												className={`${
+													param?.closeIssue?.isAuthorized ? "block" : "hidden"
+												}`}
+											>
+												{param?.closeIssue?.state === 0 ||
+												!param?.closeIssue?.state ? (
+													<div className="flex justify-center mr-1">
+														<button
+															className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
+															onClick={() => {
+																if (
+																	inputData.body != "" &&
+																	inputData.body != null
+																) {
+																	param?.closeIssue?.commentActionHook?.({
+																		...param?.closeIssue?.editApiData,
+																		editData: { body: inputData.body },
+																	});
+																	setInputData({
+																		...inputData,
+																		body: "",
+																	});
+																}
+																param?.closeIssue?.setStateInfoFunction?.(
+																	getIssueStateReason()
+																);
+															}}
 														>
-															<button
-																className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b border-solid hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] pl-[8px] py-2 pr-2`}
-																onClick={(e) => {
-																	inputData.body != "" && inputData.body != null
-																		? setIssueState(closureStates.closeComment)
-																		: setIssueState(closureStates.closeIssue);
-																	setOpenStateOptions(false);
-																	e.stopPropagation();
-																}}
+															{issueState}
+														</button>
+														<button
+															className=" relative text-center bg-[#f6f8fa] py-[5px] px-[16px] rounded-r-md  border border-solid border-[rgba(27,31,36,0.15)] border-l-[0px]"
+															onClick={() =>
+																setOpenStateOptions((prev) => !prev)
+															}
+														>
+															<span className=" text-[14px] inline-block w-0 h-0 mb-[2px] border-transparent border-t-[#24292f] border-solid border-4 border-b-0 content-['']"></span>
+															<div
+																className={`${
+																	openStateOptions ? "absolute" : "hidden"
+																} bg-[#ffffff] z-[15] right-0 border border-solid border-[#d0d7de] w-[300px] mt-3 mb-5 rounded-[6px]`}
 															>
-																<div className="flex items-start mr-1">
-																	<CheckIcon
-																		className={`${
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
-																					closureStates.closeIssue
-																				) ||
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
+																<button
+																	className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b border-solid hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] pl-[8px] py-2 pr-2`}
+																	onClick={(e) => {
+																		inputData.body != "" &&
+																		inputData.body != null
+																			? setIssueState(
 																					closureStates.closeComment
-																				) ||
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
-																					closureStates.closeComplete
-																				)
-																				? "fill-[#000000]"
-																				: "fill-[#ffffff]"
-																		}`}
-																	/>
-																</div>
+																			  )
+																			: setIssueState(closureStates.closeIssue);
+																		setOpenStateOptions(false);
+																		e.stopPropagation();
+																	}}
+																>
+																	<div className="flex items-start mr-1">
+																		<CheckIcon
+																			className={`${
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeIssue
+																					) ||
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeComment
+																					) ||
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeComplete
+																					)
+																					? "fill-[#000000]"
+																					: "fill-[#ffffff]"
+																			}`}
+																		/>
+																	</div>
 
-																<div className="leading-tight min-w-0">
-																	<div className="flex items-center">
-																		<IssueClosedIcon className="fill-[#8250df] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
+																	<div className="leading-tight min-w-0">
+																		<div className="flex items-center">
+																			<IssueClosedIcon className="fill-[#8250df] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
 
-																		<div className="text-[14px] font-semibold text-[#24292f]truncate sm:pt-[2px]">
-																			Close as completed
+																			<div className="text-[14px] font-semibold text-[#24292f]truncate sm:pt-[2px]">
+																				Close as completed
+																			</div>
+																		</div>
+
+																		<div className="text-[12px] font-medium text-[#57606a] mt-1 truncate">
+																			Done, closed, fixed, resolved
 																		</div>
 																	</div>
-
-																	<div className="text-[12px] font-medium text-[#57606a] mt-1 truncate">
-																		Done, closed, fixed, resolved
-																	</div>
-																</div>
-															</button>
-															<button
-																className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b border-none hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] pl-[8px] py-2 pr-2`}
-																onClick={(e) => {
-																	inputData.body != "" && inputData.body != null
-																		? setIssueState(
-																				closureStates.closeSkipComment
-																		  )
-																		: setIssueState(closureStates.closeSkip);
-																	setOpenStateOptions(false);
-																	e.stopPropagation();
-																}}
-															>
-																<div className="flex items-start mr-1">
-																	<CheckIcon
-																		className={`${
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
-																					closureStates.closeSkip
-																				) ||
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
+																</button>
+																<button
+																	className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b border-none hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] pl-[8px] py-2 pr-2`}
+																	onClick={(e) => {
+																		inputData.body != "" &&
+																		inputData.body != null
+																			? setIssueState(
 																					closureStates.closeSkipComment
-																				) ||
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
-																					closureStates.closeNotPlanned
-																				)
-																				? "fill-[#000000]"
-																				: "fill-[#ffffff]"
-																		}`}
-																	/>
-																</div>
+																			  )
+																			: setIssueState(closureStates.closeSkip);
+																		setOpenStateOptions(false);
+																		e.stopPropagation();
+																	}}
+																>
+																	<div className="flex items-start mr-1">
+																		<CheckIcon
+																			className={`${
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeSkip
+																					) ||
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeSkipComment
+																					) ||
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeNotPlanned
+																					)
+																					? "fill-[#000000]"
+																					: "fill-[#ffffff]"
+																			}`}
+																		/>
+																	</div>
 
-																<div className="leading-tight min-w-0">
-																	<div className="flex items-center">
-																		<SkipIcon className="fill-[#57606a] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
+																	<div className="leading-tight min-w-0">
+																		<div className="flex items-center">
+																			<SkipIcon className="fill-[#57606a] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
 
-																		<div className="text-[14px] font-semibold text-[#24292f]truncate sm:pt-[2px]">
-																			Close as not planned
+																			<div className="text-[14px] font-semibold text-[#24292f]truncate sm:pt-[2px]">
+																				Close as not planned
+																			</div>
+																		</div>
+
+																		<div className="text-[12px] font-medium text-[#57606a] mt-1 truncate">
+																			Won't fix, can't repro, duplicate, state
 																		</div>
 																	</div>
-
-																	<div className="text-[12px] font-medium text-[#57606a] mt-1 truncate">
-																		Won't fix, can't repro, duplicate, state
-																	</div>
-																</div>
-															</button>
-														</div>
-													</button>
-												</div>
-											) : param?.closeIssue?.state === 1 ? (
-												<div className="flex justify-center mr-1">
-													<button
-														className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
-														onClick={() => {
-															if (
-																inputData.body != "" &&
-																inputData.body != null
-															) {
-																param?.closeIssue?.commentActionHook?.({
-																	...param?.closeIssue?.editApiData,
-																	editData: { body: inputData.body },
-																});
-																setInputData({
-																	...inputData,
-																	body: "",
-																});
-															}
-															param?.closeIssue?.setStateInfoFunction?.(
-																getIssueStateReason()
-															);
-														}}
-													>
-														{issueState}
-													</button>
-													<button
-														className=" relative text-center bg-[#f6f8fa] py-[5px] px-[16px] rounded-r-md  border border-solid border-[rgba(27,31,36,0.15)] border-l-[0px]"
-														onClick={() => setOpenStateOptions((prev) => !prev)}
-													>
-														<span className=" text-[14px] inline-block w-0 h-0 mb-[2px] border-transparent border-t-[#24292f] border-solid border-4 border-b-0 content-['']"></span>
-														<div
-															className={`${
-																openStateOptions ? "absolute" : "hidden"
-															} bg-[#ffffff] z-[15] right-0 border border-solid border-[#d0d7de] w-[300px] mt-3 mb-5 rounded-[6px]`}
+																</button>
+															</div>
+														</button>
+													</div>
+												) : param?.closeIssue?.state === 1 ? (
+													<div className="flex justify-center mr-1">
+														<button
+															className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
+															onClick={() => {
+																if (
+																	inputData.body != "" &&
+																	inputData.body != null
+																) {
+																	param?.closeIssue?.commentActionHook?.({
+																		...param?.closeIssue?.editApiData,
+																		editData: { body: inputData.body },
+																	});
+																	setInputData({
+																		...inputData,
+																		body: "",
+																	});
+																}
+																param?.closeIssue?.setStateInfoFunction?.(
+																	getIssueStateReason()
+																);
+															}}
 														>
-															<button
-																className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b 
+															{issueState}
+														</button>
+														<button
+															className=" relative text-center bg-[#f6f8fa] py-[5px] px-[16px] rounded-r-md  border border-solid border-[rgba(27,31,36,0.15)] border-l-[0px]"
+															onClick={() =>
+																setOpenStateOptions((prev) => !prev)
+															}
+														>
+															<span className=" text-[14px] inline-block w-0 h-0 mb-[2px] border-transparent border-t-[#24292f] border-solid border-4 border-b-0 content-['']"></span>
+															<div
+																className={`${
+																	openStateOptions ? "absolute" : "hidden"
+																} bg-[#ffffff] z-[15] right-0 border border-solid border-[#d0d7de] w-[300px] mt-3 mb-5 rounded-[6px]`}
+															>
+																<button
+																	className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b 
 											
 												"border-solid"
 												
 										hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] pl-[8px] py-2 pr-2`}
-																onClick={(e) => {
-																	setIssueState(closureStates.reopen);
-																	setOpenStateOptions(false);
-																	e.stopPropagation();
-																}}
-															>
-																<div className="flex items-start mr-1">
-																	<CheckIcon
-																		className={`${
-																			JSON.stringify(issueState) ==
-																			JSON.stringify(closureStates.reopen)
-																				? "fill-[#000000]"
-																				: "fill-[#ffffff]"
-																		}`}
-																	/>
-																</div>
+																	onClick={(e) => {
+																		setIssueState(closureStates.reopen);
+																		setOpenStateOptions(false);
+																		e.stopPropagation();
+																	}}
+																>
+																	<div className="flex items-start mr-1">
+																		<CheckIcon
+																			className={`${
+																				JSON.stringify(issueState) ==
+																				JSON.stringify(closureStates.reopen)
+																					? "fill-[#000000]"
+																					: "fill-[#ffffff]"
+																			}`}
+																		/>
+																	</div>
 
-																<div className="leading-tight min-w-0">
-																	<div className="flex items-center">
-																		<IssueReopenedIcon className="fill-[#1a7f3c] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
+																	<div className="leading-tight min-w-0">
+																		<div className="flex items-center">
+																			<IssueReopenedIcon className="fill-[#1a7f3c] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
 
-																		<div className="text-[14px] font-semibold text-[#24292f] truncate sm:pt-[2px]">
-																			Reopen issue
+																			<div className="text-[14px] font-semibold text-[#24292f] truncate sm:pt-[2px]">
+																				Reopen issue
+																			</div>
 																		</div>
 																	</div>
-																</div>
-															</button>
-															<button
-																className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b border-none hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] pl-[8px] py-2 pr-2`}
-																onClick={(e) => {
-																	setIssueState(closureStates.closeComplete);
-																	setOpenStateOptions(false);
-																	e.stopPropagation();
-																}}
-															>
-																<div className="flex items-start mr-1">
-																	<CheckIcon
-																		className={`${
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
-																					closureStates.closeIssue
-																				) ||
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
-																					closureStates.closeComment
-																				) ||
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
-																					closureStates.closeComplete
-																				)
-																				? "fill-[#000000]"
-																				: "fill-[#ffffff]"
-																		}`}
-																	/>
-																</div>
+																</button>
+																<button
+																	className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b border-none hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] pl-[8px] py-2 pr-2`}
+																	onClick={(e) => {
+																		setIssueState(closureStates.closeComplete);
+																		setOpenStateOptions(false);
+																		e.stopPropagation();
+																	}}
+																>
+																	<div className="flex items-start mr-1">
+																		<CheckIcon
+																			className={`${
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeIssue
+																					) ||
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeComment
+																					) ||
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeComplete
+																					)
+																					? "fill-[#000000]"
+																					: "fill-[#ffffff]"
+																			}`}
+																		/>
+																	</div>
 
-																<div className="leading-tight min-w-0">
-																	<div className="flex items-center">
-																		<IssueClosedIcon className="fill-[#8250df] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
+																	<div className="leading-tight min-w-0">
+																		<div className="flex items-center">
+																			<IssueClosedIcon className="fill-[#8250df] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
 
-																		<div className="text-[14px] font-semibold text-[#24292f]truncate sm:pt-[2px]">
-																			Close as completed
+																			<div className="text-[14px] font-semibold text-[#24292f]truncate sm:pt-[2px]">
+																				Close as completed
+																			</div>
 																		</div>
 																	</div>
-																</div>
-															</button>
-														</div>
-													</button>
-												</div>
-											) : (
-												<div className="flex justify-center mr-1">
-													<button
-														className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
-														onClick={() => {
-															if (
-																inputData.body != "" &&
-																inputData.body != null
-															) {
-																param?.closeIssue?.commentActionHook?.({
-																	...param?.closeIssue?.editApiData,
-																	editData: { body: inputData.body },
-																});
-																setInputData({
-																	...inputData,
-																	body: "",
-																});
-															}
-															param?.closeIssue?.setStateInfoFunction?.(
-																getIssueStateReason()
-															);
-														}}
-													>
-														{issueState}
-													</button>
-													<button
-														className=" relative text-center bg-[#f6f8fa] py-[5px] px-[16px] rounded-r-md  border border-solid border-[rgba(27,31,36,0.15)] border-l-[0px]"
-														onClick={() => setOpenStateOptions((prev) => !prev)}
-													>
-														<span className=" text-[14px] inline-block w-0 h-0 mb-[2px] border-transparent border-t-[#24292f] border-solid border-4 border-b-0 content-['']"></span>
-														<div
-															className={`${
-																openStateOptions ? "absolute" : "hidden"
-															} bg-[#ffffff] z-[15] right-0 border border-solid border-[#d0d7de] w-[300px] mt-3 mb-5 rounded-[6px]`}
+																</button>
+															</div>
+														</button>
+													</div>
+												) : (
+													<div className="flex justify-center mr-1">
+														<button
+															className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
+															onClick={() => {
+																if (
+																	inputData.body != "" &&
+																	inputData.body != null
+																) {
+																	param?.closeIssue?.commentActionHook?.({
+																		...param?.closeIssue?.editApiData,
+																		editData: { body: inputData.body },
+																	});
+																	setInputData({
+																		...inputData,
+																		body: "",
+																	});
+																}
+																param?.closeIssue?.setStateInfoFunction?.(
+																	getIssueStateReason()
+																);
+															}}
 														>
-															<button
-																className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b 
+															{issueState}
+														</button>
+														<button
+															className=" relative text-center bg-[#f6f8fa] py-[5px] px-[16px] rounded-r-md  border border-solid border-[rgba(27,31,36,0.15)] border-l-[0px]"
+															onClick={() =>
+																setOpenStateOptions((prev) => !prev)
+															}
+														>
+															<span className=" text-[14px] inline-block w-0 h-0 mb-[2px] border-transparent border-t-[#24292f] border-solid border-4 border-b-0 content-['']"></span>
+															<div
+																className={`${
+																	openStateOptions ? "absolute" : "hidden"
+																} bg-[#ffffff] z-[15] right-0 border border-solid border-[#d0d7de] w-[300px] mt-3 mb-5 rounded-[6px]`}
+															>
+																<button
+																	className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b 
 											
 												"border-solid"
 												
 										hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] pl-[8px] py-2 pr-2`}
-																onClick={(e) => {
-																	setIssueState(closureStates.reopen);
-																	setOpenStateOptions(false);
-																	e.stopPropagation();
-																}}
-															>
-																<div className="flex items-start mr-1">
-																	<CheckIcon
-																		className={`${
-																			JSON.stringify(issueState) ==
-																			JSON.stringify(closureStates.reopen)
-																				? "fill-[#000000]"
-																				: "fill-[#ffffff]"
-																		}`}
-																	/>
-																</div>
+																	onClick={(e) => {
+																		setIssueState(closureStates.reopen);
+																		setOpenStateOptions(false);
+																		e.stopPropagation();
+																	}}
+																>
+																	<div className="flex items-start mr-1">
+																		<CheckIcon
+																			className={`${
+																				JSON.stringify(issueState) ==
+																				JSON.stringify(closureStates.reopen)
+																					? "fill-[#000000]"
+																					: "fill-[#ffffff]"
+																			}`}
+																		/>
+																	</div>
 
-																<div className="leading-tight min-w-0">
-																	<div className="flex items-center">
-																		<IssueReopenedIcon className="fill-[#1a7f37] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
+																	<div className="leading-tight min-w-0">
+																		<div className="flex items-center">
+																			<IssueReopenedIcon className="fill-[#1a7f37] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
 
-																		<div className="text-[14px] font-semibold text-[#24292f]truncate sm:pt-[2px]">
-																			Reopen issue
+																			<div className="text-[14px] font-semibold text-[#24292f]truncate sm:pt-[2px]">
+																				Reopen issue
+																			</div>
 																		</div>
 																	</div>
-																</div>
-															</button>
-															<button
-																className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b border-none hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] pl-[8px] py-2 pr-2`}
-																onClick={(e) => {
-																	setIssueState(closureStates.closeNotPlanned);
-																	setOpenStateOptions(false);
-																	e.stopPropagation();
-																}}
-															>
-																<div className="flex items-start mr-1">
-																	<CheckIcon
-																		className={`${
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
-																					closureStates.closeSkip
-																				) ||
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
-																					closureStates.closeSkipComment
-																				) ||
-																			JSON.stringify(issueState) ==
-																				JSON.stringify(
-																					closureStates.closeNotPlanned
-																				)
-																				? "fill-[#000000]"
-																				: "fill-[#ffffff]"
-																		}`}
-																	/>
-																</div>
+																</button>
+																<button
+																	className={`flex items-start w-full p-4 overflow-hidden text-[#24292f] text-left cursor-pointer border-b border-none hover:bg-[rgba(234,238,242,0.5)] border-b-[hsla(210,18%,87%,1)] pl-[8px] py-2 pr-2`}
+																	onClick={(e) => {
+																		setIssueState(
+																			closureStates.closeNotPlanned
+																		);
+																		setOpenStateOptions(false);
+																		e.stopPropagation();
+																	}}
+																>
+																	<div className="flex items-start mr-1">
+																		<CheckIcon
+																			className={`${
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeSkip
+																					) ||
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeSkipComment
+																					) ||
+																				JSON.stringify(issueState) ==
+																					JSON.stringify(
+																						closureStates.closeNotPlanned
+																					)
+																					? "fill-[#000000]"
+																					: "fill-[#ffffff]"
+																			}`}
+																		/>
+																	</div>
 
-																<div className="leading-tight min-w-0">
-																	<div className="flex items-center">
-																		<SkipIcon className="fill-[#57606a] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
+																	<div className="leading-tight min-w-0">
+																		<div className="flex items-center">
+																			<SkipIcon className="fill-[#57606a] mt-px rounded-[2em] w-[16px] h-[16px] mr-1" />
 
-																		<div className="text-[14px] font-semibold text-[#24292f]truncate sm:pt-[2px]">
-																			Close as not planned
+																			<div className="text-[14px] font-semibold text-[#24292f]truncate sm:pt-[2px]">
+																				Close as not planned
+																			</div>
 																		</div>
 																	</div>
-																</div>
-															</button>
-														</div>
-													</button>
-												</div>
-											)}
+																</button>
+															</div>
+														</button>
+													</div>
+												)}
+											</div>
 											<ButtonShare
 												param={{}}
 												textColor={"#ffffff"}

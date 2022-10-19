@@ -9,13 +9,14 @@ export default function LabelItem({
 	deleteAction,
 	gitInfo,
 	updateAction,
+	isAuthorized,
 }) {
 	const [editClick, setEditClick] = useState(false);
 	const [sortClick, setSortClick] = useState(false);
 
 	return editClick ? (
 		<WrapperBox>
-			<WrapperItemBox>
+			<WrapperItemBox isAuthorized={isAuthorized}>
 				<ActionSummaryButton
 					isClicked={sortClick}
 					onClick={() => setSortClick((prev) => !prev)}
@@ -75,7 +76,7 @@ export default function LabelItem({
 				<LabelIssueDescription>
 					dajsfpoisdjfoiasdjfaoisdfjierpijp
 				</LabelIssueDescription>
-				<WrapperItemBox>
+				<WrapperItemBox isAuthorized={isAuthorized}>
 					<SummaryButton
 						isClicked={sortClick}
 						onClick={() => setSortClick((prev) => !prev)}
@@ -192,6 +193,7 @@ type PropsTypes = {
 	labelcolor?: string;
 	wordcolor?: string;
 	isClicked?: boolean;
+	isAuthorized?: boolean;
 };
 
 const SummaryButton = styled.button`
@@ -254,6 +256,7 @@ const LabelIssueDescription = styled.a`
 `;
 
 const WrapperItemBox = styled.div`
+	display: ${(props: PropsTypes) => (props.isAuthorized ? "block" : "none")};
 	position: relative;
 `;
 

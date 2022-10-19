@@ -27,6 +27,10 @@ export default function LabelManagement() {
 	const visibility = useSelector(
 		(state: RootState) => state?.currentRepoInfo?.repoInfo?.visibility
 	);
+	const loginName = useSelector(
+		(state: RootState) =>
+			state?.supaBaseInfo?.user?.identities[0].identity_data.user_name
+	);
 
 	const {
 		data: labelListData,
@@ -79,7 +83,9 @@ export default function LabelManagement() {
 					<SearchLabelWrapper>
 						<SearchBox />
 					</SearchLabelWrapper>
-					<ButtonCompoStyle>
+					<ButtonCompoStyle
+						isAuthorized={loginName === username ? true : false}
+					>
 						<ButtonShare
 							param={{}}
 							textColor="#fff"
@@ -94,12 +100,14 @@ export default function LabelManagement() {
 						/>
 					</ButtonCompoStyle>
 				</OtherNavBox>
+
 				<NewLabel
 					show={newLabelClick}
 					cancelAction={() => setNewLabelClick(false)}
 					createAction={createLabel}
 					gitInfo={{ reponame: reponame, username: username }}
 				/>
+
 				<LabelListBox>
 					<LabelListBoxHeader>
 						<LabelListBoxHeaderSpan>{`${labelListData?.length} labels`}</LabelListBoxHeaderSpan>
@@ -127,6 +135,7 @@ export default function LabelManagement() {
 										labelname: element.name,
 									}}
 									updateAction={updateLabel}
+									isAuthorized={loginName === username ? true : false}
 								/>
 							</ListItemBox>
 						);
@@ -226,6 +235,10 @@ type isSelectedProps = {
 	isSelected: boolean;
 };
 
+type isAuthorized = {
+	isAuthorized: boolean;
+};
+
 const SearchLabelWrapper = styled.div`
 	flex-basis: 100%;
 	margin-left: 0px;
@@ -283,6 +296,7 @@ const ListItemBox = styled.div`
 `;
 
 const ButtonCompoStyle = styled.div`
+	display: ${(props: isAuthorized) => (props.isAuthorized ? "block" : "none")};
 	position: absolute;
 	right: 0px;
 `;

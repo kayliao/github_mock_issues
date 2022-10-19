@@ -22,6 +22,11 @@ export default function NewIssuePage() {
 		(state: RootState) =>
 			state.supaBaseInfo.user.identities[0].identity_data.avatar_url
 	);
+
+	const loginName = useSelector(
+		(state: RootState) =>
+			state?.supaBaseInfo?.user?.identities[0].identity_data.user_name
+	);
 	const [textData, setTextData] = useState({ title: "", body: "" });
 	const [barData, setBarData] = useState({ assignees: [], labels: [] });
 	const { data: assigneeListData, error: getAssigneeListError } =
@@ -102,6 +107,7 @@ export default function NewIssuePage() {
 					<SettingsBar
 						setBarData={setBarData}
 						param={{
+							isAuthorized: loginName === username ? true : false,
 							openDevelop: true,
 							Notifications: { open: false, subscribe: false },
 							Participant: { open: false },

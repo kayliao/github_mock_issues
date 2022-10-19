@@ -234,6 +234,7 @@ export default function CommentItem({
 					param={{
 						boxBlue: param?.boxBlue ? param?.boxBlue : false,
 						isFirst: param?.isFirst ? param?.isFirst : false,
+						isAuthorized: param?.isAuthorized ? param?.isAuthorized : false,
 						reactions: param?.reactions?.content
 							? param?.reactions?.content
 							: commentReactionsData
