@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { RootState } from "./store/store";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { currentRepoInfoActions } from "./reducer/currentRepoInfoReducer";
+import { countRestTime } from "./utils/shareFunctions";
 
 function Repo() {
 	const dispatch = useDispatch();
-
+	const navigate = useNavigate();
 	const token = useSelector((state: RootState) => state.supaBaseInfo.token);
 	const user = useSelector((state: RootState) => state.supaBaseInfo.user);
 
@@ -26,23 +27,15 @@ function Repo() {
 				}
 			);
 			const resjson = await res.json();
+			if (!res.ok) {
+				navigate(`/error/${res.status}/${resjson.message}`);
+				return;
+			}
 			setRepolist(resjson);
 		}
 		if (token) getRepos();
 	}, [token]);
 
-	function getTime(time) {
-		const formattedDate = new Date(time);
-
-		formattedDate.toLocaleString("default", { month: "short" });
-
-		return formattedDate.toLocaleString("en-GB", {
-			day: "numeric",
-			month: "long",
-			year: "numeric",
-		});
-	}
-	if (repolist?.message === "Bad credentials") setRepolist(null);
 	return (
 		<>
 			{token && user ? (
@@ -72,8 +65,8 @@ function Repo() {
 								</RepoA>
 								<VisibilityTag>{element.visibility}</VisibilityTag>
 								<UpdateTime>
-									{`Updated on `}
-									{getTime(element.updated_at)}
+									{`Updated `}
+									{countRestTime(element.updated_at)}
 								</UpdateTime>
 							</RepoBox>
 						))}

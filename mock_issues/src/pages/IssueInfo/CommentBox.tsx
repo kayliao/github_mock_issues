@@ -2,6 +2,7 @@ import { KebabHorizontalIcon, SmileyIcon } from "@primer/octicons-react";
 import { marked } from "marked";
 import "../../prose.css";
 import { useRef } from "react";
+import { countRestTime } from "utils/shareFunctions";
 
 export default function CommentBox({
 	avatar,
@@ -13,47 +14,6 @@ export default function CommentBox({
 	const commentBoxActionsRef = useRef(null);
 	const topSmileListRef = useRef(null);
 	const bottomSmileListRef = useRef(null);
-
-	function countRestTime(timeString) {
-		const time = new Date(timeString);
-		const timeNow = Date.now();
-		const diffTime = timeNow - time.getTime();
-
-		const diffDays = Math.floor(diffTime / (24 * 3600 * 1000));
-		let hours, minutes, seconds;
-		if (diffDays <= 0) {
-			const leave1 = diffTime % (24 * 3600 * 1000);
-			hours = Math.floor(leave1 / (3600 * 1000));
-			if (hours <= 0) {
-				const leave2 = leave1 % (3600 * 1000);
-				minutes = Math.floor(leave2 / (60 * 1000));
-				if (minutes <= 0) {
-					const leave3 = leave2 % (60 * 1000);
-					seconds = Math.round(leave3 / 1000);
-					return `${seconds} seconds ago`;
-				} else {
-					return `${minutes} minutes ago`;
-				}
-			} else {
-				return `${hours} hours ago`;
-			}
-		} else if (diffDays <= 30) {
-			return `${diffDays} days ago`;
-		} else {
-			time.toLocaleString("default", { month: "short" });
-
-			time.toLocaleString("en-GB", {
-				day: "numeric",
-				month: "long",
-				year: "numeric",
-			});
-			return `on ${time.toLocaleString("en-GB", {
-				day: "numeric",
-				month: "long",
-				year: "numeric",
-			})}`;
-		}
-	}
 
 	const renderer = {
 		listitem(text: string, booleantask: boolean, checked: boolean) {
