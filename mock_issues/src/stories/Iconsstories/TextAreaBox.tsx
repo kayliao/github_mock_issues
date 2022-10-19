@@ -115,6 +115,8 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 	const textAreaMarkRef = useRef(null);
 	const [selectedFile, setSelectedFile] = useState(null);
 	const [fileUploading, setFileUploading] = useState(false);
+	const [fileUploadingError, setFileUploadingError] = useState(false);
+
 	const [filePath, setFilePath] = useState(null);
 	const [issueState, setIssueState] = useState(closureStates.closeIssue);
 	const [openStateOptions, setOpenStateOptions] = useState(false);
@@ -164,14 +166,20 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 		const uploadFiletoFirebase = async () => {
 			let fileUrl = null;
 			if (selectedFile != null) {
-				const fileRef = ref(storage, `/githubfile/${selectedFile?.name}`);
-				const uploadResult = await uploadBytes(fileRef, selectedFile?.file);
+				try {
+					const fileRef = ref(storage, `/githubfile/${selectedFile?.name}`);
+					const uploadResult = await uploadBytes(fileRef, selectedFile?.file);
 
-				const downloadURLResult = await getDownloadURL(fileRef).then((url) => {
-					fileUrl = url;
-				});
-
-				setFilePath(fileUrl);
+					const downloadURLResult = await getDownloadURL(fileRef).then(
+						(url) => {
+							fileUrl = url;
+						}
+					);
+					setFilePath(fileUrl);
+				} catch (error) {
+					setFileUploading(false);
+					setFileUploadingError(true);
+				}
 			}
 		};
 		uploadFiletoFirebase();
@@ -179,7 +187,7 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 
 	useEffect(() => {
 		const result = checkBlockorCaret();
-		if (result.bool === true && selectedFile != null) {
+		if (result.bool === true && selectedFile != null && filePath != null) {
 			const nextlinePosBack =
 				inputData.body
 					.substring(result.endPos, inputData.body.length)
@@ -199,6 +207,7 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 			});
 		}
 		setFileUploading(false);
+		setFileUploadingError(false);
 	}, [filePath]);
 
 	function autoAdjustTextArea(target) {
@@ -1484,6 +1493,10 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 												<span className="font-normal text-[13px] text-[#57606a]">
 													uploading...
 												</span>
+											) : fileUploadingError ? (
+												<span className="font-normal text-[13px] text-[#57606a]">
+													Error. Upload failed.
+												</span>
 											) : (
 												<span className="font-normal text-[13px] text-[#57606a]">
 													Attach files by dragging & dropping, selecting or
@@ -1537,6 +1550,19 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 													<button
 														className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
 														onClick={() => {
+															if (
+																inputData.body != "" &&
+																inputData.body != null
+															) {
+																param?.closeIssue?.commentActionHook?.({
+																	...param?.closeIssue?.editApiData,
+																	editData: { body: inputData.body },
+																});
+																setInputData({
+																	...inputData,
+																	body: "",
+																});
+															}
 															param?.closeIssue?.setStateInfoFunction?.(
 																getIssueStateReason()
 															);
@@ -1654,6 +1680,19 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 													<button
 														className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
 														onClick={() => {
+															if (
+																inputData.body != "" &&
+																inputData.body != null
+															) {
+																param?.closeIssue?.commentActionHook?.({
+																	...param?.closeIssue?.editApiData,
+																	editData: { body: inputData.body },
+																});
+																setInputData({
+																	...inputData,
+																	body: "",
+																});
+															}
 															param?.closeIssue?.setStateInfoFunction?.(
 																getIssueStateReason()
 															);
@@ -1751,6 +1790,19 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 													<button
 														className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
 														onClick={() => {
+															if (
+																inputData.body != "" &&
+																inputData.body != null
+															) {
+																param?.closeIssue?.commentActionHook?.({
+																	...param?.closeIssue?.editApiData,
+																	editData: { body: inputData.body },
+																});
+																setInputData({
+																	...inputData,
+																	body: "",
+																});
+															}
 															param?.closeIssue?.setStateInfoFunction?.(
 																getIssueStateReason()
 															);
@@ -1949,6 +2001,19 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 													<button
 														className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
 														onClick={() => {
+															if (
+																inputData.body != "" &&
+																inputData.body != null
+															) {
+																param?.closeIssue?.commentActionHook?.({
+																	...param?.closeIssue?.editApiData,
+																	editData: { body: inputData.body },
+																});
+																setInputData({
+																	...inputData,
+																	body: "",
+																});
+															}
 															param?.closeIssue?.setStateInfoFunction?.(
 																getIssueStateReason()
 															);
@@ -2066,6 +2131,19 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 													<button
 														className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
 														onClick={() => {
+															if (
+																inputData.body != "" &&
+																inputData.body != null
+															) {
+																param?.closeIssue?.commentActionHook?.({
+																	...param?.closeIssue?.editApiData,
+																	editData: { body: inputData.body },
+																});
+																setInputData({
+																	...inputData,
+																	body: "",
+																});
+															}
 															param?.closeIssue?.setStateInfoFunction?.(
 																getIssueStateReason()
 															);
@@ -2163,6 +2241,19 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 													<button
 														className="flex items-center text-[14px] text-[#24292f] bg-[#f6f8fa] py-[5px] px-[16px] rounded-l-md border border-solid border-[rgba(27,31,36,0.15)]"
 														onClick={() => {
+															if (
+																inputData.body != "" &&
+																inputData.body != null
+															) {
+																param?.closeIssue?.commentActionHook?.({
+																	...param?.closeIssue?.editApiData,
+																	editData: { body: inputData.body },
+																});
+																setInputData({
+																	...inputData,
+																	body: "",
+																});
+															}
 															param?.closeIssue?.setStateInfoFunction?.(
 																getIssueStateReason()
 															);
