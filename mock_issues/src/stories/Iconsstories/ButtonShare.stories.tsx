@@ -1,7 +1,7 @@
 import ButtonShare from "./ButtonShare";
 
 export default {
-	title: "Example/ButtonShare",
+	title: "Example/Shared/ButtonShare",
 	component: ButtonShare,
 	parameters: {
 		layout: "fullscreen",

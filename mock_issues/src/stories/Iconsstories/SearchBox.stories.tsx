@@ -1,7 +1,7 @@
 import SearchBox from "./SearchBox";
 
 export default {
-	title: "Example/SearchBox",
+	title: "Example/Shared/SearchBox",
 	component: SearchBox,
 	parameters: {
 		layout: "fullscreen",

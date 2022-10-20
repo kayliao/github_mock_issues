@@ -2,7 +2,7 @@ import "../../stories/storybookStyle.css";
 import SortDropList from "./SortDropList";
 
 export default {
-	title: "Example/SortDropList",
+	title: "Example/Shared/SortDropList",
 	component: SortDropList,
 	parameters: {
 		layout: "fullscreen",

@@ -1,7 +1,7 @@
 import Label from "./Label";
 
 export default {
-	title: "Example/Label",
+	title: "Example/Shared/Label",
 	component: Label,
 	parameters: {
 		layout: "fullscreen",
