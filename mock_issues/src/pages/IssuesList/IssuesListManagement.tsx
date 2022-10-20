@@ -14,11 +14,14 @@ import {
 	ChevronRightIcon,
 } from "@primer/octicons-react";
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import NormalDropList from "stories/Iconsstories/NormalDropList";
 import MidHead from "components/MidHead/MidHead";
 import EmptyPage from "./EmptyPage";
 import IssuesListItem from "./IssuesListItem";
+import { useGetRepoInfoQuery } from "api/repoInfoApiSlice";
+import { currentRepoInfoActions } from "../../reducer/currentRepoInfoReducer";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
 
 const sortItemsQueryTable = [
 	{
@@ -76,6 +79,8 @@ const filterItemsQueryTable = [
 
 export default function IssuesListManagement() {
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
+
 	const [noQueryHover, setNoQueryHover] = useState(false);
 	const [labelButtonClick, setLabelButtonClick] = useState(false);
 	const [assigneeButtonClick, setAssigneeButtonClick] = useState(false);
@@ -146,6 +151,44 @@ export default function IssuesListManagement() {
 			order: "desc",
 			page: 1,
 		});
+
+	const currentRepoUser = useSelector(
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.owner?.login
+	);
+
+	const currentRepoName = useSelector(
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.name
+	);
+
+	const {
+		data: repoInfo,
+		isSuccess: repoInfoGetSuccess,
+		error: repoInfoGetError,
+	} = useGetRepoInfoQuery({
+		username,
+		reponame,
+	});
+
+	if (
+		repoInfoGetSuccess &&
+		(currentRepoUser != username || currentRepoName != reponame)
+	) {
+		console.log("setting repo");
+		dispatch(
+			currentRepoInfoActions.setCurrentRepoInfo({
+				repoInfo: repoInfo,
+			})
+		);
+		window.localStorage.setItem("currentRepoInfo", JSON.stringify(repoInfo));
+	}
+
+	if (repoInfoGetError) {
+		navigate(
+			`/error/${(repoInfoGetError as FetchBaseQueryError).status}/${
+				(repoInfoGetError as FetchBaseQueryError).data?.["message"]
+			}`
+		);
+	}
 
 	function makeQueryString(stringObjects) {
 		let result = "";

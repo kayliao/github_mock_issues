@@ -119,7 +119,7 @@ const HeaderBox = styled.div`
 	width: 100%;
 	height: 60px;
 	background-color: #000000;
-	z-index: 2;
+	z-index: 20;
 	display: flex;
 	align-items: center;
 `;

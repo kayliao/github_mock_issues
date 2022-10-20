@@ -15,7 +15,7 @@ import {
 	useGetIssueInfoQuery,
 	useUpdateIssueMutation,
 } from "../../api/issueInfoApiSlice";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "store/store";
 import { useGetLabelListsQuery } from "api/labelApiSlice";
 import { useGetIssueTimelineQuery } from "api/issueTimelineApiSlice";
@@ -32,12 +32,16 @@ import {
 	useCreateIssueReactionMutation,
 } from "api/issueReactionApiSlice";
 
+import { useGetRepoInfoQuery } from "api/repoInfoApiSlice";
+
 import MidHead from "../../components/MidHead/MidHead";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
 import { countRestTime } from "../../utils/shareFunctions";
+import { currentRepoInfoActions } from "../../reducer/currentRepoInfoReducer";
 
 export default function IssueInfo() {
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 	const [editOnClick, setEditOnClick] = useState(false);
 	const { username, reponame, issuenumber } = useParams();
 	const [barData, setBarData] = useState(null);
@@ -50,6 +54,44 @@ export default function IssueInfo() {
 		(state: RootState) => state?.currentRepoInfo?.repoInfo?.visibility
 	);
 	const [fixedHeaderStatus, setFixedHeaderStatus] = useState(false);
+
+	const currentRepoUser = useSelector(
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.owner?.login
+	);
+
+	const currentRepoName = useSelector(
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.name
+	);
+
+	const {
+		data: repoInfo,
+		isSuccess: repoInfoGetSuccess,
+		error: repoInfoGetError,
+	} = useGetRepoInfoQuery({
+		username,
+		reponame,
+	});
+
+	if (
+		repoInfoGetSuccess &&
+		(currentRepoUser != username || currentRepoName != reponame)
+	) {
+		console.log("setting repo");
+		dispatch(
+			currentRepoInfoActions.setCurrentRepoInfo({
+				repoInfo: repoInfo,
+			})
+		);
+		window.localStorage.setItem("currentRepoInfo", JSON.stringify(repoInfo));
+	}
+
+	if (repoInfoGetError) {
+		navigate(
+			`/error/${(repoInfoGetError as FetchBaseQueryError).status}/${
+				(repoInfoGetError as FetchBaseQueryError).data?.["message"]
+			}`
+		);
+	}
 
 	const { data: issueReactionsInformation } = useGetIssueReactionInfoQuery({
 		username,

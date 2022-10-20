@@ -9,7 +9,9 @@ import { TagIcon, MilestoneIcon } from "@primer/octicons-react";
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { RootState } from "../../store/store";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useGetRepoInfoQuery } from "api/repoInfoApiSlice";
+import { currentRepoInfoActions } from "../../reducer/currentRepoInfoReducer";
 
 import {
 	useGetLabelListsQuery,
@@ -21,6 +23,7 @@ import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
 
 export default function LabelManagement() {
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 	const [newLabelClick, setNewLabelClick] = useState(false);
 	const [sortClick, setSortClick] = useState(false);
 	const { username, reponame } = useParams();
@@ -31,6 +34,44 @@ export default function LabelManagement() {
 		(state: RootState) =>
 			state?.supaBaseInfo?.user?.identities[0].identity_data.user_name
 	);
+
+	const currentRepoUser = useSelector(
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.owner?.login
+	);
+
+	const currentRepoName = useSelector(
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.name
+	);
+
+	const {
+		data: repoInfo,
+		isSuccess: repoInfoGetSuccess,
+		error: repoInfoGetError,
+	} = useGetRepoInfoQuery({
+		username,
+		reponame,
+	});
+
+	if (
+		repoInfoGetSuccess &&
+		(currentRepoUser != username || currentRepoName != reponame)
+	) {
+		console.log("setting repo");
+		dispatch(
+			currentRepoInfoActions.setCurrentRepoInfo({
+				repoInfo: repoInfo,
+			})
+		);
+		window.localStorage.setItem("currentRepoInfo", JSON.stringify(repoInfo));
+	}
+
+	if (repoInfoGetError) {
+		navigate(
+			`/error/${(repoInfoGetError as FetchBaseQueryError).status}/${
+				(repoInfoGetError as FetchBaseQueryError).data?.["message"]
+			}`
+		);
+	}
 
 	const {
 		data: labelListData,

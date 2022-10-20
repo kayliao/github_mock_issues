@@ -2,7 +2,7 @@ import SettingsBar from "stories/Iconsstories/SettingsBar";
 import TextAreaBox from "stories/Iconsstories/TextAreaBox";
 import MidHead from "components/MidHead/MidHead";
 import { useParams, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "store/store";
 
 import { useNewIssueMutation } from "api/issueApiSlice";
@@ -10,11 +10,13 @@ import { useGetAssigneeListsQuery } from "api/assigneeApiSlice";
 import { useGetLabelListsQuery } from "api/labelApiSlice";
 import { useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
+import { useGetRepoInfoQuery } from "api/repoInfoApiSlice";
+import { currentRepoInfoActions } from "../../reducer/currentRepoInfoReducer";
 
 export default function NewIssuePage() {
 	const { username, reponame } = useParams();
 	const navigate = useNavigate();
-
+	const dispatch = useDispatch();
 	const visibility = useSelector(
 		(state: RootState) => state?.currentRepoInfo?.repoInfo?.visibility
 	);
@@ -29,6 +31,45 @@ export default function NewIssuePage() {
 	);
 	const [textData, setTextData] = useState({ title: "", body: "" });
 	const [barData, setBarData] = useState({ assignees: [], labels: [] });
+
+	const currentRepoUser = useSelector(
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.owner?.login
+	);
+
+	const currentRepoName = useSelector(
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.name
+	);
+
+	const {
+		data: repoInfo,
+		isSuccess: repoInfoGetSuccess,
+		error: repoInfoGetError,
+	} = useGetRepoInfoQuery({
+		username,
+		reponame,
+	});
+
+	if (
+		repoInfoGetSuccess &&
+		(currentRepoUser != username || currentRepoName != reponame)
+	) {
+		console.log("setting repo");
+		dispatch(
+			currentRepoInfoActions.setCurrentRepoInfo({
+				repoInfo: repoInfo,
+			})
+		);
+		window.localStorage.setItem("currentRepoInfo", JSON.stringify(repoInfo));
+	}
+
+	if (repoInfoGetError) {
+		navigate(
+			`/error/${(repoInfoGetError as FetchBaseQueryError).status}/${
+				(repoInfoGetError as FetchBaseQueryError).data?.["message"]
+			}`
+		);
+	}
+
 	const { data: assigneeListData, error: getAssigneeListError } =
 		useGetAssigneeListsQuery({
 			username: username,
