@@ -31,7 +31,10 @@ export default function LabelItem({
 								const result = window.confirm(
 									"Are you sure? Deleting a label will remove it from all issues and pull requests."
 								);
-								if (result) deleteAction();
+								if (result) {
+									deleteAction();
+									setEditClick(false);
+								}
 							}}
 						>
 							Delete
@@ -45,7 +48,10 @@ export default function LabelItem({
 					const result = window.confirm(
 						"Are you sure? Deleting a label will remove it from all issues and pull requests."
 					);
-					if (result) deleteAction();
+					if (result) {
+						deleteAction();
+						setEditClick(false);
+					}
 				}}
 			>
 				Delete
@@ -94,7 +100,10 @@ export default function LabelItem({
 									const result = window.confirm(
 										"Are you sure? Deleting a label will remove it from all issues and pull requests."
 									);
-									if (result) deleteAction();
+									if (result) {
+										deleteAction();
+										setEditClick(false);
+									}
 								}}
 							>
 								Delete
@@ -108,7 +117,10 @@ export default function LabelItem({
 							const result = window.confirm(
 								"Are you sure? Deleting a label will remove it from all issues and pull requests."
 							);
-							if (result) deleteAction();
+							if (result) {
+								deleteAction();
+								setEditClick(false);
+							}
 						}}
 					>
 						Delete

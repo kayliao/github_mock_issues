@@ -148,7 +148,11 @@ export default function NewIssuePage() {
 					<SettingsBar
 						setBarData={setBarData}
 						param={{
-							isAuthorized: loginName === username ? true : false,
+							isAuthorized:
+								loginName === username ||
+								assigneeListData?.some((item) => item.login === loginName)
+									? true
+									: false,
 							openDevelop: true,
 							Notifications: { open: false, subscribe: false },
 							Participant: { open: false },

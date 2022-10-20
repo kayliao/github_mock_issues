@@ -20,6 +20,7 @@ import {
 	useCreateLabelMutation,
 } from "../../api/labelApiSlice";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
+import { useGetAssigneeListsQuery } from "api/assigneeApiSlice";
 
 export default function LabelManagement() {
 	const navigate = useNavigate();
@@ -42,6 +43,11 @@ export default function LabelManagement() {
 	const currentRepoName = useSelector(
 		(state: RootState) => state?.currentRepoInfo?.repoInfo?.name
 	);
+
+	const { data: assigneeListData } = useGetAssigneeListsQuery({
+		username: username,
+		reponame: reponame,
+	});
 
 	const {
 		data: repoInfo,
@@ -125,7 +131,12 @@ export default function LabelManagement() {
 						<SearchBox />
 					</SearchLabelWrapper>
 					<ButtonCompoStyle
-						isAuthorized={loginName === username ? true : false}
+						isAuthorized={
+							loginName === username ||
+							assigneeListData?.some((item) => item.login === loginName)
+								? true
+								: false
+						}
 					>
 						<ButtonShare
 							param={{}}
@@ -176,7 +187,12 @@ export default function LabelManagement() {
 										labelname: element.name,
 									}}
 									updateAction={updateLabel}
-									isAuthorized={loginName === username ? true : false}
+									isAuthorized={
+										loginName === username ||
+										assigneeListData?.some((item) => item.login === loginName)
+											? true
+											: false
+									}
 								/>
 							</ListItemBox>
 						);

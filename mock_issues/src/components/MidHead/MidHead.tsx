@@ -16,6 +16,7 @@ import {
 	GraphIcon,
 	GearIcon,
 } from "@primer/octicons-react";
+import e from "express";
 
 const ActionLists = [
 	{
@@ -93,7 +94,14 @@ export default function MidHead({ username, reponame, visibility }) {
 		<MidHeadBox>
 			<TitleBox>
 				<RepoIcon />
-				<UserNameTitle>{username}</UserNameTitle>
+				<UserNameTitle
+					onClick={(e) => {
+						e.preventDefault();
+						navigate(`/${username}/repos`);
+					}}
+				>
+					{username}
+				</UserNameTitle>
 				<DivideLine>/</DivideLine>
 				<RepoNameTitle>{reponame}</RepoNameTitle>
 				<Visibility>{visibility}</Visibility>
@@ -209,14 +217,12 @@ const Visibility = styled.div`
 
 const ActionsListBox = styled.div`
 	display: flex;
-	${"" /* justify-content: space-between; */}
 	min-height: 48px;
 	max-height: 48px;
 	padding-right: 16px;
 	padding-left: 16px;
 	overflow-x: auto;
-	// overflow: hidden;
-	// flex-flow: row wrap;
+	overflow-y: clip;
 
 	@media screen and (min-width: 768px) {
 		padding-right: 24px;
@@ -252,10 +258,10 @@ const ActionButtonBox = styled.div`
 	align-items: center;
 	justify-content: center;
 	position: relative;
-	// min-height: 48px;
 	padding: 0 8px;
 
 	&:hover {
+		cursor: pointer;
 		border-radius: 6px;
 		background-color: #eaeef2;
 	}

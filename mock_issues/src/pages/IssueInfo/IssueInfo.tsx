@@ -222,6 +222,10 @@ export default function IssueInfo() {
 			});
 	}, [stateUpdateInfo]);
 
+	console.log(assigneeListData);
+	console.log(issueInformation);
+	console.log(assigneeListData?.some((item) => item.login === loginName));
+
 	return (
 		<div>
 			<MidHead
@@ -469,7 +473,8 @@ export default function IssueInfo() {
 								isFirst: true,
 								isAuthorized:
 									loginName === issueInformation?.user.login ||
-									loginName === username
+									loginName === username ||
+									assigneeListData?.some((item) => item.login === loginName)
 										? true
 										: false,
 								isOwner:
@@ -697,7 +702,8 @@ export default function IssueInfo() {
 										isFirst: false,
 										isAuthorized:
 											loginName === element?.user.login ||
-											loginName === username
+											loginName === username ||
+											assigneeListData?.some((item) => item.login === loginName)
 												? true
 												: false,
 										isOwner:
@@ -757,7 +763,11 @@ export default function IssueInfo() {
 											reponame,
 											issuenumber,
 										},
-										isAuthorized: loginName === username ? true : false,
+										isAuthorized:
+											loginName === username ||
+											assigneeListData?.some((item) => item.login === loginName)
+												? true
+												: false,
 									},
 									editComment: {
 										open: false,
@@ -784,7 +794,11 @@ export default function IssueInfo() {
 							<SettingsBar
 								setBarData={setBarData}
 								param={{
-									isAuthorized: loginName === username ? true : false,
+									isAuthorized:
+										loginName === username ||
+										assigneeListData?.some((item) => item.login === loginName)
+											? true
+											: false,
 									openDevelop: true,
 									Notifications: { open: true, subscribe: false },
 									Participant: {
@@ -808,14 +822,6 @@ export default function IssueInfo() {
 													})
 												)
 												.concat(
-													assigneeListData?.map((element) => {
-														return {
-															avatar_url: element.avatar_url,
-															name: element.login,
-														};
-													})
-												)
-												.concat(
 													issueCommentInformation?.map((element) => {
 														return {
 															avatar_url: element.user.avatar_url,
@@ -823,6 +829,12 @@ export default function IssueInfo() {
 														};
 													})
 												)
+												.concat([
+													{
+														avatar_url: issueInformation.user.avatar_url,
+														name: issueInformation.user.login,
+													},
+												])
 												.filter((element) => {
 													return element != undefined;
 												})
