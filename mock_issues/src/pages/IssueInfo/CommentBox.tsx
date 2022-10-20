@@ -373,7 +373,12 @@ export default function CommentBox({
 													<button
 														className="w-[100%] cursor-pointer text-[14px] py-1 pr-2 pl-4 text-[#cf222e] text-left hover:bg-[#cf222e] hover:text-[#ffffff]"
 														onClick={() => {
-															param?.deleteItemAction?.();
+															const result = window.confirm(
+																"Are you sure you want to delete this?"
+															);
+															if (result) {
+																param?.deleteItemAction?.();
+															}
 															commentBoxActionsRef.current.open = false;
 														}}
 													>
@@ -395,9 +400,17 @@ export default function CommentBox({
 						<div>
 							<div className="p-4 bg-[#ffffff] rounded-b-md">
 								<div
-									className="prose"
+									className={`prose text-[14px] ${
+										showMessage == null || showMessage == ""
+											? "text-[#57606a]"
+											: "text-[#24292f]"
+									}`}
 									dangerouslySetInnerHTML={{
-										__html: marked(showMessage),
+										__html: marked(
+											showMessage == null || showMessage == ""
+												? "_No description provided._"
+												: showMessage
+										),
 									}}
 								></div>
 							</div>

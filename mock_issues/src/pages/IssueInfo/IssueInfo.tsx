@@ -59,8 +59,9 @@ export default function IssueInfo() {
 		(state: RootState) => state?.currentRepoInfo?.repoInfo?.owner?.login
 	);
 
-	const currentRepoUserAvatar = useSelector(
-		(state: RootState) => state?.currentRepoInfo?.repoInfo?.owner?.avatar_url
+	const loginUserAvatar = useSelector(
+		(state: RootState) =>
+			state?.supaBaseInfo?.user?.identities[0].identity_data.avatar_url
 	);
 
 	const currentRepoName = useSelector(
@@ -221,10 +222,6 @@ export default function IssueInfo() {
 				},
 			});
 	}, [stateUpdateInfo]);
-
-	console.log(assigneeListData);
-	console.log(issueInformation);
-	console.log(assigneeListData?.some((item) => item.login === loginName));
 
 	return (
 		<div>
@@ -746,7 +743,7 @@ export default function IssueInfo() {
 						<a id="jumpToNewComment">
 							<TextAreaBox
 								setTextData={() => {}}
-								avatar={currentRepoUserAvatar}
+								avatar={loginUserAvatar}
 								param={{
 									closeIssue: {
 										open: true,

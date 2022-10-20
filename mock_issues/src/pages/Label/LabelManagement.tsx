@@ -88,9 +88,50 @@ export default function LabelManagement() {
 		reponame: reponame,
 	});
 
-	const [deleteLabel] = useDeleteLabelMutation();
-	const [updateLabel] = useUpdateLabelMutation();
-	const [createLabel] = useCreateLabelMutation();
+	const [deleteLabel, { error: deleteError }] = useDeleteLabelMutation();
+	const [updateLabel, { error: updateError }] = useUpdateLabelMutation();
+	const [createLabel, { error: createLabelError }] = useCreateLabelMutation();
+
+	// interface errorDataRoot {
+	// 	status: number;
+	// 	data: Data;
+	// }
+
+	// interface Data {
+	// 	message: string;
+	// 	errors: Error[];
+	// 	documentation_url: string;
+	// }
+
+	// interface Error {
+	// 	resource: string;
+	// 	code: string;
+	// 	field: string;
+	// }
+
+	// if (deleteError) {
+	// 	alert(
+	// 		`Action Failed!\nErrors:${
+	// 			(deleteError as errorDataRoot)?.data?.errors[0]?.code
+	// 		}`
+	// 	);
+	// }
+
+	// if (updateError) {
+	// 	alert(
+	// 		`Action Failed!\nErrors:${
+	// 			(updateError as errorDataRoot)?.data?.errors[0]?.code
+	// 		}`
+	// 	);
+	// }
+
+	// if (createLabelError) {
+	// 	alert(
+	// 		`Action Failed!\nErrors:${
+	// 			(createLabelError as errorDataRoot)?.data?.errors[0]?.code
+	// 		}`
+	// 	);
+	// }
 
 	if (isLoading) {
 		return (
