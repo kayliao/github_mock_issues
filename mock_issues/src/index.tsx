@@ -3,7 +3,7 @@ import { Provider } from "react-redux";
 import "./index.css";
 import App from "./App";
 import Repo from "./Repo";
-import Error from "components/Error/Error";
+import Error from "pages/Error/Error";
 import LabelManagement from "./pages/Label/LabelManagement";
 import IssuesListManagement from "pages/IssuesList/IssuesListManagement";
 import UsersLists from "pages/SearchUser/UsersLists";
