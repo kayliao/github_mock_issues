@@ -59,6 +59,10 @@ export default function IssueInfo() {
 		(state: RootState) => state?.currentRepoInfo?.repoInfo?.owner?.login
 	);
 
+	const currentRepoUserAvatar = useSelector(
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.owner?.avatar_url
+	);
+
 	const currentRepoName = useSelector(
 		(state: RootState) => state?.currentRepoInfo?.repoInfo?.name
 	);
@@ -736,7 +740,7 @@ export default function IssueInfo() {
 						<a id="jumpToNewComment">
 							<TextAreaBox
 								setTextData={() => {}}
-								avatar={"https://avatars.githubusercontent.com/u/34449805?v=4"}
+								avatar={currentRepoUserAvatar}
 								param={{
 									closeIssue: {
 										open: true,
