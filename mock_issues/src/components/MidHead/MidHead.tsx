@@ -113,7 +113,9 @@ export default function MidHead({ username, reponame, visibility }) {
 									{element.text}
 								</ActionTitle>
 								{element.number !== 0 ? (
-									<ActionsNumber>{element.number}</ActionsNumber>
+									<ActionsNumber>
+										<span>{element.number}</span>
+									</ActionsNumber>
 								) : (
 									<></>
 								)}
@@ -231,6 +233,7 @@ const ActionsIcon = styled.div`
 	margin-right: 8px;
 `;
 const ActionsNumber = styled.div`
+	margin-top: 4px;
 	padding: 0 6px;
 	background-color: rgba(175, 184, 193, 0.2);
 
@@ -240,7 +243,7 @@ const ActionsNumber = styled.div`
 	font-size: 12px;
 `;
 const ActionsListBoxContainer = styled.div`
-	max-width: 999px;
+	max-width: 1054px;
 `;
 const ActionButtonBox = styled.div`
 	white-space: nowrap;
@@ -277,6 +280,7 @@ const ActionButtonBox = styled.div`
 `;
 
 const ActionTitle = styled.span`
+	margin-top: 2px;
 	font-size: 14px;
 	font-weight: ${(props: PropsType) => props.fontweight};
 `;

@@ -67,7 +67,7 @@ export default function IssuesListItem({
 							})}
 						</span>
 						{issuesItemData.state === "open" ? (
-							<div className="text-text text-sm mt-2">
+							<div className="text-[#57606a] text-[12px] mt-2">
 								{`#${issuesItemData.number} opened ${countRestTime(
 									issuesItemData.created_at
 								)} by `}
@@ -76,7 +76,7 @@ export default function IssuesListItem({
 								</a>
 							</div>
 						) : (
-							<div className="text-text text-sm mt-2">
+							<div className="text-[#57606a] text-[12px] mt-2">
 								{`#${issuesItemData.number} by `}
 								<a className="cursor-pointer hover:text-[#0969da]">
 									{issuesItemData.user.login}

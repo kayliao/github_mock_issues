@@ -122,7 +122,7 @@ export default function NewIssuePage() {
 				reponame={reponame}
 				visibility={visibility}
 			/>
-			<div className="px-4 mt-6 md:flex md:w-[100%] md:justify-between md:px-6">
+			<div className="px-4 mt-6 md:flex md:w-[100%] md:justify-between md:px-6 xl:max-w-[1280px] xl:mx-auto">
 				<TextAreaBox
 					setTextData={setTextData}
 					avatar={userAvatar}
