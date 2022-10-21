@@ -120,6 +120,7 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 	const [filePath, setFilePath] = useState(null);
 	const [issueState, setIssueState] = useState(closureStates.closeIssue);
 	const [openStateOptions, setOpenStateOptions] = useState(false);
+	const [submitLoading, setSubmitLoading] = useState(true);
 
 	// Initialize Firebase
 	const app = initializeApp(firebaseConfig);
@@ -1998,12 +1999,15 @@ export default function TextAreaBox({ setTextData, param, avatar }) {
 										hoverColor={"#2c974b"}
 										hoverBorderColor={"rgba(27,31,36,0.15)"}
 										isAble={
-											inputData.title != null && inputData.title != ""
+											inputData.title != null &&
+											inputData.title != "" &&
+											submitLoading
 												? true
 												: false
 										}
 										onClickFunc={() => {
 											param.submitIssue.submitAction();
+											setSubmitLoading(false);
 										}}
 									/>
 								)}
