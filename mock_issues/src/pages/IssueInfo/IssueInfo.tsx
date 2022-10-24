@@ -479,7 +479,7 @@ export default function IssueInfo() {
 										? true
 										: false,
 								isCollaborator:
-									issueInformation?.author_association === "Collaborator"
+									issueInformation?.author_association === "COLLABORATOR"
 										? true
 										: false,
 								boxBlue:
@@ -706,7 +706,7 @@ export default function IssueInfo() {
 										isOwner:
 											element?.author_association === "OWNER" ? true : false,
 										isCollaborator:
-											element?.author_association === "Collaborator"
+											element?.author_association === "COLLABORATOR"
 												? true
 												: false,
 										isAuthor:

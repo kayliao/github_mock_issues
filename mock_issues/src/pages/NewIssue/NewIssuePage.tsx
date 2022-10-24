@@ -107,7 +107,7 @@ export default function NewIssuePage() {
 
 		async function nav() {
 			if (isNewIssueSuccess) {
-				await sleep(5000);
+				await sleep(2000);
 				navigate(`/${username}/${reponame}/issues`);
 			}
 		}
