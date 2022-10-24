@@ -1,9 +1,7 @@
-import React from "react";
-
 import ButtonShare from "./ButtonShare";
 
 export default {
-	title: "Example/ButtonShare",
+	title: "Example/Shared/ButtonShare",
 	component: ButtonShare,
 	parameters: {
 		layout: "fullscreen",

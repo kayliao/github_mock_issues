@@ -3,7 +3,7 @@ import "../../stories/storybookStyle.css";
 import LabelItem from "./LabelItem";
 
 export default {
-	title: "Example/LabelItem",
+	title: "Example/LabelList/LabelItem",
 	component: LabelItem,
 	parameters: {
 		layout: "fullscreen",

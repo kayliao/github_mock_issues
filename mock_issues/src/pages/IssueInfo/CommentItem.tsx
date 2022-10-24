@@ -234,6 +234,7 @@ export default function CommentItem({
 					param={{
 						boxBlue: param?.boxBlue ? param?.boxBlue : false,
 						isFirst: param?.isFirst ? param?.isFirst : false,
+						isAuthorized: param?.isAuthorized ? param?.isAuthorized : false,
 						reactions: param?.reactions?.content
 							? param?.reactions?.content
 							: commentReactionsData
@@ -301,8 +302,6 @@ export default function CommentItem({
 							isFirst: param?.isFirst ? param?.isFirst : false,
 						},
 						inputData: showMessage,
-						// topTimeline: true,
-						// ahook: useGetAssigneeListsQuery,
 					}}
 				/>
 			)}

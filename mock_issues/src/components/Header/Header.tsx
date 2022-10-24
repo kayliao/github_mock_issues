@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 
 import github from "../../utils/github";
 import { useDispatch, useSelector } from "react-redux";
-import { userType } from "../../reducer/userReducer";
 import { supaBaseInfoActions } from "../../reducer/supaBaseReducer";
 
 import { MarkGithubIcon } from "@primer/octicons-react";
@@ -20,10 +19,13 @@ function Header() {
 		async function checkUser() {
 			const result = await github.checkUser();
 
-			console.log(result);
-
 			dispatch(supaBaseInfoActions.setuser({ userInfo: result.user }));
+			window.localStorage.setItem("supabaseUser", JSON.stringify(result.user));
 			dispatch(supaBaseInfoActions.setsession({ sessionInfo: result.session }));
+			window.localStorage.setItem(
+				"supabaseSession",
+				JSON.stringify(result.session)
+			);
 
 			if ("provider_token" in result.session) {
 				localStorage.setItem("provider_token", result.session.provider_token);
@@ -37,8 +39,6 @@ function Header() {
 				const token = localStorage.getItem("provider_token") ?? null;
 
 				dispatch(supaBaseInfoActions.settoken({ sessionToken: token }));
-
-				console.log(token);
 			}
 		}
 
@@ -55,13 +55,11 @@ function Header() {
 	async function handleSignOutClick() {
 		const result = await github.signOut();
 
-		console.log("signout", result);
 		dispatch(supaBaseInfoActions.setuser({ userInfo: null }));
 		dispatch(supaBaseInfoActions.setsession({ sessionInfo: null }));
 		navigate("/");
 	}
 
-	console.log(user);
 	return (
 		<HeaderBox>
 			<div onClick={() => navigate("/")}>
@@ -101,13 +99,27 @@ function Header() {
 
 export default Header;
 
+type identityDataType = {
+	avatar_url: string;
+};
+
+type identityObject = {
+	identity_data: identityDataType;
+};
+
+type identityType = [identityObject];
+
+type userType = {
+	identities: identityType;
+};
+
 const HeaderBox = styled.div`
 	position: fixed;
 	top: 0;
 	width: 100%;
 	height: 60px;
 	background-color: #000000;
-	z-index: 2;
+	z-index: 20;
 	display: flex;
 	align-items: center;
 `;
@@ -136,14 +148,9 @@ const SearchBox = styled.input`
 		box-shadow: inset 0 0 0 2px #0969da;
 		border-color: #0969da;
 	}
-`;
-
-const SignInA = styled.a`
-	position: absolute;
-	right: 20px;
-	cursor: pointer;
-	color: #fff;
-	text-decoration: none;
+	@media screen and (max-width: 486px) {
+		width: calc(70% - 80px);
+	}
 `;
 
 const SignIn = styled.div`
@@ -152,6 +159,7 @@ const SignIn = styled.div`
 	cursor: pointer;
 	color: #fff;
 	text-decoration: none;
+	font-weight: 600;
 `;
 
 const SignOut = styled.div`
@@ -160,6 +168,7 @@ const SignOut = styled.div`
 	cursor: pointer;
 	color: #fff;
 	text-decoration: none;
+	font-weight: 600;
 `;
 
 const AvartarImg = styled.img`
@@ -168,4 +177,8 @@ const AvartarImg = styled.img`
 	border-radius: 50%;
 	width: 42px;
 	height: auto;
+
+	@media screen and (max-width: 486px) {
+		display: none;
+	}
 `;

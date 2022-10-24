@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import { RootState } from "../../store/store";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { currentRepoInfoActions } from "../../reducer/currentRepoInfoReducer";
+import { countRestTime } from "../../utils/shareFunctions";
 
 function RepoSearched() {
 	const dispatch = useDispatch();
 	const { username } = useParams();
+	const navigate = useNavigate();
 	const token = useSelector((state: RootState) => state.supaBaseInfo.token);
 	const user = useSelector((state: RootState) => state.supaBaseInfo.user);
 
@@ -26,23 +28,15 @@ function RepoSearched() {
 				}
 			);
 			const resjson = await res.json();
+			if (!res.ok) {
+				navigate(`/error/${res.status}/${resjson.message}`);
+				return;
+			}
 
 			setrepolist(resjson);
 		}
 		if (token) getRepos();
 	}, [token]);
-
-	function getTime(time) {
-		const formattedDate = new Date(time);
-
-		formattedDate.toLocaleString("default", { month: "short" });
-
-		return formattedDate.toLocaleString("en-GB", {
-			day: "numeric",
-			month: "long",
-			year: "numeric",
-		});
-	}
 
 	return (
 		<>
@@ -63,6 +57,10 @@ function RepoSearched() {
 													repoInfo: element,
 												})
 											);
+											window.localStorage.setItem(
+												"currentRepoInfo",
+												JSON.stringify(element)
+											);
 										}}
 										to={`/${element.full_name}/issues`}
 									>
@@ -72,7 +70,7 @@ function RepoSearched() {
 								</WrapWord>
 								<UpdateTime>
 									{`Updated on `}
-									{getTime(element.updated_at)}
+									{countRestTime(element.updated_at)}
 								</UpdateTime>
 							</RepoBox>
 						))}

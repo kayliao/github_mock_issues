@@ -39,10 +39,15 @@ export default function UsersLists() {
 }
 
 const WrapperBox = styled.div`
-	margin-top: 16px;
-	margin-bottom: 16px;
-	padding-right: 8px;
-	padding-left: 8px;
+	// margin-top: 16px;
+	// margin-bottom: 16px;
+	// padding-right: 8px;
+	// padding-left: 8px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 80%;
+	margin-top: 20px;
+	margin-bottom: 50px;
 `;
 
 const CountTitle = styled.div`

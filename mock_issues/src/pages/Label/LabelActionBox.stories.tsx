@@ -1,7 +1,7 @@
 import LabelActionBox from "./LabelActionBox";
 
 export default {
-	title: "Example/LabelActionBox",
+	title: "Example/LabelList/LabelActionBox",
 	component: LabelActionBox,
 	parameters: {
 		layout: "fullscreen",

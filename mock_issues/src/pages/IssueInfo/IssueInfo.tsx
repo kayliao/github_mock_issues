@@ -3,22 +3,19 @@ import {
 	IssueOpenedIcon,
 	IssueClosedIcon,
 	SkipIcon,
-	CodeSquareIcon,
 } from "@primer/octicons-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import CommentItem from "./CommentItem";
 import SettingsBar from "stories/Iconsstories/SettingsBar";
 import { useGetAssigneeListsQuery } from "api/assigneeApiSlice";
-import CommentBox from "./CommentBox";
 import TextAreaBox from "stories/Iconsstories/TextAreaBox";
 import Label from "stories/Iconsstories/Label";
-import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
 	useGetIssueInfoQuery,
 	useUpdateIssueMutation,
 } from "../../api/issueInfoApiSlice";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "store/store";
 import { useGetLabelListsQuery } from "api/labelApiSlice";
 import { useGetIssueTimelineQuery } from "api/issueTimelineApiSlice";
@@ -35,13 +32,16 @@ import {
 	useCreateIssueReactionMutation,
 } from "api/issueReactionApiSlice";
 
-import MidHead from "../../components/MidHead/MidHead";
+import { useGetRepoInfoQuery } from "api/repoInfoApiSlice";
 
-type MyProps = {};
-type MyState = { editOnClick: boolean };
+import MidHead from "../../components/MidHead/MidHead";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
+import { countRestTime } from "../../utils/shareFunctions";
+import { currentRepoInfoActions } from "../../reducer/currentRepoInfoReducer";
 
 export default function IssueInfo() {
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
 	const [editOnClick, setEditOnClick] = useState(false);
 	const { username, reponame, issuenumber } = useParams();
 	const [barData, setBarData] = useState(null);
@@ -55,6 +55,49 @@ export default function IssueInfo() {
 	);
 	const [fixedHeaderStatus, setFixedHeaderStatus] = useState(false);
 
+	const currentRepoUser = useSelector(
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.owner?.login
+	);
+
+	const loginUserAvatar = useSelector(
+		(state: RootState) =>
+			state?.supaBaseInfo?.user?.identities[0].identity_data.avatar_url
+	);
+
+	const currentRepoName = useSelector(
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.name
+	);
+
+	const {
+		data: repoInfo,
+		isSuccess: repoInfoGetSuccess,
+		error: repoInfoGetError,
+	} = useGetRepoInfoQuery({
+		username,
+		reponame,
+	});
+
+	if (
+		repoInfoGetSuccess &&
+		(currentRepoUser != username || currentRepoName != reponame)
+	) {
+		console.log("setting repo");
+		dispatch(
+			currentRepoInfoActions.setCurrentRepoInfo({
+				repoInfo: repoInfo,
+			})
+		);
+		window.localStorage.setItem("currentRepoInfo", JSON.stringify(repoInfo));
+	}
+
+	if (repoInfoGetError) {
+		navigate(
+			`/error/${(repoInfoGetError as FetchBaseQueryError).status}/${
+				(repoInfoGetError as FetchBaseQueryError).data?.["message"]
+			}`
+		);
+	}
+
 	const { data: issueReactionsInformation } = useGetIssueReactionInfoQuery({
 		username,
 		reponame,
@@ -64,11 +107,20 @@ export default function IssueInfo() {
 	const [createIssueReaction] = useCreateIssueReactionMutation();
 	const [deleteIssueReaction] = useDeleteIssueReactionMutation();
 
-	const { data: issueInformation } = useGetIssueInfoQuery({
-		username,
-		reponame,
-		issuenumber,
-	});
+	const { data: issueInformation, error: getIssueInfoError } =
+		useGetIssueInfoQuery({
+			username,
+			reponame,
+			issuenumber,
+		});
+
+	if (getIssueInfoError) {
+		navigate(
+			`/error/${(getIssueInfoError as FetchBaseQueryError).status}/${
+				(getIssueInfoError as FetchBaseQueryError).data?.["message"]
+			}`
+		);
+	}
 
 	const { data: issueCommentInformation } = useGetCommentInfoQuery({
 		username,
@@ -171,47 +223,6 @@ export default function IssueInfo() {
 			});
 	}, [stateUpdateInfo]);
 
-	function countRestTime(timeString) {
-		const time = new Date(timeString);
-		const timeNow = Date.now();
-		const diffTime = timeNow - time.getTime();
-
-		const diffDays = Math.floor(diffTime / (24 * 3600 * 1000));
-		let hours, minutes, seconds;
-		if (diffDays <= 0) {
-			const leave1 = diffTime % (24 * 3600 * 1000);
-			hours = Math.floor(leave1 / (3600 * 1000));
-			if (hours <= 0) {
-				const leave2 = leave1 % (3600 * 1000);
-				minutes = Math.floor(leave2 / (60 * 1000));
-				if (minutes <= 0) {
-					const leave3 = leave2 % (60 * 1000);
-					seconds = Math.round(leave3 / 1000);
-					return `${seconds} seconds ago`;
-				} else {
-					return `${minutes} minutes ago`;
-				}
-			} else {
-				return `${hours} hours ago`;
-			}
-		} else if (diffDays <= 30) {
-			return `${diffDays} days ago`;
-		} else {
-			time.toLocaleString("default", { month: "short" });
-
-			time.toLocaleString("en-GB", {
-				day: "numeric",
-				month: "long",
-				year: "numeric",
-			});
-			return `on ${time.toLocaleString("en-GB", {
-				day: "numeric",
-				month: "long",
-				year: "numeric",
-			})}`;
-		}
-	}
-
 	return (
 		<div>
 			<MidHead
@@ -225,23 +236,29 @@ export default function IssueInfo() {
 						<div className={`${editOnClick ? "hidden" : "block"}`}>
 							<div className="flex flex-col md:flex-row md:justify-between">
 								<div className="flex mb-4 ml-[0px] mt-[0px] mb-4 items-start shrink-0 float-right md:mt-2 md:order-1 md:mb-0">
-									<ButtonShare
-										textColor="#24292f"
-										backgroundColor="#f6f8fa"
-										textSize="12px"
-										displayText="Edit"
-										borderColor="rgba(27,31,36,0.15)"
-										hoverColor="#f3f4f6"
-										hoverBorderColor="rgba(27,31,36,0.15)"
-										isAble={true}
-										onClickFunc={() => {
-											inputTitleRef.current.focus();
-											inputTitleRef.current.value = issueInformation?.title;
-											setEditOnClick(true);
-										}}
-										param={{ padding: "3px 12px" }}
-									/>
-									<div className="ml-2 float-left">
+									<div
+										className={`${
+											loginName === username ? "block" : "hidden"
+										} mr-2 `}
+									>
+										<ButtonShare
+											textColor="#24292f"
+											backgroundColor="#f6f8fa"
+											textSize="12px"
+											displayText="Edit"
+											borderColor="rgba(27,31,36,0.15)"
+											hoverColor="#f3f4f6"
+											hoverBorderColor="rgba(27,31,36,0.15)"
+											isAble={true}
+											onClickFunc={() => {
+												inputTitleRef.current.focus();
+												inputTitleRef.current.value = issueInformation?.title;
+												setEditOnClick(true);
+											}}
+											param={{ padding: "3px 12px" }}
+										/>
+									</div>
+									<div className="float-left">
 										<ButtonShare
 											textColor="#ffffff"
 											backgroundColor="#2da44e"
@@ -257,7 +274,7 @@ export default function IssueInfo() {
 											param={{ padding: "3px 12px" }}
 										/>
 									</div>
-									<div className="flex-auto text-right md:hidden">
+									<div className="flex-auto text-[14px] text-right md:hidden">
 										<a
 											href="#jumpToNewComment"
 											className="py-1 text-[#0969da] cursor-pointer"
@@ -394,40 +411,55 @@ export default function IssueInfo() {
 						</header>
 					</div>
 				</div>
-				<div className="block md:hidden text-[12px] mb-6 border-b border-solid border-[#d0d7de]">
-					<div className="flex items-center mb-4">
-						<span className="font-semibold text-[#57606a] w-[24.99%] sm:w-[16.99%]">
-							Assignees
-						</span>
-						<div className="flex flex-wrap">
-							<a className="mr-1">
-								<img
-									src="https://avatars.githubusercontent.com/u/34449805?s=40&v=4"
-									className="w-[20px] h-[20px] rounded-[50%] shadow-[0_0_0_1px_rgba(27,31,36,0.15)]"
-								/>
-							</a>
-							<a className="mr-1">
-								<img
-									src="https://avatars.githubusercontent.com/u/34449805?s=40&v=4"
-									className="w-[20px] h-[20px] rounded-[50%] shadow-[0_0_0_1px_rgba(27,31,36,0.15)]"
-								/>
-							</a>
-						</div>
-					</div>
-					<div className="flex items-center mb-4">
-						<span className="font-semibold text-[#57606a] w-[24.99%] sm:w-[16.99%]">
-							Labels
-						</span>
-						<div className="flex flex-wrap">
-							<div className="mr-1 mb-1">
-								<Label backgroundColor={"#ffffff"} labelName={"abcded"} />
-							</div>
-							<div className="mr-1 mb-1">
-								<Label backgroundColor={"#ffffff"} labelName={"abcded"} />
+				{issueInformation?.assignees?.length != 0 ||
+				issueInformation?.labels?.length != 0 ? (
+					<div className="block md:hidden text-[12px] mb-6 border-b border-solid border-[#d0d7de]">
+						<div className="flex items-center mb-4">
+							<span className="font-semibold text-[#57606a] w-[24.99%] sm:w-[16.99%]">
+								Assignees
+							</span>
+							<div className="flex flex-wrap">
+								{issueInformation?.assignees ? (
+									issueInformation?.assignees?.map((element) => {
+										return (
+											<a className="mr-1">
+												<img
+													src={element.avatar_url}
+													className="w-[20px] h-[20px] rounded-[50%] shadow-[0_0_0_1px_rgba(27,31,36,0.15)]"
+												/>
+											</a>
+										);
+									})
+								) : (
+									<></>
+								)}
 							</div>
 						</div>
+						<div className="flex items-center mb-4">
+							<span className="font-semibold text-[#57606a] w-[24.99%] sm:w-[16.99%]">
+								Labels
+							</span>
+							<div className="flex flex-wrap">
+								{issueInformation?.labels ? (
+									issueInformation?.labels?.map((element) => {
+										return (
+											<div className="mr-1 mb-1">
+												<Label
+													backgroundColor={`#${element.color}`}
+													labelName={element.name}
+												/>
+											</div>
+										);
+									})
+								) : (
+									<></>
+								)}
+							</div>
+						</div>
 					</div>
-				</div>
+				) : (
+					<></>
+				)}
 				<div className=" mt-6 md:flex md:w-[100%] md:justify-between ">
 					<div className="w-[inherit]">
 						<CommentItem
@@ -436,12 +468,18 @@ export default function IssueInfo() {
 							createTime={issueInformation?.created_at}
 							param={{
 								isFirst: true,
+								isAuthorized:
+									loginName === issueInformation?.user.login ||
+									loginName === username ||
+									assigneeListData?.some((item) => item.login === loginName)
+										? true
+										: false,
 								isOwner:
 									issueInformation?.author_association === "OWNER"
 										? true
 										: false,
 								isCollaborator:
-									issueInformation?.author_association === "Collaborator"
+									issueInformation?.author_association === "COLLABORATOR"
 										? true
 										: false,
 								boxBlue:
@@ -659,10 +697,16 @@ export default function IssueInfo() {
 									createTime={element?.created_at}
 									param={{
 										isFirst: false,
+										isAuthorized:
+											loginName === element?.user.login ||
+											loginName === username ||
+											assigneeListData?.some((item) => item.login === loginName)
+												? true
+												: false,
 										isOwner:
 											element?.author_association === "OWNER" ? true : false,
 										isCollaborator:
-											element?.author_association === "Collaborator"
+											element?.author_association === "COLLABORATOR"
 												? true
 												: false,
 										isAuthor:
@@ -699,7 +743,7 @@ export default function IssueInfo() {
 						<a id="jumpToNewComment">
 							<TextAreaBox
 								setTextData={() => {}}
-								avatar={"https://avatars.githubusercontent.com/u/34449805?v=4"}
+								avatar={loginUserAvatar}
 								param={{
 									closeIssue: {
 										open: true,
@@ -716,6 +760,11 @@ export default function IssueInfo() {
 											reponame,
 											issuenumber,
 										},
+										isAuthorized:
+											loginName === username ||
+											assigneeListData?.some((item) => item.login === loginName)
+												? true
+												: false,
 									},
 									editComment: {
 										open: false,
@@ -731,7 +780,6 @@ export default function IssueInfo() {
 										isFirst: false,
 									},
 									topTimeline: true,
-									// ahook: useGetAssigneeListsQuery,
 								}}
 							/>
 						</a>
@@ -743,12 +791,17 @@ export default function IssueInfo() {
 							<SettingsBar
 								setBarData={setBarData}
 								param={{
+									isAuthorized:
+										loginName === username ||
+										assigneeListData?.some((item) => item.login === loginName)
+											? true
+											: false,
 									openDevelop: true,
 									Notifications: { open: true, subscribe: false },
 									Participant: {
 										open: true,
 										participantList: Array.from(
-											assigneeListData
+											issueInformation?.assignees
 												?.map((element) => {
 													return {
 														avatar_url: element.avatar_url,
@@ -765,6 +818,20 @@ export default function IssueInfo() {
 														return;
 													})
 												)
+												.concat(
+													issueCommentInformation?.map((element) => {
+														return {
+															avatar_url: element.user.avatar_url,
+															name: element.user.login,
+														};
+													})
+												)
+												.concat([
+													{
+														avatar_url: issueInformation.user.avatar_url,
+														name: issueInformation.user.login,
+													},
+												])
 												.filter((element) => {
 													return element != undefined;
 												})
@@ -772,12 +839,12 @@ export default function IssueInfo() {
 												.values()
 										),
 									},
-									IssueActions: { open: true },
+									IssueActions: { open: true && loginName === username },
 									initialLabels: issueInformation?.labels?.map((element) => {
 										return element.name;
 									}),
 									initialAssignees: issueInformation?.assignees?.map(
-										(element) => {
+										(element, index) => {
 											return element.login;
 										}
 									),
@@ -785,7 +852,7 @@ export default function IssueInfo() {
 								username={username}
 								reponame={reponame}
 								assigneeList={Array.from(
-									assigneeListData
+									issueInformation?.assignees
 										?.map((element) => {
 											return {
 												avatar_url: element.avatar_url,
@@ -800,6 +867,22 @@ export default function IssueInfo() {
 														name: element.actor.login,
 													};
 												return;
+											})
+										)
+										.concat(
+											assigneeListData?.map((element) => {
+												return {
+													avatar_url: element.avatar_url,
+													name: element.login,
+												};
+											})
+										)
+										.concat(
+											issueCommentInformation?.map((element) => {
+												return {
+													avatar_url: element.user.avatar_url,
+													name: element.user.login,
+												};
 											})
 										)
 										.filter((element) => {

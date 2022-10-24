@@ -7,9 +7,11 @@ import SortDropList from "stories/Iconsstories/SortDropList";
 import ButtonShare from "../../stories/Iconsstories/ButtonShare";
 import { TagIcon, MilestoneIcon } from "@primer/octicons-react";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { RootState } from "../../store/store";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useGetRepoInfoQuery } from "api/repoInfoApiSlice";
+import { currentRepoInfoActions } from "../../reducer/currentRepoInfoReducer";
 
 import {
 	useGetLabelListsQuery,
@@ -17,35 +19,133 @@ import {
 	useUpdateLabelMutation,
 	useCreateLabelMutation,
 } from "../../api/labelApiSlice";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
+import { useGetAssigneeListsQuery } from "api/assigneeApiSlice";
 
 export default function LabelManagement() {
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
 	const [newLabelClick, setNewLabelClick] = useState(false);
 	const [sortClick, setSortClick] = useState(false);
 	const { username, reponame } = useParams();
 	const visibility = useSelector(
 		(state: RootState) => state?.currentRepoInfo?.repoInfo?.visibility
 	);
+	const loginName = useSelector(
+		(state: RootState) =>
+			state?.supaBaseInfo?.user?.identities[0].identity_data.user_name
+	);
+
+	const currentRepoUser = useSelector(
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.owner?.login
+	);
+
+	const currentRepoName = useSelector(
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.name
+	);
+
+	const { data: assigneeListData } = useGetAssigneeListsQuery({
+		username: username,
+		reponame: reponame,
+	});
+
+	const {
+		data: repoInfo,
+		isSuccess: repoInfoGetSuccess,
+		error: repoInfoGetError,
+	} = useGetRepoInfoQuery({
+		username,
+		reponame,
+	});
+
+	if (
+		repoInfoGetSuccess &&
+		(currentRepoUser != username || currentRepoName != reponame)
+	) {
+		console.log("setting repo");
+		dispatch(
+			currentRepoInfoActions.setCurrentRepoInfo({
+				repoInfo: repoInfo,
+			})
+		);
+		window.localStorage.setItem("currentRepoInfo", JSON.stringify(repoInfo));
+	}
+
+	if (repoInfoGetError) {
+		navigate(
+			`/error/${(repoInfoGetError as FetchBaseQueryError).status}/${
+				(repoInfoGetError as FetchBaseQueryError).data?.["message"]
+			}`
+		);
+	}
 
 	const {
 		data: labelListData,
 		isLoading,
-		isSuccess,
-		isError,
-		error,
+		error: getLabelListError,
 	} = useGetLabelListsQuery({
 		username: username,
 		reponame: reponame,
 	});
 
-	const [deleteLabel] = useDeleteLabelMutation();
-	const [updateLabel] = useUpdateLabelMutation();
-	const [createLabel] = useCreateLabelMutation();
+	const [deleteLabel, { error: deleteError }] = useDeleteLabelMutation();
+	const [updateLabel, { error: updateError }] = useUpdateLabelMutation();
+	const [createLabel, { error: createLabelError }] = useCreateLabelMutation();
+
+	// interface errorDataRoot {
+	// 	status: number;
+	// 	data: Data;
+	// }
+
+	// interface Data {
+	// 	message: string;
+	// 	errors: Error[];
+	// 	documentation_url: string;
+	// }
+
+	// interface Error {
+	// 	resource: string;
+	// 	code: string;
+	// 	field: string;
+	// }
+
+	// if (deleteError) {
+	// 	alert(
+	// 		`Action Failed!\nErrors:${
+	// 			(deleteError as errorDataRoot)?.data?.errors[0]?.code
+	// 		}`
+	// 	);
+	// }
+
+	// if (updateError) {
+	// 	alert(
+	// 		`Action Failed!\nErrors:${
+	// 			(updateError as errorDataRoot)?.data?.errors[0]?.code
+	// 		}`
+	// 	);
+	// }
+
+	// if (createLabelError) {
+	// 	alert(
+	// 		`Action Failed!\nErrors:${
+	// 			(createLabelError as errorDataRoot)?.data?.errors[0]?.code
+	// 		}`
+	// 	);
+	// }
 
 	if (isLoading) {
 		return (
 			<LoadingWrapper>
 				<p>...loading</p>
 			</LoadingWrapper>
+		);
+	}
+
+	if (getLabelListError) {
+		navigate(
+			`/error/${(getLabelListError as FetchBaseQueryError).status}/${
+				(getLabelListError as FetchBaseQueryError).data?.["message"]
+			}`
 		);
 	}
 
@@ -71,7 +171,14 @@ export default function LabelManagement() {
 					<SearchLabelWrapper>
 						<SearchBox />
 					</SearchLabelWrapper>
-					<ButtonCompoStyle>
+					<ButtonCompoStyle
+						isAuthorized={
+							loginName === username ||
+							assigneeListData?.some((item) => item.login === loginName)
+								? true
+								: false
+						}
+					>
 						<ButtonShare
 							param={{}}
 							textColor="#fff"
@@ -86,15 +193,17 @@ export default function LabelManagement() {
 						/>
 					</ButtonCompoStyle>
 				</OtherNavBox>
+
 				<NewLabel
 					show={newLabelClick}
 					cancelAction={() => setNewLabelClick(false)}
 					createAction={createLabel}
 					gitInfo={{ reponame: reponame, username: username }}
 				/>
+
 				<LabelListBox>
 					<LabelListBoxHeader>
-						<LabelListBoxHeaderSpan>{`${labelListData.length} labels`}</LabelListBoxHeaderSpan>
+						<LabelListBoxHeaderSpan>{`${labelListData?.length} labels`}</LabelListBoxHeaderSpan>
 						<SortDropList
 							isDrop={sortClick}
 							onClickFunc={() => setSortClick((prev) => !prev)}
@@ -119,6 +228,12 @@ export default function LabelManagement() {
 										labelname: element.name,
 									}}
 									updateAction={updateLabel}
+									isAuthorized={
+										loginName === username ||
+										assigneeListData?.some((item) => item.login === loginName)
+											? true
+											: false
+									}
 								/>
 							</ListItemBox>
 						);
@@ -218,6 +333,10 @@ type isSelectedProps = {
 	isSelected: boolean;
 };
 
+type isAuthorized = {
+	isAuthorized: boolean;
+};
+
 const SearchLabelWrapper = styled.div`
 	flex-basis: 100%;
 	margin-left: 0px;
@@ -275,6 +394,7 @@ const ListItemBox = styled.div`
 `;
 
 const ButtonCompoStyle = styled.div`
+	display: ${(props: isAuthorized) => (props.isAuthorized ? "block" : "none")};
 	position: absolute;
 	right: 0px;
 `;

@@ -2,17 +2,21 @@ import SettingsBar from "stories/Iconsstories/SettingsBar";
 import TextAreaBox from "stories/Iconsstories/TextAreaBox";
 import MidHead from "components/MidHead/MidHead";
 import { useParams, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "store/store";
-import ButtonShare from "stories/Iconsstories/ButtonShare";
 
 import { useNewIssueMutation } from "api/issueApiSlice";
 import { useGetAssigneeListsQuery } from "api/assigneeApiSlice";
 import { useGetLabelListsQuery } from "api/labelApiSlice";
 import { useEffect, useState } from "react";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
+import { useGetRepoInfoQuery } from "api/repoInfoApiSlice";
+import { currentRepoInfoActions } from "../../reducer/currentRepoInfoReducer";
 
 export default function NewIssuePage() {
 	const { username, reponame } = useParams();
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
 	const visibility = useSelector(
 		(state: RootState) => state?.currentRepoInfo?.repoInfo?.visibility
 	);
@@ -20,26 +24,81 @@ export default function NewIssuePage() {
 		(state: RootState) =>
 			state.supaBaseInfo.user.identities[0].identity_data.avatar_url
 	);
+
+	const loginName = useSelector(
+		(state: RootState) =>
+			state?.supaBaseInfo?.user?.identities[0].identity_data.user_name
+	);
 	const [textData, setTextData] = useState({ title: "", body: "" });
 	const [barData, setBarData] = useState({ assignees: [], labels: [] });
+
+	const currentRepoUser = useSelector(
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.owner?.login
+	);
+
+	const currentRepoName = useSelector(
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.name
+	);
+
 	const {
-		data: assigneeListData,
-		isLoading,
-		isSuccess,
-		isError,
-		error,
-	} = useGetAssigneeListsQuery({
-		username: username,
-		reponame: reponame,
+		data: repoInfo,
+		isSuccess: repoInfoGetSuccess,
+		error: repoInfoGetError,
+	} = useGetRepoInfoQuery({
+		username,
+		reponame,
 	});
 
-	const { data: labelListData } = useGetLabelListsQuery({
-		username: username,
-		reponame: reponame,
-	});
+	if (
+		repoInfoGetSuccess &&
+		(currentRepoUser != username || currentRepoName != reponame)
+	) {
+		console.log("setting repo");
+		dispatch(
+			currentRepoInfoActions.setCurrentRepoInfo({
+				repoInfo: repoInfo,
+			})
+		);
+		window.localStorage.setItem("currentRepoInfo", JSON.stringify(repoInfo));
+	}
+
+	if (repoInfoGetError) {
+		navigate(
+			`/error/${(repoInfoGetError as FetchBaseQueryError).status}/${
+				(repoInfoGetError as FetchBaseQueryError).data?.["message"]
+			}`
+		);
+	}
+
+	const { data: assigneeListData, error: getAssigneeListError } =
+		useGetAssigneeListsQuery({
+			username: username,
+			reponame: reponame,
+		});
+
+	if (getAssigneeListError) {
+		navigate(
+			`/error/${(getAssigneeListError as FetchBaseQueryError).status}/${
+				(getAssigneeListError as FetchBaseQueryError).data?.["message"]
+			}`
+		);
+	}
+
+	const { data: labelListData, error: getLabelListError } =
+		useGetLabelListsQuery({
+			username: username,
+			reponame: reponame,
+		});
+
+	if (getLabelListError) {
+		navigate(
+			`/error/${(getLabelListError as FetchBaseQueryError).status}/${
+				(getLabelListError as FetchBaseQueryError).data?.["message"]
+			}`
+		);
+	}
 
 	const [newIssue, { isSuccess: isNewIssueSuccess }] = useNewIssueMutation();
-	const navigate = useNavigate();
 
 	useEffect(() => {
 		function sleep(ms) {
@@ -48,7 +107,7 @@ export default function NewIssuePage() {
 
 		async function nav() {
 			if (isNewIssueSuccess) {
-				await sleep(5000);
+				await sleep(2000);
 				navigate(`/${username}/${reponame}/issues`);
 			}
 		}
@@ -63,7 +122,7 @@ export default function NewIssuePage() {
 				reponame={reponame}
 				visibility={visibility}
 			/>
-			<div className="px-4 mt-6 md:flex md:w-[100%] md:justify-between md:px-6">
+			<div className="px-4 mt-6 md:flex md:w-[100%] md:justify-between md:px-6 xl:max-w-[1280px] xl:mx-auto">
 				<TextAreaBox
 					setTextData={setTextData}
 					avatar={userAvatar}
@@ -89,6 +148,11 @@ export default function NewIssuePage() {
 					<SettingsBar
 						setBarData={setBarData}
 						param={{
+							isAuthorized:
+								loginName === username ||
+								assigneeListData?.some((item) => item.login === loginName)
+									? true
+									: false,
 							openDevelop: true,
 							Notifications: { open: false, subscribe: false },
 							Participant: { open: false },

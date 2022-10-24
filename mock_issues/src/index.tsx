@@ -3,6 +3,7 @@ import { Provider } from "react-redux";
 import "./index.css";
 import App from "./App";
 import Repo from "./Repo";
+import Error from "pages/Error/Error";
 import LabelManagement from "./pages/Label/LabelManagement";
 import IssuesListManagement from "pages/IssuesList/IssuesListManagement";
 import UsersLists from "pages/SearchUser/UsersLists";
@@ -46,6 +47,8 @@ root.render(
 					path="/:username/:reponame/issues/:issuenumber"
 					element={<IssueInfo />}
 				/>
+				<Route path="/error/:status/:message" element={<Error />} />
+				<Route path="*" element={<Error />} />
 			</Route>
 		</Routes>
 	</BrowserRouter>

@@ -16,6 +16,7 @@ import {
 	GraphIcon,
 	GearIcon,
 } from "@primer/octicons-react";
+import e from "express";
 
 const ActionLists = [
 	{
@@ -93,7 +94,14 @@ export default function MidHead({ username, reponame, visibility }) {
 		<MidHeadBox>
 			<TitleBox>
 				<RepoIcon />
-				<UserNameTitle>{username}</UserNameTitle>
+				<UserNameTitle
+					onClick={(e) => {
+						e.preventDefault();
+						navigate(`/${username}/repos`);
+					}}
+				>
+					{username}
+				</UserNameTitle>
 				<DivideLine>/</DivideLine>
 				<RepoNameTitle>{reponame}</RepoNameTitle>
 				<Visibility>{visibility}</Visibility>
@@ -113,7 +121,9 @@ export default function MidHead({ username, reponame, visibility }) {
 									{element.text}
 								</ActionTitle>
 								{element.number !== 0 ? (
-									<ActionsNumber>{element.number}</ActionsNumber>
+									<ActionsNumber>
+										<span>{element.number}</span>
+									</ActionsNumber>
 								) : (
 									<></>
 								)}
@@ -207,14 +217,12 @@ const Visibility = styled.div`
 
 const ActionsListBox = styled.div`
 	display: flex;
-	${"" /* justify-content: space-between; */}
 	min-height: 48px;
 	max-height: 48px;
 	padding-right: 16px;
 	padding-left: 16px;
 	overflow-x: auto;
-	// overflow: hidden;
-	// flex-flow: row wrap;
+	overflow-y: clip;
 
 	@media screen and (min-width: 768px) {
 		padding-right: 24px;
@@ -231,6 +239,7 @@ const ActionsIcon = styled.div`
 	margin-right: 8px;
 `;
 const ActionsNumber = styled.div`
+	margin-top: 4px;
 	padding: 0 6px;
 	background-color: rgba(175, 184, 193, 0.2);
 
@@ -240,7 +249,7 @@ const ActionsNumber = styled.div`
 	font-size: 12px;
 `;
 const ActionsListBoxContainer = styled.div`
-	max-width: 999px;
+	max-width: 1054px;
 `;
 const ActionButtonBox = styled.div`
 	white-space: nowrap;
@@ -249,10 +258,10 @@ const ActionButtonBox = styled.div`
 	align-items: center;
 	justify-content: center;
 	position: relative;
-	// min-height: 48px;
 	padding: 0 8px;
 
 	&:hover {
+		cursor: pointer;
 		border-radius: 6px;
 		background-color: #eaeef2;
 	}
@@ -277,6 +286,7 @@ const ActionButtonBox = styled.div`
 `;
 
 const ActionTitle = styled.span`
+	margin-top: 2px;
 	font-size: 14px;
 	font-weight: ${(props: PropsType) => props.fontweight};
 `;

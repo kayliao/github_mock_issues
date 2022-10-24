@@ -5,8 +5,6 @@ const github = {
 		/* if a user is signed in, update local state */
 		const user = supabase.auth.user();
 		const session = supabase.auth.session();
-		console.log(user);
-		console.log(session);
 		return { user, session };
 	},
 	async signInWithGithub() {
@@ -19,13 +17,13 @@ const github = {
 				scopes: "repo gist notifications",
 			}
 		);
-
-		console.log("signin", user);
-		console.log(session);
 	},
 	async signOut() {
 		/* sign the user out */
 		await supabase.auth.signOut();
+		localStorage.removeItem("supabaseSession");
+		localStorage.removeItem("currentRepoInfo");
+		localStorage.removeItem("supabaseUser");
 		return null;
 	},
 };

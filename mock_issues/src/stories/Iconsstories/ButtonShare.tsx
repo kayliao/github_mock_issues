@@ -84,5 +84,4 @@ type NewButtonType = {
 		disableTextColor: string;
 		disableBackgroundColor: string;
 	};
-	// param?:{disableTextColor?:string,disableBackgroundColor?:string,disableBorderColor?:string}
 };

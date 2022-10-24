@@ -9,20 +9,19 @@ import {
 	MilestoneIcon,
 	SearchIcon,
 	TagIcon,
-	CommentIcon,
 	XIcon,
 	ChevronLeftIcon,
 	ChevronRightIcon,
-	IssueClosedIcon,
-	GitPullRequestIcon,
-	GitPullRequestClosedIcon,
 } from "@primer/octicons-react";
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import NormalDropList from "stories/Iconsstories/NormalDropList";
 import MidHead from "components/MidHead/MidHead";
 import EmptyPage from "./EmptyPage";
 import IssuesListItem from "./IssuesListItem";
+import { useGetRepoInfoQuery } from "api/repoInfoApiSlice";
+import { currentRepoInfoActions } from "../../reducer/currentRepoInfoReducer";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/dist/query";
 
 const sortItemsQueryTable = [
 	{
@@ -80,6 +79,8 @@ const filterItemsQueryTable = [
 
 export default function IssuesListManagement() {
 	const navigate = useNavigate();
+	const dispatch = useDispatch();
+
 	const [noQueryHover, setNoQueryHover] = useState(false);
 	const [labelButtonClick, setLabelButtonClick] = useState(false);
 	const [assigneeButtonClick, setAssigneeButtonClick] = useState(false);
@@ -105,8 +106,6 @@ export default function IssuesListManagement() {
 		middle: [],
 		nextPages: [],
 	});
-
-	console.log(IssueListData);
 
 	const { username, reponame } = useParams();
 	const visibility = useSelector(
@@ -153,6 +152,44 @@ export default function IssuesListManagement() {
 			page: 1,
 		});
 
+	const currentRepoUser = useSelector(
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.owner?.login
+	);
+
+	const currentRepoName = useSelector(
+		(state: RootState) => state?.currentRepoInfo?.repoInfo?.name
+	);
+
+	const {
+		data: repoInfo,
+		isSuccess: repoInfoGetSuccess,
+		error: repoInfoGetError,
+	} = useGetRepoInfoQuery({
+		username,
+		reponame,
+	});
+
+	if (
+		repoInfoGetSuccess &&
+		(currentRepoUser != username || currentRepoName != reponame)
+	) {
+		console.log("setting repo");
+		dispatch(
+			currentRepoInfoActions.setCurrentRepoInfo({
+				repoInfo: repoInfo,
+			})
+		);
+		window.localStorage.setItem("currentRepoInfo", JSON.stringify(repoInfo));
+	}
+
+	if (repoInfoGetError) {
+		navigate(
+			`/error/${(repoInfoGetError as FetchBaseQueryError).status}/${
+				(repoInfoGetError as FetchBaseQueryError).data?.["message"]
+			}`
+		);
+	}
+
 	function makeQueryString(stringObjects) {
 		let result = "";
 		for (let [key, value] of Object.entries(stringObjects)) {
@@ -194,11 +231,19 @@ export default function IssuesListManagement() {
 				}
 			);
 			const data = await res.json();
-			data?.unshift({
+			if (!res.ok) {
+				navigate(`/error/${res.status}/${data.message}`);
+				return;
+			}
+
+			const newData = data?.filter((element) => {
+				return element?.login != loginName;
+			});
+			newData?.unshift({
 				login: loginName,
 				avatar_url: loginAvatar,
 			});
-			setAssigneeListData(data);
+			setAssigneeListData(newData);
 		}
 		getAssigneeLists(username, reponame);
 	}, []);
@@ -218,6 +263,10 @@ export default function IssuesListManagement() {
 				}
 			);
 			const data = await res.json();
+			if (!res.ok) {
+				navigate(`/error/${res.status}/${data.message}`);
+				return;
+			}
 			setIssueList(data.items);
 			setTotalPages(Math.ceil(data.total_count / 25));
 		}
@@ -284,6 +333,10 @@ export default function IssuesListManagement() {
 				}
 			);
 			const data = await res.json();
+			if (!res.ok) {
+				navigate(`/error/${res.status}/${data.message}`);
+				return;
+			}
 			setLabelListData(data);
 		}
 		getLabelLists(username, reponame);
@@ -401,47 +454,6 @@ export default function IssuesListManagement() {
 		setCurrentPage(1);
 	}, [selectedLabelList]);
 
-	// function countRestTime(timeString) {
-	// 	const time = new Date(timeString);
-	// 	const timeNow = Date.now();
-	// 	const diffTime = timeNow - time.getTime();
-
-	// 	const diffDays = Math.floor(diffTime / (24 * 3600 * 1000));
-	// 	let hours, minutes, seconds;
-	// 	if (diffDays <= 0) {
-	// 		const leave1 = diffTime % (24 * 3600 * 1000);
-	// 		hours = Math.floor(leave1 / (3600 * 1000));
-	// 		if (hours <= 0) {
-	// 			const leave2 = leave1 % (3600 * 1000);
-	// 			minutes = Math.floor(leave2 / (60 * 1000));
-	// 			if (minutes <= 0) {
-	// 				const leave3 = leave2 % (60 * 1000);
-	// 				seconds = Math.round(leave3 / 1000);
-	// 				return `${seconds} seconds ago`;
-	// 			} else {
-	// 				return `${minutes} minutes ago`;
-	// 			}
-	// 		} else {
-	// 			return `${hours} hours ago`;
-	// 		}
-	// 	} else if (diffDays <= 30) {
-	// 		return `${diffDays} days ago`;
-	// 	} else {
-	// 		time.toLocaleString("default", { month: "short" });
-
-	// 		time.toLocaleString("en-GB", {
-	// 			day: "numeric",
-	// 			month: "long",
-	// 			year: "numeric",
-	// 		});
-	// 		return `on ${time.toLocaleString("en-GB", {
-	// 			day: "numeric",
-	// 			month: "long",
-	// 			year: "numeric",
-	// 		})}`;
-	// 	}
-	// }
-
 	return (
 		<>
 			<MidHead
@@ -476,18 +488,12 @@ export default function IssuesListManagement() {
 								>
 									<TagIcon size={16} className="left-2 top-[9px]" />
 									<span className="mx-[3px]">Labels</span>
-									{/* <span className="px-1.5 pt-[2px] bg-[rgba(175,184,193,0.2)] border border-solid border-[rgba(0,0,0,0)] rounded-[2em] text-xs font-medium	leading-[18px] text-[#24292f] text-center hidden md:block">
-										{LabelListData?.length}
-									</span> */}
 								</button>
 							</div>
 							<div>
 								<button className="py-[4px] px-4 border border-solid borderrounded-l-md border-[#d0d7de] rounded-r-md flex items-center flex-nowrap hover:bg-[#f3f4f6]">
 									<MilestoneIcon size={16} className="left-2 top-[9px]" />
 									<span className="mx-[3px]">MileStones</span>
-									{/* <span className="px-1.5 pt-[2px] bg-[rgba(175,184,193,0.2)] border border-solid border-[rgba(0,0,0,0)] rounded-[2em] text-xs font-medium	leading-[18px] text-[#24292f] text-center hidden md:block">
-										0
-									</span> */}
 								</button>
 							</div>
 						</div>
